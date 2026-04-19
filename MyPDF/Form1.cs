@@ -99,7 +99,10 @@ namespace MyPDF
             this.Text = myName;
 
             pdfViewer1.Dock = DockStyle.Fill;
+            
+            // pdfViewerのしおり表示を無効
             pdfViewer1.ShowBookmarks = false;
+            // pdfViewerのツールバー表示を無効
             pdfViewer1.ShowToolbar = false;
 
             panel2.Dock = DockStyle.Fill;
