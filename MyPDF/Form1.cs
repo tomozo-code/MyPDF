@@ -29,9 +29,9 @@ using DrawingColor = System.Drawing.Color;
 
 // セキュリティ設定の仕様
 // パスなし → 編集可能
-// 開くパス(User) → パス要求 → 編集可能
-// 制限パス(Owner) → パス要求 → 編集可能
-// 開くパス(User) + 制限パス(Owner) → 
+// 開くパス(User) → パス要求 → 閲覧モード(編集不可)
+// 制限パス(Owner) → パス要求 → 編集モード(編集可能)
+// 開くパス(User) + 制限パス(Owner) → どのパスで開いたかで　閲覧 or 編集
 
 namespace MyPDF
 {
