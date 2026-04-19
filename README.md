@@ -89,6 +89,7 @@ https://github.com/tomozo-code/MyPDF
 ### PDFium
 - Copyright (c) The Chromium Authors
 - ライセンス：BSD 3-Clause License
+
 詳細は同梱の LICENSE_PDFium.txt を参照してください。
 著作権表示およびライセンス文を保持してください。
 
