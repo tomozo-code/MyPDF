@@ -6,6 +6,12 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
+
+// ==============================
+// 保護パスワード入力フォーム
+// ==============================
+
+
 namespace MyPDF
 {
     public partial class Form5 : Form

@@ -70,10 +70,6 @@ namespace MyPDF
             // UIに反映
             LoadToUI();
 
-            //LoadPdfInfo();
-                        
-            //LoadViewerSettings();
-
         }
 
         // ==============================

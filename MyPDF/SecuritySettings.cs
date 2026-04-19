@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
+// ==============================
+// セキュリティ設定用(メタデータ)
+// ==============================
+
 namespace MyPDF
 {
     public class SecuritySettings

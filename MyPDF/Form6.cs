@@ -6,6 +6,13 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
+
+
+// ==============================
+// しおりプロパティ設定フォーム
+// ==============================
+
+
 namespace MyPDF
 {
     public partial class Form6 : Form
@@ -67,6 +74,9 @@ namespace MyPDF
             }
         }
 
+        // ==============================
+        // スタイルインデックスをセット
+        // ==============================
         private int StyleToIndex(FontStyle style)
         {
             if (style.HasFlag(FontStyle.Bold) && style.HasFlag(FontStyle.Italic))
@@ -79,6 +89,9 @@ namespace MyPDF
             return 0;
         }
 
+        // ==============================
+        // フォントスタイルをセット
+        // ==============================
         private FontStyle IndexToStyle(int index)
         {
             switch (index)
@@ -90,6 +103,9 @@ namespace MyPDF
             }
         }
 
+        // ==============================
+        // OKボタンをクリックしたとき
+        // ==============================
         private void btnOk_Click(object sender, EventArgs e)
         {
             SelectedStyle = IndexToStyle(comboBox1.SelectedIndex);
@@ -98,6 +114,9 @@ namespace MyPDF
             this.Close();
         }
 
+        // ==============================
+        // Cancelボタンをクリックしたとき
+        // ==============================
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.Cancel;

@@ -7,8 +7,6 @@ using System.Text;
 // ==============================
 
 
-
-
 namespace MyPDF
 {
     public class PdfSettings

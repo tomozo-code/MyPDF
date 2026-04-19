@@ -9,6 +9,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
+// ==============================
+// セキュリティ設定フォーム
+// ==============================
+
 
 namespace MyPDF
 {
@@ -96,17 +100,6 @@ namespace MyPDF
                 txtOwnerPassConfirm.Text = "";
             }
 
-            //if (checkBox2.Checked)
-            //{
-            //    btnOK.Enabled = true;
-            //}
-            //else
-            //{
-            //    btnOK.Enabled = checkBox1.Checked;
-
-            //}
-
-
         }
 
         // ==============================
@@ -136,25 +129,6 @@ namespace MyPDF
                 //txtUserPass.Text = "";
                 txtUserPassConfirm.Text = "";
             }
-
-            //if (checkBox1.Checked)
-            //{
-            //    btnOK.Enabled = true;
-            //}
-            //else
-            //{
-            //    btnOK.Enabled = checkBox2.Checked;
-
-            //}
-
-
-            // 権限パス一致判定
-            //bool isMatch =
-            //    !string.IsNullOrEmpty(txtOwnerPass.Text) &&
-            //    txtOwnerPass.Text == txtOwnerPassConfirm.Text;
-
-            //btnOK.Enabled = isMatch;
-
 
 
         }
@@ -199,15 +173,6 @@ namespace MyPDF
                 return;
             }
 
-            //if (checkBox2.Checked)
-            //{
-            // User未入力チェック
-            //    if (string.IsNullOrEmpty(txtUserPass.Text))
-            //    {
-            //        MessageBox.Show("開く用パスワードは必須です。", "確認");
-            //        return;
-            //    }
-            //}
 
             if (txtUserPass.Text == txtOwnerPass.Text && !string.IsNullOrEmpty(txtUserPass.Text))
             {
