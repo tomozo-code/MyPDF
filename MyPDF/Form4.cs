@@ -13,7 +13,6 @@ using System.Windows.Forms;
 // セキュリティ設定フォーム
 // ==============================
 
-
 namespace MyPDF
 {
     public partial class Form4 : Form

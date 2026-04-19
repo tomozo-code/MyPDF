@@ -15,8 +15,6 @@ using System.Windows.Forms;
 // PDFのプロパティ用
 // ==============================
 
-
-
 namespace MyPDF
 {
     public partial class Form2 : Form

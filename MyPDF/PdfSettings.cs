@@ -6,7 +6,6 @@ using System.Text;
 // PDFプロパティ用(メタデータ)
 // ==============================
 
-
 namespace MyPDF
 {
     public class PdfSettings

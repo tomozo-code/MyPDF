@@ -3,11 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-
 // ==============================
 // PDFプロパティ用(開き方コンボボックス)
 // ==============================
-
 
 namespace MyPDF
 {
