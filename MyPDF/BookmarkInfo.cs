@@ -16,9 +16,6 @@ namespace MyPDF
         public int Page { get; set; }
         // しおり展開(展開:true、縮小:false)
         public bool IsOpen { get; set; }
-        
-        public bool IsRootOpen { get; set; }
-
         // 選択された色
         public Color SelectedColor { get; set; }
 

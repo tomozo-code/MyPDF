@@ -63,6 +63,9 @@
             ShioriTenkaiToolStripMenuItem = new ToolStripMenuItem();
             ShioriSyukusyouToolStripMenuItem = new ToolStripMenuItem();
             toolStripMenuItem6 = new ToolStripSeparator();
+            ImportShioriToolStripMenuItem = new ToolStripMenuItem();
+            ExportShioriToolStripMenuItem = new ToolStripMenuItem();
+            toolStripMenuItem7 = new ToolStripSeparator();
             ShioriProToolStripMenuItem = new ToolStripMenuItem();
             tabPage2 = new TabPage();
             listView1 = new ListView();
@@ -91,7 +94,7 @@
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Padding = new Padding(7, 2, 0, 2);
-            menuStrip1.Size = new Size(782, 29);
+            menuStrip1.Size = new Size(964, 29);
             menuStrip1.TabIndex = 0;
             menuStrip1.Text = "menuStrip1";
             menuStrip1.MouseEnter += menuStrip1_MouseEnter;
@@ -212,7 +215,7 @@
             statusStrip1.Location = new Point(0, 388);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Padding = new Padding(1, 0, 16, 0);
-            statusStrip1.Size = new Size(782, 26);
+            statusStrip1.Size = new Size(964, 26);
             statusStrip1.TabIndex = 1;
             statusStrip1.Text = "statusStrip1";
             // 
@@ -236,9 +239,9 @@
             panel2.BackColor = SystemColors.Control;
             panel2.BorderStyle = BorderStyle.FixedSingle;
             panel2.Controls.Add(pdfViewer1);
-            panel2.Location = new Point(234, 85);
+            panel2.Location = new Point(263, 116);
             panel2.Name = "panel2";
-            panel2.Size = new Size(187, 128);
+            panel2.Size = new Size(293, 199);
             panel2.TabIndex = 4;
             // 
             // pdfViewer1
@@ -246,7 +249,7 @@
             pdfViewer1.Location = new Point(32, 22);
             pdfViewer1.Margin = new Padding(4, 4, 4, 4);
             pdfViewer1.Name = "pdfViewer1";
-            pdfViewer1.Size = new Size(150, 70);
+            pdfViewer1.Size = new Size(150, 141);
             pdfViewer1.TabIndex = 0;
             pdfViewer1.ZoomMode = PdfiumViewer.PdfViewerZoomMode.FitBest;
             // 
@@ -300,9 +303,9 @@
             // contextMenuStrip1
             // 
             contextMenuStrip1.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
-            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { AddShioriToolStripMenuItem, DelShioriToolStripMenuItem, toolStripMenuItem1, SetShioriToolStripMenuItem, toolStripMenuItem4, AllShioriTenkaiToolStripMenuItem, AllShioriSyukusyouToolStripMenuItem, toolStripMenuItem5, ShioriTenkaiToolStripMenuItem, ShioriSyukusyouToolStripMenuItem, toolStripMenuItem6, ShioriProToolStripMenuItem });
+            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { AddShioriToolStripMenuItem, DelShioriToolStripMenuItem, toolStripMenuItem1, SetShioriToolStripMenuItem, toolStripMenuItem4, AllShioriTenkaiToolStripMenuItem, AllShioriSyukusyouToolStripMenuItem, toolStripMenuItem5, ShioriTenkaiToolStripMenuItem, ShioriSyukusyouToolStripMenuItem, toolStripMenuItem6, ImportShioriToolStripMenuItem, ExportShioriToolStripMenuItem, toolStripMenuItem7, ShioriProToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(303, 236);
+            contextMenuStrip1.Size = new Size(303, 316);
             // 
             // AddShioriToolStripMenuItem
             // 
@@ -401,6 +404,33 @@
             toolStripMenuItem6.Name = "toolStripMenuItem6";
             toolStripMenuItem6.Size = new Size(299, 6);
             // 
+            // ImportShioriToolStripMenuItem
+            // 
+            ImportShioriToolStripMenuItem.Enabled = false;
+            ImportShioriToolStripMenuItem.Name = "ImportShioriToolStripMenuItem";
+            ImportShioriToolStripMenuItem.Size = new Size(302, 26);
+            ImportShioriToolStripMenuItem.Text = "しおりインポート(&I)...";
+            ImportShioriToolStripMenuItem.ToolTipText = "CSV形式のしおりデータをインポート(読み込み)";
+            ImportShioriToolStripMenuItem.Click += ImportShioriToolStripMenuItem_Click;
+            ImportShioriToolStripMenuItem.MouseEnter += menuStrip1_MouseEnter;
+            ImportShioriToolStripMenuItem.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // ExportShioriToolStripMenuItem
+            // 
+            ExportShioriToolStripMenuItem.Enabled = false;
+            ExportShioriToolStripMenuItem.Name = "ExportShioriToolStripMenuItem";
+            ExportShioriToolStripMenuItem.Size = new Size(302, 26);
+            ExportShioriToolStripMenuItem.Text = "しおりエクスポート(&E)...";
+            ExportShioriToolStripMenuItem.ToolTipText = "しおりデータをCSV形式でエクスポート(書き出し)";
+            ExportShioriToolStripMenuItem.Click += ExportShioriToolStripMenuItem_Click;
+            ExportShioriToolStripMenuItem.MouseEnter += menuStrip1_MouseEnter;
+            ExportShioriToolStripMenuItem.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // toolStripMenuItem7
+            // 
+            toolStripMenuItem7.Name = "toolStripMenuItem7";
+            toolStripMenuItem7.Size = new Size(299, 6);
+            // 
             // ShioriProToolStripMenuItem
             // 
             ShioriProToolStripMenuItem.Enabled = false;
@@ -463,7 +493,7 @@
             panel3.Dock = DockStyle.Top;
             panel3.Location = new Point(207, 29);
             panel3.Name = "panel3";
-            panel3.Size = new Size(575, 36);
+            panel3.Size = new Size(757, 36);
             panel3.TabIndex = 5;
             // 
             // ZoomComboBox
@@ -503,7 +533,7 @@
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(782, 414);
+            ClientSize = new Size(964, 414);
             Controls.Add(panel2);
             Controls.Add(panel3);
             Controls.Add(splitter1);
@@ -579,5 +609,8 @@
         private ToolStripSeparator toolStripMenuItem6;
         private ToolStripMenuItem ShioriProToolStripMenuItem;
         private ToolTip treeToolTip;
+        private ToolStripMenuItem ImportShioriToolStripMenuItem;
+        private ToolStripMenuItem ExportShioriToolStripMenuItem;
+        private ToolStripSeparator toolStripMenuItem7;
     }
 }

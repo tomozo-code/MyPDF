@@ -37,7 +37,7 @@ namespace MyPDF
             var version = assembly.GetName().Version?.ToString() ?? "不明";
 
             labelTitle.Text = "ともさんのPDF編集帖";
-            labelVersion.Text = $"Version:1.0.0";
+            labelVersion.Text = $"Version: {version}";
             labelCopyright.Text = "Copyright(c) 2026 ともさん";
 
 

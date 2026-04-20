@@ -98,16 +98,16 @@ namespace MyPDF
 
             this.Text = myName;
 
+            panel2.Dock = DockStyle.Fill;
             pdfViewer1.Dock = DockStyle.Fill;
-            
+
             // pdfViewerのしおり表示を無効
             pdfViewer1.ShowBookmarks = false;
             // pdfViewerのツールバー表示を無効
             pdfViewer1.ShowToolbar = false;
 
-            panel2.Dock = DockStyle.Fill;
-            tabControl1.Dock = DockStyle.Fill;
             panel1.Width = 300;
+            tabControl1.Dock = DockStyle.Fill;
             treeView1.Dock = DockStyle.Fill;
             listView1.Dock = DockStyle.Fill;
 
@@ -151,6 +151,11 @@ namespace MyPDF
             ShioriTenkaiToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.D3;
             // 選択中のしおりを縮小
             ShioriSyukusyouToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.D4;
+            // しおりインポート
+            ImportShioriToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.I;
+            // しおりエクスポート
+            ExportShioriToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.E;
+
 
             // 0.1秒ごとにページを監視
             pageTimer.Interval = 100; // 0.1秒ごと
@@ -603,11 +608,15 @@ namespace MyPDF
 
                 // 表示モード
                 var pageMode = catalogObj.GetAsName(PdfName.PageMode);
-                settings.PageMode = pageMode?.GetValue() ?? "UseNone";
+                settings.PageMode = pageMode?.GetValue();
+                //var pageMode = catalogObj.GetAsName(PdfName.PageMode);
+                //settings.PageMode = pageMode?.GetValue() ?? "UseNone";
 
                 // レイアウト
                 var layout = catalogObj.GetAsName(PdfName.PageLayout);
-                settings.PageLayout = layout?.GetValue() ?? "SinglePage";
+                settings.PageLayout = layout?.GetValue();
+                //var layout = catalogObj.GetAsName(PdfName.PageLayout);
+                //settings.PageLayout = layout?.GetValue() ?? "SinglePage";
 
                 var openAction = catalogObj.Get(PdfName.OpenAction);
 
@@ -984,8 +993,8 @@ namespace MyPDF
                 UpdateContextMenuState();
 
                 // 更新フラグ(falseならtrueに)
-                if (!isDirty)
-                    isDirty = true;
+                //if (!isDirty)
+                isDirty = true;
             }
 
         }
@@ -1026,8 +1035,8 @@ namespace MyPDF
                 return;
 
             // 変更確定 → フラグON
-            if (!isDirty)
-                isDirty = true;
+            //if (!isDirty)
+            isDirty = true;
 
             // デバッグ確認
             Debug.WriteLine($"しおり名変更: {e.Node.Text} → {e.Label}");
@@ -1300,7 +1309,7 @@ namespace MyPDF
 
                     // Info（セミコロン区切り）
                     info.SetKeywords(string.Join("; ", keywordList));
-                    
+
                     //info.SetProducer(producer);
                     //info.SetCreator(appName);
 
@@ -1344,14 +1353,26 @@ namespace MyPDF
                     //xmp.SetProperty(XMPConst.NS_XMP, "CreatorTool", producer);
                     // PDFにXMP設定
                     pdf.SetXmpMetadata(xmp);
-                                
+
 
                     // 表示設定
                     var catalog = pdf.GetCatalog();
                     // 表示モード
                     catalog.SetPageMode(new PdfName(currentSettings.PageMode));
+                    //var mode = ToPdfName(currentSettings.PageMode);
+                    //if (mode != null)
+                    //{
+                    //    catalog.SetPageMode(mode);
+                    //}
+
                     // レイアウト
                     catalog.SetPageLayout(new PdfName(currentSettings.PageLayout));
+                    //var layout = ToPdfName(currentSettings.PageLayout);
+                    //if (layout != null)
+                    //{
+                    //    catalog.SetPageLayout(layout);
+                    //}
+
                     // ページ範囲チェック
                     int max = pdf.GetNumberOfPages();
                     int page = Math.Max(1, Math.Min(currentSettings.OpenPage, max));
@@ -1498,8 +1519,8 @@ namespace MyPDF
                 // ファイルロック系（今回のケース）
                 MessageBox.Show(
                     "他のアプリケーションで開かれているため保存できません。" + Environment.NewLine
-                    + "PDFを閉じてから再度保存してください。"+ Environment.NewLine + Environment.NewLine 
-                    +inputPath,
+                    + "PDFを閉じてから再度保存してください。" + Environment.NewLine + Environment.NewLine
+                    + inputPath,
                     "保存エラー",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning
@@ -1541,9 +1562,7 @@ namespace MyPDF
         {
 
             // 安全に取り出す
-            var info = node.Tag as BookmarkInfo;
-            if (info == null)
-                return;
+            if (node.Tag is not BookmarkInfo info) return;
 
             int page = info.Page;
 
@@ -1624,6 +1643,10 @@ namespace MyPDF
                 SecurityToolStripMenuItem.Enabled = false;
                 // しおりのプロパティ
                 ShioriProToolStripMenuItem.Enabled = false;
+                // しおりインポート
+                ImportShioriToolStripMenuItem.Enabled = false;
+                // しおりエクスポート
+                ExportShioriToolStripMenuItem.Enabled = false;
 
             }
             else
@@ -1647,6 +1670,11 @@ namespace MyPDF
                 //SecurityToolStripMenuItem.Enabled = false;
                 // しおりのプロパティ
                 ShioriProToolStripMenuItem.Enabled = hasNodes; // ノードある時だけ
+                // しおりインポート                               
+                ImportShioriToolStripMenuItem.Enabled = hasNodes; // ノードある時だけ
+                // しおりエクスポート
+                ExportShioriToolStripMenuItem.Enabled = hasNodes; // ノードある時だけ
+
 
 
             }
@@ -1729,8 +1757,8 @@ namespace MyPDF
             UpdateContextMenuState();
 
             // 更新フラグ(falseならtrueに)
-            if (!isDirty)
-                isDirty = true;
+            //if (!isDirty)
+            isDirty = true;
 
         }
 
@@ -1774,8 +1802,8 @@ namespace MyPDF
             UpdateContextMenuState();
 
             // 更新フラグ(falseならtrueに)
-            if (!isDirty)
-                isDirty = true;
+            //if (!isDirty)
+            isDirty = true;
 
         }
 
@@ -1981,8 +2009,8 @@ namespace MyPDF
             UpdateContextMenuState();
 
             // 更新フラグ(falseならtrueに)
-            if (!isDirty)
-                isDirty = true;
+            //if (!isDirty)
+            isDirty = true;
 
         }
 
@@ -2123,8 +2151,8 @@ namespace MyPDF
             }
 
             // 更新フラグ(falseならtrueに)
-            if (!isDirty)
-                isDirty = true;
+            //if (!isDirty)
+            isDirty = true;
 
             // 視覚的にわかるように(チェック用)
             //treeView1.SelectedNode.Text = $"{treeView1.SelectedNode.Text.Split('(')[0].Trim()} ({currentPage})";
@@ -2167,6 +2195,12 @@ namespace MyPDF
 
             // サムネイルを全部消す(初期化)
             listView1.Items.Clear();
+            // メモリ解放
+            foreach (Image img in thumbnailImageList.Images)
+            {
+                img.Dispose();
+            }
+
             thumbnailImageList.Images.Clear();
 
             // 総ページ数を取得
@@ -2564,6 +2598,10 @@ namespace MyPDF
         {
             if (pdfViewer1.Document == null) return;
 
+            // 先にZoomをリセット（ここが核心）
+            pdfViewer1.Renderer.Zoom = 1.0f;
+
+
             switch (ZoomComboBox.SelectedIndex)
             {
                 // 自動調整
@@ -2586,15 +2624,15 @@ namespace MyPDF
             // 再描画
             int page = pdfViewer1.Renderer.Page;
 
-            if (pdfViewer1.Document.PageCount > 1)
-            {
-                pdfViewer1.Renderer.Page = page == 0 ? 1 : 0;
-                pdfViewer1.Renderer.Page = page;
-            }
-            else
-            {
-                pdfViewer1.Refresh();
-            }
+            //if (pdfViewer1.Document.PageCount > 1)
+            //{
+            //    pdfViewer1.Renderer.Page = page == 0 ? 1 : 0;
+            //    pdfViewer1.Renderer.Page = page;
+            //}
+            //else
+            //{
+            pdfViewer1.Refresh();
+            //}
 
         }
 
@@ -2633,8 +2671,9 @@ namespace MyPDF
             }
 
             // BookmarkInfoからしおりのプロパティ(色、スタイル)を取得
-            var info = node.Tag as BookmarkInfo;
-            if (info == null)
+            //var info = node.Tag as BookmarkInfo;
+            //if (info == null)
+            if (node.Tag is not BookmarkInfo info)
             {
                 MessageBox.Show("しおり情報が取得できません。", "確認");
                 return;
@@ -2660,8 +2699,8 @@ namespace MyPDF
                     treeView1.Refresh();
 
                     // 更新フラグ(falseならtrueに)
-                    if (!isDirty)
-                        isDirty = true;
+                    //if (!isDirty)
+                    isDirty = true;
 
                 }
             }
@@ -2683,8 +2722,7 @@ namespace MyPDF
                 return;
             }
 
-            var info = node.Tag as BookmarkInfo;
-            if (info == null) return;
+            if (node.Tag is not BookmarkInfo info) return;
 
             // スタイル変換
             string styleText = GetStyleName(info.SelectedStyle);
@@ -2698,11 +2736,11 @@ namespace MyPDF
                 $"スタイル： {styleText}\n" +
                 $"色： {colorName} (16進)";
 
-        treeToolTip.SetToolTip(treeView1, text);
+            treeToolTip.SetToolTip(treeView1, text);
         }
 
         // ==============================
-        // 色を16進に変換
+        // 色を16進に変換(ツールチップ用)
         // ==============================
         private string GetColorName(DrawingColor color)
         {
@@ -2710,7 +2748,7 @@ namespace MyPDF
         }
 
         // ==============================
-        // スタイル変換
+        // スタイル変換(ツールチップ用)
         // ==============================
         private string GetStyleName(FontStyle style)
         {
@@ -2729,5 +2767,232 @@ namespace MyPDF
             return "標準";
         }
 
+
+        // ==============================
+        // しおりインポート
+        // ==============================
+        private void ImportShioriToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "CSVファイル (*.csv)|*.csv";
+
+                if (ofd.ShowDialog() != DialogResult.OK)
+                    return;
+
+                try
+                {
+                    var list = LoadCsvBookmarks(ofd.FileName);
+
+                    // 既存しおり削除（上書き）
+                    treeView1.Nodes.Clear();
+
+                    BuildTreeFromCsv(list);
+
+                    MessageBox.Show("しおりをインポートしました。", "インポート");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("インポート失敗:\n" + ex.Message);
+                }
+            }
+        }
+
+        // ==============================
+        // しおりCSVの読み込み
+        // ==============================
+        private List<CsvBookmark> LoadCsvBookmarks(string path)
+        {
+            var list = new List<CsvBookmark>();
+            var lines = File.ReadAllLines(path, Encoding.UTF8);
+
+            for (int i = 1; i < lines.Length; i++) // 1行目スキップ
+            {
+                if (string.IsNullOrWhiteSpace(lines[i])) continue;
+
+                var cols = lines[i].Split(',');
+
+                if (cols.Length < 5) continue;
+
+                var item = new CsvBookmark
+                {
+                    Title = cols[0],
+                    Page = int.TryParse(cols[1], out int p) ? p : 1,
+                    Level = int.TryParse(cols[2], out int l) ? l : 0,
+                    Style = ParseStyle(cols[3]),
+                    Color = ParseColor(cols[4])
+                };
+
+                list.Add(item);
+            }
+
+            return list;
+        }
+
+        // ==============================
+        // しおり(ツリービュー)構築
+        // ==============================
+        private void BuildTreeFromCsv(List<CsvBookmark> list)
+        {
+            Stack<TreeNode> stack = new Stack<TreeNode>();
+
+            foreach (var item in list)
+            {
+                TreeNode node = new TreeNode(item.Title);
+
+                // しおりクラスに入れる
+                node.Tag = new BookmarkInfo
+                {
+                    BmTitle = item.Title,
+                    Page = item.Page,
+                    IsOpen = true,
+                    SelectedColor = item.Color,
+                    SelectedStyle = item.Style
+                };
+
+                // 見た目
+                node.ForeColor = item.Color;
+                node.NodeFont = new Font(treeView1.Font, item.Style);
+
+                int level = item.Level;
+
+                while (stack.Count > level)
+                    stack.Pop();
+
+                if (stack.Count == 0)
+                    treeView1.Nodes.Add(node);
+                else
+                    stack.Peek().Nodes.Add(node);
+
+                stack.Push(node);
+            }
+
+            treeView1.ExpandAll();
+        }
+
+        // ==============================
+        // スタイルを変換(CSV読み込み)インポートとエクスポート共用
+        // ==============================
+        private FontStyle ParseStyle(string s)
+        {
+            return s switch
+            {
+                "ボールド" => FontStyle.Bold,
+                "イタリック" => FontStyle.Italic,
+                "ボールドイタリック" => FontStyle.Bold | FontStyle.Italic,
+                _ => FontStyle.Regular
+            };
+        }
+
+        // ==============================
+        // 色を変換(CSV読み込み)
+        // ==============================
+        private DrawingColor ParseColor(string hex)
+        {
+            try
+            {
+                return ColorTranslator.FromHtml(hex);
+            }
+            catch
+            {
+                return DrawingColor.Black;
+            }
+        }
+
+        // ==============================
+        // しおりエクスポート
+        // ==============================
+        private void ExportShioriToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (treeView1.Nodes.Count == 0)
+            {
+                MessageBox.Show("しおりがありません。",　"確認");
+                return;
+            }
+
+            using (SaveFileDialog sfd = new SaveFileDialog())
+            {
+                sfd.Filter = "CSVファイル (*.csv)|*.csv";
+                sfd.FileName = "しおり(bookmark).csv";
+
+                if (sfd.ShowDialog() != DialogResult.OK)
+                    return;
+
+                try
+                {
+                    ExportCsvBookmarks(sfd.FileName);
+                    MessageBox.Show("しおりをエクスポートしました。", "エクスポート");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("エクスポート失敗:\n" + ex.Message);
+                }
+            }
+        }
+
+        // ==============================
+        // しおりCSVの書き出し
+        // ==============================
+        private void ExportCsvBookmarks(string path)
+        {
+            var lines = new List<string>();
+
+            // ヘッダー
+            lines.Add("しおり名,ページ番号,階層,スタイル,色");
+
+            foreach (TreeNode node in treeView1.Nodes)
+            {
+                ExportNodeRecursive(node, 0, lines);
+            }
+
+            File.WriteAllLines(path, lines, Encoding.UTF8);
+        }
+
+        // ==============================
+        // 再帰でツリーをCSV化
+        // ==============================
+        private void ExportNodeRecursive(TreeNode node, int level, List<string> lines)
+        {
+            if (node.Tag is BookmarkInfo info)
+            {
+                string style = GetStyleName(info.SelectedStyle);
+                string color = GetColorHex(info.SelectedColor);
+
+                // CSV行
+                string line = $"{EscapeCsv(info.BmTitle)},{info.Page},{level},{style},{color}";
+                lines.Add(line);
+            }
+
+            foreach (TreeNode child in node.Nodes)
+            {
+                ExportNodeRecursive(child, level + 1, lines);
+            }
+        }
+
+        // ==============================
+        // 色を変換16進へ(エクスポート)
+        // ==============================
+        private string GetColorHex(DrawingColor color)
+        {
+            return $"#{color.R:X2}{color.G:X2}{color.B:X2}";
+        }
+
+        // ==============================
+        // CSVエスケープ
+        // ==============================
+
+        private string EscapeCsv(string? text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return "";
+
+            if (text.Contains(",") || text.Contains("\"") || text.Contains("\n"))
+            {
+                text = text.Replace("\"", "\"\"");
+                return $"\"{text}\"";
+            }
+
+            return text;
+        }
     }
 }

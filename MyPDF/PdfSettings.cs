@@ -57,5 +57,7 @@ namespace MyPDF
         // 開くときのスタートページ
         public int OpenPage { get; set; } = 1;
 
+
+
     }
 }

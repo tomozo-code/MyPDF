@@ -345,15 +345,18 @@ namespace MyPDF
             checkBox2.Checked = Settings.Check_User;
             txtUserPass.Text = Settings.UserPassword;
 
-            switch (Settings.Encryption.ToString())
+            switch (Settings.Encryption)
                 {
-                case "3":
+                // AES-256(推奨) = 1
+                case EncryptionConstants.ENCRYPTION_AES_256:
                     rbAES256.Checked = true;
                     break;
-                case "2":
+                // AES-128 = 3
+                case EncryptionConstants.ENCRYPTION_AES_128:
                     rbAES128.Checked = true;
                     break;
-                case "1":
+                // RC4-128(互換) = 2
+                case EncryptionConstants.STANDARD_ENCRYPTION_128:
                     rbRC4.Checked = true;
                     break;
                 }

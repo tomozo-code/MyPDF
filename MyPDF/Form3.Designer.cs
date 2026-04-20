@@ -42,7 +42,7 @@
             // 
             // button1
             // 
-            button1.Location = new Point(108, 218);
+            button1.Location = new Point(107, 241);
             button1.Name = "button1";
             button1.Size = new Size(100, 30);
             button1.TabIndex = 0;
@@ -110,9 +110,9 @@
             label3.AutoSize = true;
             label3.Location = new Point(35, 182);
             label3.Name = "label3";
-            label3.Size = new Size(202, 21);
+            label3.Size = new Size(292, 42);
             label3.TabIndex = 7;
-            label3.Text = "・PdfiumViewer(Apache 2.0)";
+            label3.Text = "・PdfiumViewer.core(Apache License 2.0),\r\n  based on PdfiumViewer.";
             // 
             // Form3
             // 

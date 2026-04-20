@@ -208,7 +208,7 @@ namespace MyPDF
 
             }
 
-            Settings.Zoom = MagComboBox.Text;
+            //Settings.Zoom = MagComboBox.Text;
             // 倍率
             switch (MagComboBox.Text)
             {
