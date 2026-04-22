@@ -35,14 +35,12 @@
             labelCopyright = new Label();
             pictureBox1 = new PictureBox();
             label1 = new Label();
-            label2 = new Label();
-            label3 = new Label();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
             // button1
             // 
-            button1.Location = new Point(107, 241);
+            button1.Location = new Point(171, 406);
             button1.Name = "button1";
             button1.Size = new Size(100, 30);
             button1.TabIndex = 0;
@@ -92,41 +90,21 @@
             label1.AutoSize = true;
             label1.Location = new Point(12, 141);
             label1.Name = "label1";
-            label1.Size = new Size(314, 21);
+            label1.Size = new Size(461, 252);
             label1.TabIndex = 5;
-            label1.Text = "本ソフトウェアは以下のライブラリを使用しています";
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(35, 161);
-            label2.Name = "label2";
-            label2.Size = new Size(96, 21);
-            label2.TabIndex = 6;
-            label2.Text = "・iText(AGPL)";
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new Point(35, 182);
-            label3.Name = "label3";
-            label3.Size = new Size(292, 42);
-            label3.TabIndex = 7;
-            label3.Text = "・PdfiumViewer.core(Apache License 2.0),\r\n  based on PdfiumViewer.";
+            label1.Text = resources.GetString("label1.Text");
             // 
             // Form3
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(432, 302);
-            Controls.Add(label3);
-            Controls.Add(label2);
-            Controls.Add(label1);
+            ClientSize = new Size(676, 560);
             Controls.Add(pictureBox1);
             Controls.Add(labelCopyright);
             Controls.Add(labelVersion);
             Controls.Add(labelTitle);
             Controls.Add(button1);
+            Controls.Add(label1);
             Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
@@ -149,7 +127,5 @@
         private Label labelCopyright;
         private PictureBox pictureBox1;
         private Label label1;
-        private Label label2;
-        private Label label3;
     }
 }

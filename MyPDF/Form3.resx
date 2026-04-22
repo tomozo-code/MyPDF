@@ -9213,6 +9213,20 @@
         TSOxAAAAAElFTkSuQmCC
 </value>
   </data>
+  <data name="label1.Text" xml:space="preserve">
+    <value>本ソフトウェアは以下のオープンソースソフトウェアを使用しています：
+
+・iText (AGPL License)
+
+・PdfiumViewer.Core (Apache License 2.0)
+　Copyright (c) PdfiumViewer.Core authors
+
+・PDFium (BSD 3-Clause License)
+　Copyright (c) The Chromium Authors
+
+各ライブラリの著作権表示およびライセンス条件に従って使用されています
+詳細は同梱のライセンスファイルをご参照ください</value>
+  </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAcAEBAAAAEAIABoBAAAdgAAABgYAAABACAAiAkAAN4EAAAgIAAAAQAgAKgQAABmDgAAMDAAAAEA

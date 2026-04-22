@@ -133,6 +133,8 @@ namespace MyPDF
             // ショートカットキーの設定
             // Ctrl+O(開く)
             OpenToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.O;
+            // Ctrl + G(既定のPDFアプリで開く)
+            AcrobatOpenToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.G;
             // Ctrl+S(上書き保存)
             SaveToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.S;
             // Ctrl+B(しおり作成)
@@ -220,6 +222,7 @@ namespace MyPDF
                 // ファイル選択ダイアログを作成
                 using (OpenFileDialog ofd = new OpenFileDialog())
                 {
+                    ofd.Title = "PDFファイルを開く";
                     //PDFだけに制限
                     ofd.Filter = "PDFファイル (*.pdf)|*.pdf";
                     // ダイアログ表示 「開く」ボタンが押されたときだけ中に入る
@@ -794,7 +797,7 @@ namespace MyPDF
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"エラー:\n{ex.Message}","エラー", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show($"エラー:\n{ex.Message}", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
@@ -1140,6 +1143,7 @@ namespace MyPDF
 
             using (SaveFileDialog sfd = new SaveFileDialog())
             {
+                sfd.Title = "名前を付けてPDFファイルを保存";
                 sfd.Filter = "PDFファイル (*.pdf)|*.pdf";
                 sfd.FileName = IOPath.GetFileName(currentPdfPath);
 
@@ -1365,7 +1369,6 @@ namespace MyPDF
                     // 表示設定
                     var catalog = pdf.GetCatalog();
                     // 表示モード
-                    //catalog.SetPageMode(new PdfName(currentSettings.PageMode));
                     switch (currentSettings.PageMode)
                     {
                         case "UseNone":
@@ -1390,7 +1393,6 @@ namespace MyPDF
                     }
 
                     // レイアウト
-                    //catalog.SetPageLayout(new PdfName(currentSettings.PageLayout));
                     switch (currentSettings.PageLayout)
                     {
                         case "SinglePage":
@@ -1521,7 +1523,7 @@ namespace MyPDF
 
                     if (string.IsNullOrEmpty(setUserPassword))
                     {
-                        MessageEdit = "権限パスワードは、 " + setOwnerPassword + " です。"+ Environment.NewLine +
+                        MessageEdit = "権限パスワードは、 " + setOwnerPassword + " です。" + Environment.NewLine +
                             "閲覧パスワードは、設定されていません。";
                     }
                     else
@@ -1553,7 +1555,7 @@ namespace MyPDF
                 // ログ出す
                 Debug.WriteLine(ioEx.ToString());
 
-                // ファイルロック系（今回のケース）
+                // ファイルロック系
                 MessageBox.Show(
                     "他のアプリケーションで開かれているため保存できません。" + Environment.NewLine
                     + "PDFを閉じてから再度保存してください。" + Environment.NewLine + Environment.NewLine
@@ -1676,6 +1678,8 @@ namespace MyPDF
                 SaveToolStripMenuItem.Enabled = false;
                 // 名前を付けて保存
                 SaveAsToolStripMenuItem.Enabled = false;
+                // 既定のPDFアプリで開く
+                AcrobatOpenToolStripMenuItem.Enabled = false;
                 // PDFのプロパティ
                 PdfSetToolStripMenuItem.Enabled = false;
                 // セキュリティ設定
@@ -1704,6 +1708,8 @@ namespace MyPDF
                 SaveToolStripMenuItem.Enabled = true;
                 // 名前を付けて保存
                 SaveAsToolStripMenuItem.Enabled = true;
+                // 既定のPDFアプリで開く
+                AcrobatOpenToolStripMenuItem.Enabled = true;
                 // PDFのプロパティ
                 PdfSetToolStripMenuItem.Enabled = true;
                 // セキュリティ設定
@@ -2802,6 +2808,7 @@ namespace MyPDF
         {
             using (OpenFileDialog ofd = new OpenFileDialog())
             {
+                ofd.Title = "しおりファイル(CSV)をインポート";
                 ofd.Filter = "CSVファイル (*.csv)|*.csv";
 
                 if (ofd.ShowDialog() != DialogResult.OK)
@@ -2939,8 +2946,9 @@ namespace MyPDF
 
             using (SaveFileDialog sfd = new SaveFileDialog())
             {
+                sfd.Title = "しおりをCSV形式でエクスポート";
                 sfd.Filter = "CSVファイル (*.csv)|*.csv";
-                sfd.FileName = "しおり(bookmark).csv";
+                sfd.FileName = "shiori.csv";
 
                 if (sfd.ShowDialog() != DialogResult.OK)
                     return;
@@ -3055,6 +3063,28 @@ namespace MyPDF
 
             }
 
+        }
+
+        // ==============================
+        // 既定のPDFアプリで開く
+        // ==============================
+        private void AcrobatOpenToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(currentPdfPath))
+                return;
+
+            try
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = currentPdfPath,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("外部アプリで開けませんでした。\n" + ex.Message, "外部アプリオープンエラー", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
     }
 }

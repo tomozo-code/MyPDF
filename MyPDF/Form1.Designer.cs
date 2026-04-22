@@ -33,6 +33,8 @@
             menuStrip1 = new MenuStrip();
             FileToolStripMenuItem = new ToolStripMenuItem();
             OpenToolStripMenuItem = new ToolStripMenuItem();
+            AcrobatOpenToolStripMenuItem = new ToolStripMenuItem();
+            toolStripMenuItem9 = new ToolStripSeparator();
             SaveToolStripMenuItem = new ToolStripMenuItem();
             SaveAsToolStripMenuItem = new ToolStripMenuItem();
             toolStripMenuItem2 = new ToolStripSeparator();
@@ -55,6 +57,8 @@
             AddShioriToolStripMenuItem = new ToolStripMenuItem();
             DelShioriToolStripMenuItem = new ToolStripMenuItem();
             toolStripMenuItem1 = new ToolStripSeparator();
+            AllDelToolStripMenuItem = new ToolStripMenuItem();
+            toolStripMenuItem8 = new ToolStripSeparator();
             SetShioriToolStripMenuItem = new ToolStripMenuItem();
             toolStripMenuItem4 = new ToolStripSeparator();
             AllShioriTenkaiToolStripMenuItem = new ToolStripMenuItem();
@@ -76,8 +80,6 @@
             NowPageTxt = new TextBox();
             TotalPageLabel = new Label();
             treeToolTip = new ToolTip(components);
-            AllDelToolStripMenuItem = new ToolStripMenuItem();
-            toolStripMenuItem8 = new ToolStripSeparator();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             panel2.SuspendLayout();
@@ -104,7 +106,7 @@
             // 
             // FileToolStripMenuItem
             // 
-            FileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { OpenToolStripMenuItem, SaveToolStripMenuItem, SaveAsToolStripMenuItem, toolStripMenuItem2, PdfSetToolStripMenuItem, SecurityToolStripMenuItem, toolStripMenuItem3, XToolStripMenuItem });
+            FileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { OpenToolStripMenuItem, AcrobatOpenToolStripMenuItem, toolStripMenuItem9, SaveToolStripMenuItem, SaveAsToolStripMenuItem, toolStripMenuItem2, PdfSetToolStripMenuItem, SecurityToolStripMenuItem, toolStripMenuItem3, XToolStripMenuItem });
             FileToolStripMenuItem.Name = "FileToolStripMenuItem";
             FileToolStripMenuItem.Size = new Size(85, 25);
             FileToolStripMenuItem.Text = "ファイル(&F)";
@@ -112,18 +114,34 @@
             // OpenToolStripMenuItem
             // 
             OpenToolStripMenuItem.Name = "OpenToolStripMenuItem";
-            OpenToolStripMenuItem.Size = new Size(226, 26);
+            OpenToolStripMenuItem.Size = new Size(256, 26);
             OpenToolStripMenuItem.Text = "開く(&O)...";
             OpenToolStripMenuItem.ToolTipText = "PDFファイルを開きます";
             OpenToolStripMenuItem.Click += OpenToolStripMenuItem_Click;
             OpenToolStripMenuItem.MouseEnter += menuStrip1_MouseEnter;
             OpenToolStripMenuItem.MouseLeave += menuStrip1_MouseLeave;
             // 
+            // AcrobatOpenToolStripMenuItem
+            // 
+            AcrobatOpenToolStripMenuItem.Enabled = false;
+            AcrobatOpenToolStripMenuItem.Name = "AcrobatOpenToolStripMenuItem";
+            AcrobatOpenToolStripMenuItem.Size = new Size(256, 26);
+            AcrobatOpenToolStripMenuItem.Text = "既定のPDFアプリで開く(&G)...";
+            AcrobatOpenToolStripMenuItem.ToolTipText = "開いているPDFファイルを既定のアプリで開きます";
+            AcrobatOpenToolStripMenuItem.Click += AcrobatOpenToolStripMenuItem_Click;
+            AcrobatOpenToolStripMenuItem.MouseEnter += menuStrip1_MouseEnter;
+            AcrobatOpenToolStripMenuItem.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // toolStripMenuItem9
+            // 
+            toolStripMenuItem9.Name = "toolStripMenuItem9";
+            toolStripMenuItem9.Size = new Size(253, 6);
+            // 
             // SaveToolStripMenuItem
             // 
             SaveToolStripMenuItem.Enabled = false;
             SaveToolStripMenuItem.Name = "SaveToolStripMenuItem";
-            SaveToolStripMenuItem.Size = new Size(226, 26);
+            SaveToolStripMenuItem.Size = new Size(256, 26);
             SaveToolStripMenuItem.Text = "上書き保存(&S)";
             SaveToolStripMenuItem.ToolTipText = "開いているPDFを上書き保存します";
             SaveToolStripMenuItem.Click += SaveToolStripMenuItem_Click;
@@ -134,7 +152,7 @@
             // 
             SaveAsToolStripMenuItem.Enabled = false;
             SaveAsToolStripMenuItem.Name = "SaveAsToolStripMenuItem";
-            SaveAsToolStripMenuItem.Size = new Size(226, 26);
+            SaveAsToolStripMenuItem.Size = new Size(256, 26);
             SaveAsToolStripMenuItem.Text = "名前を付けて保存(&A)...";
             SaveAsToolStripMenuItem.ToolTipText = "開いているPDFに名前を付けて保存します";
             SaveAsToolStripMenuItem.Click += SaveAsToolStripMenuItem_Click;
@@ -144,13 +162,13 @@
             // toolStripMenuItem2
             // 
             toolStripMenuItem2.Name = "toolStripMenuItem2";
-            toolStripMenuItem2.Size = new Size(223, 6);
+            toolStripMenuItem2.Size = new Size(253, 6);
             // 
             // PdfSetToolStripMenuItem
             // 
             PdfSetToolStripMenuItem.Enabled = false;
             PdfSetToolStripMenuItem.Name = "PdfSetToolStripMenuItem";
-            PdfSetToolStripMenuItem.Size = new Size(226, 26);
+            PdfSetToolStripMenuItem.Size = new Size(256, 26);
             PdfSetToolStripMenuItem.Text = "PDFのプロパティ(&D)...";
             PdfSetToolStripMenuItem.ToolTipText = "PDFのプロパティを編集します";
             PdfSetToolStripMenuItem.Click += PdfSetToolStripMenuItem_Click;
@@ -161,7 +179,7 @@
             // 
             SecurityToolStripMenuItem.Enabled = false;
             SecurityToolStripMenuItem.Name = "SecurityToolStripMenuItem";
-            SecurityToolStripMenuItem.Size = new Size(226, 26);
+            SecurityToolStripMenuItem.Size = new Size(256, 26);
             SecurityToolStripMenuItem.Text = "セキュリティ設定(&T)...";
             SecurityToolStripMenuItem.ToolTipText = "PDFにセキュリティを設定します";
             SecurityToolStripMenuItem.Click += SecurityToolStripMenuItem_Click;
@@ -171,12 +189,12 @@
             // toolStripMenuItem3
             // 
             toolStripMenuItem3.Name = "toolStripMenuItem3";
-            toolStripMenuItem3.Size = new Size(223, 6);
+            toolStripMenuItem3.Size = new Size(253, 6);
             // 
             // XToolStripMenuItem
             // 
             XToolStripMenuItem.Name = "XToolStripMenuItem";
-            XToolStripMenuItem.Size = new Size(226, 26);
+            XToolStripMenuItem.Size = new Size(256, 26);
             XToolStripMenuItem.Text = "終了(&X)";
             XToolStripMenuItem.ToolTipText = "PDF編集帖を終了します";
             XToolStripMenuItem.Click += XToolStripMenuItem_Click;
@@ -335,6 +353,22 @@
             // 
             toolStripMenuItem1.Name = "toolStripMenuItem1";
             toolStripMenuItem1.Size = new Size(299, 6);
+            // 
+            // AllDelToolStripMenuItem
+            // 
+            AllDelToolStripMenuItem.Enabled = false;
+            AllDelToolStripMenuItem.Name = "AllDelToolStripMenuItem";
+            AllDelToolStripMenuItem.Size = new Size(302, 26);
+            AllDelToolStripMenuItem.Text = "全てのしおり削除";
+            AllDelToolStripMenuItem.ToolTipText = "全てのしおりを削除します";
+            AllDelToolStripMenuItem.Click += AllDelToolStripMenuItem_Click;
+            AllDelToolStripMenuItem.MouseEnter += menuStrip1_MouseEnter;
+            AllDelToolStripMenuItem.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // toolStripMenuItem8
+            // 
+            toolStripMenuItem8.Name = "toolStripMenuItem8";
+            toolStripMenuItem8.Size = new Size(299, 6);
             // 
             // SetShioriToolStripMenuItem
             // 
@@ -531,19 +565,6 @@
             TotalPageLabel.TabIndex = 0;
             TotalPageLabel.Text = "総ページ番号";
             // 
-            // AllDelToolStripMenuItem
-            // 
-            AllDelToolStripMenuItem.Enabled = false;
-            AllDelToolStripMenuItem.Name = "AllDelToolStripMenuItem";
-            AllDelToolStripMenuItem.Size = new Size(302, 26);
-            AllDelToolStripMenuItem.Text = "全てのしおり削除";
-            AllDelToolStripMenuItem.Click += AllDelToolStripMenuItem_Click;
-            // 
-            // toolStripMenuItem8
-            // 
-            toolStripMenuItem8.Name = "toolStripMenuItem8";
-            toolStripMenuItem8.Size = new Size(299, 6);
-            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
@@ -629,5 +650,7 @@
         private ToolStripSeparator toolStripMenuItem7;
         private ToolStripMenuItem AllDelToolStripMenuItem;
         private ToolStripSeparator toolStripMenuItem8;
+        private ToolStripMenuItem AcrobatOpenToolStripMenuItem;
+        private ToolStripSeparator toolStripMenuItem9;
     }
 }
