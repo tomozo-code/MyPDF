@@ -48,9 +48,6 @@ namespace MyPDF
                 Check_chkExtract = settings.Check_chkExtract
             };
 
-
-
-
         }
 
         // ==============================
@@ -68,34 +65,41 @@ namespace MyPDF
         // ==============================
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-
+            // panel2 の中にある全コントロールを1つずつ取り出す
             foreach (Control item in panel2.Controls)
             {
-
+                // チェックボックスか？
                 if (item is CheckBox)
                 {
+                    // 親チェックボックスに従ってON/OFF
                     item.Enabled = checkBox1.Checked;
                 }
 
+                // ラジオボタンか？
                 if (item is RadioButton)
                 {
+                    // 親チェックボックスに従ってON/OFF
                     item.Enabled = checkBox1.Checked;
                 }
 
             }
 
+            // checkBox1 が OFF で checkBox2 が ON
             if (!checkBox1.Checked && checkBox2.Checked)
             {
+                // 強制的にOFFにする
                 checkBox2.Checked = false;
             }
 
-
+            // パスワード入力欄のON/OFF制御
+            // checkBox1 ON → 入力可、OFF → 入力不可
             txtOwnerPass.Enabled = checkBox1.Checked;
             txtOwnerPassConfirm.Enabled = checkBox1.Checked;
 
+            // checkBox1 がOFFのとき
             if (!checkBox1.Checked)
             {
-                //txtOwnerPass.Text = "";
+                // 確認用パスワードをクリア
                 txtOwnerPassConfirm.Text = "";
             }
 
@@ -106,26 +110,30 @@ namespace MyPDF
         // ==============================
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
         {
+            // panel3 の中にある全コントロールを1つずつ取り出す
             foreach (Control item in panel3.Controls)
             {
-
+                // テキストボックスか？
                 if (item is TextBox)
                 {
+                    // 親チェックボックスに従ってON/OFF
                     item.Enabled = checkBox2.Checked;
 
                 }
 
             }
 
+            // checkBox2 が ON で checkBox1 が OFF
             if (checkBox2.Checked && !checkBox1.Checked)
             {
+                // checkBox1のチェックON
                 checkBox1.Checked = true;
             }
 
-
+            // checkBox2 がOFFのとき
             if (!checkBox2.Checked)
             {
-                //txtUserPass.Text = "";
+                // 確認用パスワードをクリア
                 txtUserPassConfirm.Text = "";
             }
 
@@ -141,13 +149,13 @@ namespace MyPDF
             // パスワード一致チェック
             if (txtOwnerPass.Text != txtOwnerPassConfirm.Text)
             {
-                MessageBox.Show("権限パスワードが一致しません。", "確認");
+                MessageBox.Show("権限パスワードが一致しません。", "権限パスワード確認", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
             if (txtUserPass.Text != txtUserPassConfirm.Text)
             {
-                MessageBox.Show("閲覧パスワードが一致しません。", "確認");
+                MessageBox.Show("閲覧パスワードが一致しません。", "閲覧パスワード確認", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
@@ -157,7 +165,7 @@ namespace MyPDF
 
                 if (string.IsNullOrEmpty(txtOwnerPass.Text))
                 {
-                    MessageBox.Show("権限パスワードは必須です。", "確認");
+                    MessageBox.Show("権限パスワードは必須です。", "権限パスワード必須確認", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
             }
@@ -167,7 +175,7 @@ namespace MyPDF
             {
                 MessageBox.Show(
                     "閲覧パスワードのみの設定はできません。" + Environment.NewLine + "権限パスワードも設定してください。",
-                    "確認"
+                    "パスワード設定確認", MessageBoxButtons.OK, MessageBoxIcon.Information
                 );
                 return;
             }
@@ -175,7 +183,7 @@ namespace MyPDF
 
             if (txtUserPass.Text == txtOwnerPass.Text && !string.IsNullOrEmpty(txtUserPass.Text))
             {
-                MessageBox.Show("権限パスワードと閲覧のパスワードは同じにできません。", "確認");
+                MessageBox.Show("権限パスワードと閲覧のパスワードは同じにできません。", "パスワード設定確認", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
@@ -298,22 +306,11 @@ namespace MyPDF
         // ==============================
         private void OwnerPass_TextChanged(object sender, EventArgs e)
         {
-            // チェックOFFなら全部無効
-            //if (!checkBox1.Checked)
-            //{
-            //    txtUserPass.Enabled = false;
-            //    txtUserPassConfirm.Enabled = false;
-            //    return;
-            //}
 
             // 権限パス一致判定
             bool isMatch =
                 !string.IsNullOrEmpty(txtOwnerPass.Text) &&
                 txtOwnerPass.Text == txtOwnerPassConfirm.Text;
-
-            //txtUserPass.Enabled = isMatch;
-            //txtUserPassConfirm.Enabled = isMatch;
-            //btnOK.Enabled = isMatch;
         }
 
         // ==============================

@@ -4,6 +4,7 @@ using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Navigation;
 using iText.Kernel.XMP;
 using iText.Kernel.XMP.Options;
+using iText.StyledXmlParser.Jsoup.Nodes;
 using Org.BouncyCastle.Asn1.Cms;
 using PdfiumViewer;
 using System.Buffers;
@@ -11,19 +12,19 @@ using System.Diagnostics;
 using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using DrawingColor = System.Drawing.Color;
 using IOPath = System.IO.Path;
 using ITextDoc = iText.Kernel.Pdf.PdfDocument;
 using PdfiTextReader = iText.Kernel.Pdf.PdfReader;
 using PdfiumDoc = PdfiumViewer.PdfDocument;
-using DrawingColor = System.Drawing.Color;
 
 
 // ==============================
-// パッケージ：iText、PdfiumViewer
+// パッケージ：iText、PdfiumViewer.core
 // PDFを表示、編集
 // ==============================
 
-// PDF表示 → Pdfium
+// PDF表示 → PdfiumViewer.core
 // しおり操作 → TreeView
 // 保存 → iText
 
@@ -39,7 +40,6 @@ namespace MyPDF
     {
         // 現在開いているPDFのパス(保存・再読み込みで使う)
         private string currentPdfPath = "";
-
         // ドラッグ＆ドロップ用
         // dropTargetNode → ドロップ先
         private TreeNode? dropTargetNode = null;
@@ -47,42 +47,45 @@ namespace MyPDF
         private bool insertAfter = false;
         // insertAsChild → 子にするか
         private bool insertAsChild = false;
-
         // 右クリック時に「ページジャンプしないようにするフラグ」
         private bool isRightClickSelecting = false;
-
         // ページ監視用（Pdfiumにイベントないので自前監視）
         private int lastPage = -1;
         private System.Windows.Forms.Timer pageTimer = new System.Windows.Forms.Timer();
-
         // 更新フラグ(true:更新あり、false:更新なし)
         public bool isDirty = false;
-
         // 今PDF開いてる？のフラグ(ture:開いてる、false:開いてない)
         private bool isOpening = false;
-
         // PDFがセキュリティありかチェック用のフラグ(true:なし、false:あり)
         private bool canEdit = true;
 
-
-        // サムネイル用
+        // サムネイル関連
+        // サムネイルを順番に読み込むためのインデックス
         private int thumbnailLoadIndex = 0;
+        // サムネイルを非同期っぽく分割読み込みするためのタイマー
         private System.Windows.Forms.Timer thumbnailTimer = new System.Windows.Forms.Timer();
 
+        // PDF設定・セキュリティ
+        // 現在読み込んでいるPDFの各種設定（メタデータ・表示設定など）
         private PdfSettings currentSettings = new PdfSettings();
-
+        // 現在のセキュリティ設定（パスワード・権限など）
         private SecuritySettings? currentSecurity;
 
+        // UI補助
+        // ツールチップに表示するヒント文字列
         private string? toolHintTxt = null;
-
+        // サムネイルとページ表示の同期中かどうか（無限ループ防止用）
         private bool isSyncingThumbnail = false;
 
+        // パスワード関連
+        // 入力されたパスワード（一時用)
         private string? password = null;
-
+        // 現在PDFを開いているときのパスワード
         private string? currentPassword;
 
+        // アプリ名（タイトルバー表示用）
         private string myName = "ともさんのPDF編集帖";
-
+        // ツールチップ表示用：直前にマウスが乗っていたノード
         private TreeNode? lastNode = null;
 
         public Form1()
@@ -95,7 +98,7 @@ namespace MyPDF
 
             // フォーム最大化
             this.WindowState = FormWindowState.Maximized;
-
+            // アプリ名（タイトルバー表示）
             this.Text = myName;
 
             panel2.Dock = DockStyle.Fill;
@@ -115,6 +118,7 @@ namespace MyPDF
             TotalPageLabel.Text = "/ 総ページ数";
             toolHintTxt = "ファイル: PDF未選択";
 
+            // しおり列選択 代わりに線なし
             treeView1.FullRowSelect = true;
             treeView1.ShowLines = false;
 
@@ -207,19 +211,21 @@ namespace MyPDF
             if (!ConfirmSave(() => SavePdfCore(currentPdfPath, currentPdfPath, true)))
                 return;
 
-
             // PDF今開いてる?(trueなら無視(戻る))
             if (isOpening) return;
             isOpening = true;
 
             try
             {
+                // ファイル選択ダイアログを作成
                 using (OpenFileDialog ofd = new OpenFileDialog())
                 {
+                    //PDFだけに制限
                     ofd.Filter = "PDFファイル (*.pdf)|*.pdf";
-
+                    // ダイアログ表示 「開く」ボタンが押されたときだけ中に入る
                     if (ofd.ShowDialog() == DialogResult.OK)
                     {
+                        // フォーム全体を操作不可にする
                         this.Enabled = false;
 
                         try
@@ -229,6 +235,7 @@ namespace MyPDF
                         }
                         finally
                         {
+                            // 例外が出てもフォームを操作可能にする
                             this.Enabled = true;
                         }
                     }
@@ -236,7 +243,7 @@ namespace MyPDF
             }
             finally
             {
-
+                // 「開いてるフラグ」を必ず解除
                 isOpening = false;
 
             }
@@ -297,7 +304,6 @@ namespace MyPDF
                         continue; // 再トライ
                     }
 
-
                     canEdit = isOwner;
 
                     Debug.WriteLine("-----セキュリティ------------------------");
@@ -306,7 +312,6 @@ namespace MyPDF
                     // セキュリティ情報保持
                     currentSecurity ??= new SecuritySettings();
                     currentSecurity.IsOwnerOpened = isOwner;
-
 
                     if (isOwner)
                     {
@@ -356,12 +361,10 @@ namespace MyPDF
                     GC.WaitForPendingFinalizers();
                 }
 
-
             }
 
             // ファイルを記憶
             currentPdfPath = path;
-
 
             // Pdfiumで表示
             PdfiumViewer.PdfDocument document;
@@ -428,8 +431,8 @@ namespace MyPDF
 
                 MessageBox.Show(
                     "[ " + fileName + " ] は制限が設定されています。" + Environment.NewLine + "編集不可です。",
-                    "確認",
-                    MessageBoxButtons.OK
+                    "制限確認(編集不可)",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information
                 );
             }
 
@@ -748,6 +751,10 @@ namespace MyPDF
         {
             // ツリービューを初期化
             treeView1.Nodes.Clear();
+            // 選択解除（安全）
+            treeView1.SelectedNode = null;
+            // ツールチップ消す
+            treeToolTip.SetToolTip(treeView1, "");
 
             try
             {
@@ -787,7 +794,7 @@ namespace MyPDF
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"エラー:\n{ex.Message}");
+                MessageBox.Show($"エラー:\n{ex.Message}","エラー", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
@@ -984,7 +991,7 @@ namespace MyPDF
                 var node = treeView1.SelectedNode;
 
                 if (MessageBox.Show($"「{node.Text}」を削除しますか？" + Environment.NewLine + "配下のしおりも削除されます。",
-                    "しおり削除", MessageBoxButtons.YesNo) == DialogResult.No)
+                    "しおり削除", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.No)
                     return;
 
                 node.Remove();
@@ -1013,7 +1020,7 @@ namespace MyPDF
             // 空文字防止
             if (string.IsNullOrWhiteSpace(e.Label))
             {
-                MessageBox.Show("名前は空にできません。", "確認", MessageBoxButtons.OK);
+                MessageBox.Show("しおり名は空にできません。", "しおり名確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 e.CancelEdit = true;
                 return;
             }
@@ -1117,7 +1124,7 @@ namespace MyPDF
 
             if (SavePdfCore(currentPdfPath, currentPdfPath, true))
             {
-                MessageBox.Show("上書き保存しました。", "確認");
+                MessageBox.Show("上書き保存しました。", "上書き保存確認", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
 
@@ -1140,7 +1147,7 @@ namespace MyPDF
 
                 if (SavePdfCore(currentPdfPath, sfd.FileName, false))
                 {
-                    MessageBox.Show("名前を付けて保存しました。", "確認");
+                    MessageBox.Show("名前を付けて保存しました。", "名前を付けて保存確認", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
 
@@ -1156,7 +1163,7 @@ namespace MyPDF
 
             var result = MessageBox.Show(
                 "更新されています。上書き保存しますか？" + Environment.NewLine + "はい(Y)：上書き保存、いいえ(N)：保存しない(更新を破棄)",
-                "確認",
+                "更新確認",
                 MessageBoxButtons.YesNoCancel,
                 MessageBoxIcon.Warning
             );
@@ -1358,20 +1365,50 @@ namespace MyPDF
                     // 表示設定
                     var catalog = pdf.GetCatalog();
                     // 表示モード
-                    catalog.SetPageMode(new PdfName(currentSettings.PageMode));
-                    //var mode = ToPdfName(currentSettings.PageMode);
-                    //if (mode != null)
-                    //{
-                    //    catalog.SetPageMode(mode);
-                    //}
+                    //catalog.SetPageMode(new PdfName(currentSettings.PageMode));
+                    switch (currentSettings.PageMode)
+                    {
+                        case "UseNone":
+                            catalog.SetPageMode(PdfName.UseNone);
+                            break;
+
+                        case "UseOutlines":
+                            catalog.SetPageMode(PdfName.UseOutlines);
+                            break;
+
+                        case "UseThumbs":
+                            catalog.SetPageMode(PdfName.UseThumbs);
+                            break;
+
+                        case "UseAttachments":
+                            catalog.SetPageMode(PdfName.UseAttachments);
+                            break;
+
+                        case "UseOC":
+                            catalog.SetPageMode(PdfName.UseOC);
+                            break;
+                    }
 
                     // レイアウト
-                    catalog.SetPageLayout(new PdfName(currentSettings.PageLayout));
-                    //var layout = ToPdfName(currentSettings.PageLayout);
-                    //if (layout != null)
-                    //{
-                    //    catalog.SetPageLayout(layout);
-                    //}
+                    //catalog.SetPageLayout(new PdfName(currentSettings.PageLayout));
+                    switch (currentSettings.PageLayout)
+                    {
+                        case "SinglePage":
+                            catalog.SetPageLayout(PdfName.SinglePage);
+                            break;
+
+                        case "OneColumn":
+                            catalog.SetPageLayout(PdfName.OneColumn);
+                            break;
+
+                        case "TwoColumnLeft":
+                            catalog.SetPageLayout(PdfName.TwoColumnLeft);
+                            break;
+
+                        case "TwoPageLeft":
+                            catalog.SetPageLayout(PdfName.TwoPageLeft);
+                            break;
+                    }
 
                     // ページ範囲チェック
                     int max = pdf.GetNumberOfPages();
@@ -1484,21 +1521,21 @@ namespace MyPDF
 
                     if (string.IsNullOrEmpty(setUserPassword))
                     {
-                        MessageEdit = "閲覧パスワードは、設定されていません。" + Environment.NewLine +
-                            "権限パスワードは、 " + setOwnerPassword + " です。";
+                        MessageEdit = "権限パスワードは、 " + setOwnerPassword + " です。"+ Environment.NewLine +
+                            "閲覧パスワードは、設定されていません。";
                     }
                     else
                     {
 
-                        MessageEdit = "閲覧パスワードは、 " + setUserPassword + " です。" + Environment.NewLine +
-                        "権限パスワードは、 " + setOwnerPassword + " です。";
+                        MessageEdit = "権限パスワードは、 " + setOwnerPassword + " です。" + Environment.NewLine +
+                            "閲覧パスワードは、 " + setUserPassword + " です。";
 
                     }
 
                     MessageBox.Show(
                         "[ " + fileName + " ] はセキュリティが設定されました。" + Environment.NewLine + MessageEdit,
-                        "確認",
-                        MessageBoxButtons.OK
+                        "セキュリティ確認",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information
                     );
                 }
 
@@ -1630,6 +1667,8 @@ namespace MyPDF
                 AddShioriToolStripMenuItem.Enabled = false;
                 // しおり削除
                 DelShioriToolStripMenuItem.Enabled = false;
+                // 全てのしおり削除
+                AllDelToolStripMenuItem.Enabled = false;
                 // 現在のページ番号をしおりに設定
                 SetShioriToolStripMenuItem.Enabled = false;
 
@@ -1656,6 +1695,8 @@ namespace MyPDF
                 AddShioriToolStripMenuItem.Enabled = true;     // 常にOK
                 // しおり削除
                 DelShioriToolStripMenuItem.Enabled = hasNodes; // ノードある時だけ
+                // 全てのしおり削除
+                AllDelToolStripMenuItem.Enabled = hasNodes; // ノードある時だけ
                 // 現在のページ番号をしおりに設定
                 SetShioriToolStripMenuItem.Enabled = hasNodes; // ノードある時だけ
 
@@ -1756,8 +1797,7 @@ namespace MyPDF
             // ツリービューの右クリックメニュー ON/OFF
             UpdateContextMenuState();
 
-            // 更新フラグ(falseならtrueに)
-            //if (!isDirty)
+            // 更新フラグ
             isDirty = true;
 
         }
@@ -1793,7 +1833,7 @@ namespace MyPDF
             var node = treeView1.SelectedNode;
 
             if (MessageBox.Show($"「{node.Text}」を削除しますか？" + Environment.NewLine + "配下のしおりも削除されます。",
-                "しおり削除", MessageBoxButtons.YesNo) == DialogResult.No)
+                "しおり削除", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
                 return;
 
             treeView1.SelectedNode.Remove();
@@ -1801,8 +1841,7 @@ namespace MyPDF
             // ツリービューの右クリックメニュー ON/OFF
             UpdateContextMenuState();
 
-            // 更新フラグ(falseならtrueに)
-            //if (!isDirty)
+            // 更新フラグ
             isDirty = true;
 
         }
@@ -2008,8 +2047,7 @@ namespace MyPDF
             // ツリービューの右クリックメニュー ON/OFF
             UpdateContextMenuState();
 
-            // 更新フラグ(falseならtrueに)
-            //if (!isDirty)
+            // 更新フラグ
             isDirty = true;
 
         }
@@ -2624,15 +2662,7 @@ namespace MyPDF
             // 再描画
             int page = pdfViewer1.Renderer.Page;
 
-            //if (pdfViewer1.Document.PageCount > 1)
-            //{
-            //    pdfViewer1.Renderer.Page = page == 0 ? 1 : 0;
-            //    pdfViewer1.Renderer.Page = page;
-            //}
-            //else
-            //{
             pdfViewer1.Refresh();
-            //}
 
         }
 
@@ -2666,16 +2696,14 @@ namespace MyPDF
 
             if (node == null)
             {
-                MessageBox.Show("しおりを選択してください。", "確認");
+                MessageBox.Show("しおりを選択してください。", "しおり選択確認", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
             // BookmarkInfoからしおりのプロパティ(色、スタイル)を取得
-            //var info = node.Tag as BookmarkInfo;
-            //if (info == null)
             if (node.Tag is not BookmarkInfo info)
             {
-                MessageBox.Show("しおり情報が取得できません。", "確認");
+                MessageBox.Show("しおり情報が取得できません。", "しおり情報確認", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
@@ -2698,8 +2726,7 @@ namespace MyPDF
 
                     treeView1.Refresh();
 
-                    // 更新フラグ(falseならtrueに)
-                    //if (!isDirty)
+                    // 更新フラグ
                     isDirty = true;
 
                 }
@@ -2789,11 +2816,11 @@ namespace MyPDF
 
                     BuildTreeFromCsv(list);
 
-                    MessageBox.Show("しおりをインポートしました。", "インポート");
+                    MessageBox.Show("しおりをインポートしました。", "インポート", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("インポート失敗:\n" + ex.Message);
+                    MessageBox.Show("インポート失敗:\n" + ex.Message, "インポート失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
         }
@@ -2906,7 +2933,7 @@ namespace MyPDF
         {
             if (treeView1.Nodes.Count == 0)
             {
-                MessageBox.Show("しおりがありません。",　"確認");
+                MessageBox.Show("しおりがありません。", "しおり確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -2921,11 +2948,11 @@ namespace MyPDF
                 try
                 {
                     ExportCsvBookmarks(sfd.FileName);
-                    MessageBox.Show("しおりをエクスポートしました。", "エクスポート");
+                    MessageBox.Show("しおりをエクスポートしました。", "エクスポート", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("エクスポート失敗:\n" + ex.Message);
+                    MessageBox.Show("エクスポート失敗:\n" + ex.Message, "エクスポート失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
         }
@@ -2980,7 +3007,6 @@ namespace MyPDF
         // ==============================
         // CSVエスケープ
         // ==============================
-
         private string EscapeCsv(string? text)
         {
             if (string.IsNullOrEmpty(text))
@@ -2993,6 +3019,42 @@ namespace MyPDF
             }
 
             return text;
+        }
+
+        // ==============================
+        // しおりを全て削除
+        // ==============================
+        private void AllDelToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (treeView1.Nodes.Count == 0)
+            {
+                MessageBox.Show("削除するしおりがありません。", "しおり無し確認", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            if (treeView1.Nodes.Count > 0)
+            {
+                if (MessageBox.Show($"全てのしおりを削除しますか？",
+                    "全しおり削除", MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning,
+                    // Noをデフォルトに
+                    MessageBoxDefaultButton.Button2) == DialogResult.No)
+                    return;
+
+                // ツリービューを初期化
+                treeView1.Nodes.Clear();
+                // 選択解除（安全）
+                treeView1.SelectedNode = null;
+                // ツールチップ消す
+                treeToolTip.SetToolTip(treeView1, "");
+                // ツリービューの右クリックメニュー ON/OFF
+                UpdateContextMenuState();
+
+                // 更新フラグ
+                isDirty = true;
+
+            }
+
         }
     }
 }

@@ -19,7 +19,6 @@ namespace MyPDF
 {
     public partial class Form2 : Form
     {
-
         public PdfSettings Settings { get; private set; }
 
         //private string pdfPath = "";
@@ -31,11 +30,6 @@ namespace MyPDF
             // フォームサイズ
             this.Width = 800;
             this.Height = 500;
-
-            //tabControl1.Dock = DockStyle.Fill;
-
-            //Settings = settings;
-            //pdfPath = path;
 
             // コピー（参照渡し事故防止）
             Settings = new PdfSettings
@@ -89,8 +83,6 @@ namespace MyPDF
             // ページサイズ
             PageSizeLabel.Text = $"{Math.Round(Settings.PageSize_W)} x {Math.Round(Settings.PageSize_H)} mm";
 
-
-
             // タイトル
             TitleTxt.Text = Settings.Title;
             // 作成者
@@ -113,7 +105,6 @@ namespace MyPDF
             if (mode == null)
             {
                 ViewComboBox.SelectedIndex = 0;
-                //return;
             }
             else
             {
@@ -125,7 +116,6 @@ namespace MyPDF
             if (layout == null)
             {
                 PageLayoutComboBox.SelectedIndex = 0;
-                //return;
             }
             else
             {
@@ -269,16 +259,12 @@ namespace MyPDF
 
             }
 
-
             // デバッグ出力確認
             Debug.WriteLine("-----PDFプロパティ(OK)------------------------");
             Debug.WriteLine("タイトル: " + Settings.Title);
             Debug.WriteLine("作成者: " + Settings.Author);
             Debug.WriteLine("サブタイトル: " + Settings.Subject);
             Debug.WriteLine("キーワード: " + Settings.Keywords);
-
-
-
 
             if (int.TryParse(PageTxt.Text, out int page))
                 Settings.OpenPage = page;
@@ -296,16 +282,6 @@ namespace MyPDF
         {
             this.DialogResult = DialogResult.Cancel;
             this.Close();
-        }
-
-        // ==============================
-        // Form2読み込み時
-        // ==============================
-        private void Form2_Load(object sender, EventArgs e)
-        {
-
-
-
         }
 
         // ==============================
@@ -354,22 +330,26 @@ namespace MyPDF
 
         // ==============================
         // コンボボックス選択ヘルパー
+        // combo:対象のコンボボックス、value:探したい値（例："UseOutlines"）
         // ==============================
         private void SelectCombo(ComboBox combo, string value)
         {
+            // コンボボックスに入っている全項目を1つずつ取り出す
             foreach (var item in combo.Items)
             {
+                // item が ComboItem で、その中の Value が PdfName なら処理する
                 if (item is ComboItem ci && ci.Value is PdfName name)
                 {
+                    // PdfName → string に変換して比較
                     if (name.GetValue() == value)
                     {
+                        // 一致したら、その項目を選択状態にする
                         combo.SelectedItem = item;
                         return;
                     }
                 }
             }
         }
-
 
     }
 }

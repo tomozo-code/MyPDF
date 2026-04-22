@@ -80,7 +80,7 @@
             txtUserPassConfirm.Location = new Point(135, 57);
             txtUserPassConfirm.Name = "txtUserPassConfirm";
             txtUserPassConfirm.Size = new Size(300, 29);
-            txtUserPassConfirm.TabIndex = 14;
+            txtUserPassConfirm.TabIndex = 12;
             txtUserPassConfirm.TextChanged += UserPass_TextChanged;
             // 
             // txtUserPass
@@ -90,7 +90,7 @@
             txtUserPass.Location = new Point(135, 21);
             txtUserPass.Name = "txtUserPass";
             txtUserPass.Size = new Size(300, 29);
-            txtUserPass.TabIndex = 15;
+            txtUserPass.TabIndex = 11;
             txtUserPass.TextChanged += UserPass_TextChanged;
             // 
             // label2
@@ -146,7 +146,7 @@
             txtOwnerPass.Location = new Point(135, 16);
             txtOwnerPass.Name = "txtOwnerPass";
             txtOwnerPass.Size = new Size(300, 29);
-            txtOwnerPass.TabIndex = 19;
+            txtOwnerPass.TabIndex = 2;
             txtOwnerPass.TextChanged += OwnerPass_TextChanged;
             // 
             // label1
@@ -165,7 +165,7 @@
             txtOwnerPassConfirm.Location = new Point(135, 55);
             txtOwnerPassConfirm.Name = "txtOwnerPassConfirm";
             txtOwnerPassConfirm.Size = new Size(300, 29);
-            txtOwnerPassConfirm.TabIndex = 18;
+            txtOwnerPassConfirm.TabIndex = 3;
             txtOwnerPassConfirm.TextChanged += OwnerPass_TextChanged;
             // 
             // label4
@@ -251,7 +251,7 @@
             rbRC4.Location = new Point(304, 372);
             rbRC4.Name = "rbRC4";
             rbRC4.Size = new Size(132, 25);
-            rbRC4.TabIndex = 22;
+            rbRC4.TabIndex = 15;
             rbRC4.Text = "RC4-128(互換)";
             rbRC4.UseVisualStyleBackColor = true;
             // 
@@ -261,7 +261,7 @@
             rbAES128.Location = new Point(191, 372);
             rbAES128.Name = "rbAES128";
             rbAES128.Size = new Size(88, 25);
-            rbAES128.TabIndex = 22;
+            rbAES128.TabIndex = 14;
             rbAES128.Text = "AES-128";
             rbAES128.UseVisualStyleBackColor = true;
             // 
@@ -272,7 +272,7 @@
             rbAES256.Location = new Point(44, 372);
             rbAES256.Name = "rbAES256";
             rbAES256.Size = new Size(130, 25);
-            rbAES256.TabIndex = 22;
+            rbAES256.TabIndex = 13;
             rbAES256.TabStop = true;
             rbAES256.Text = "AES-256(推奨)";
             rbAES256.UseVisualStyleBackColor = true;
@@ -321,7 +321,7 @@
             btnCancel.Location = new Point(118, 6);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(100, 32);
-            btnCancel.TabIndex = 10;
+            btnCancel.TabIndex = 16;
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
             btnCancel.Click += btnCancel_Click;
@@ -331,7 +331,7 @@
             btnOK.Location = new Point(12, 6);
             btnOK.Name = "btnOK";
             btnOK.Size = new Size(100, 32);
-            btnOK.TabIndex = 11;
+            btnOK.TabIndex = 17;
             btnOK.Text = "OK";
             btnOK.UseVisualStyleBackColor = true;
             btnOK.Click += btnOK_Click;
@@ -342,7 +342,7 @@
             checkBox2.Location = new Point(25, 235);
             checkBox2.Name = "checkBox2";
             checkBox2.Size = new Size(193, 25);
-            checkBox2.TabIndex = 1;
+            checkBox2.TabIndex = 10;
             checkBox2.Text = "開くときのパスワードを設定";
             checkBox2.UseVisualStyleBackColor = true;
             checkBox2.CheckedChanged += checkBox2_CheckedChanged;

@@ -76,6 +76,8 @@
             NowPageTxt = new TextBox();
             TotalPageLabel = new Label();
             treeToolTip = new ToolTip(components);
+            AllDelToolStripMenuItem = new ToolStripMenuItem();
+            toolStripMenuItem8 = new ToolStripSeparator();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             panel2.SuspendLayout();
@@ -303,9 +305,9 @@
             // contextMenuStrip1
             // 
             contextMenuStrip1.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
-            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { AddShioriToolStripMenuItem, DelShioriToolStripMenuItem, toolStripMenuItem1, SetShioriToolStripMenuItem, toolStripMenuItem4, AllShioriTenkaiToolStripMenuItem, AllShioriSyukusyouToolStripMenuItem, toolStripMenuItem5, ShioriTenkaiToolStripMenuItem, ShioriSyukusyouToolStripMenuItem, toolStripMenuItem6, ImportShioriToolStripMenuItem, ExportShioriToolStripMenuItem, toolStripMenuItem7, ShioriProToolStripMenuItem });
+            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { AddShioriToolStripMenuItem, DelShioriToolStripMenuItem, toolStripMenuItem1, AllDelToolStripMenuItem, toolStripMenuItem8, SetShioriToolStripMenuItem, toolStripMenuItem4, AllShioriTenkaiToolStripMenuItem, AllShioriSyukusyouToolStripMenuItem, toolStripMenuItem5, ShioriTenkaiToolStripMenuItem, ShioriSyukusyouToolStripMenuItem, toolStripMenuItem6, ImportShioriToolStripMenuItem, ExportShioriToolStripMenuItem, toolStripMenuItem7, ShioriProToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(303, 316);
+            contextMenuStrip1.Size = new Size(303, 348);
             // 
             // AddShioriToolStripMenuItem
             // 
@@ -529,6 +531,19 @@
             TotalPageLabel.TabIndex = 0;
             TotalPageLabel.Text = "総ページ番号";
             // 
+            // AllDelToolStripMenuItem
+            // 
+            AllDelToolStripMenuItem.Enabled = false;
+            AllDelToolStripMenuItem.Name = "AllDelToolStripMenuItem";
+            AllDelToolStripMenuItem.Size = new Size(302, 26);
+            AllDelToolStripMenuItem.Text = "全てのしおり削除";
+            AllDelToolStripMenuItem.Click += AllDelToolStripMenuItem_Click;
+            // 
+            // toolStripMenuItem8
+            // 
+            toolStripMenuItem8.Name = "toolStripMenuItem8";
+            toolStripMenuItem8.Size = new Size(299, 6);
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
@@ -612,5 +627,7 @@
         private ToolStripMenuItem ImportShioriToolStripMenuItem;
         private ToolStripMenuItem ExportShioriToolStripMenuItem;
         private ToolStripSeparator toolStripMenuItem7;
+        private ToolStripMenuItem AllDelToolStripMenuItem;
+        private ToolStripSeparator toolStripMenuItem8;
     }
 }
