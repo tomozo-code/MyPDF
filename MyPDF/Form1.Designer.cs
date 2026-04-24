@@ -30,28 +30,11 @@
         {
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            menuStrip1 = new MenuStrip();
-            FileToolStripMenuItem = new ToolStripMenuItem();
-            OpenToolStripMenuItem = new ToolStripMenuItem();
-            AcrobatOpenToolStripMenuItem = new ToolStripMenuItem();
-            toolStripMenuItem9 = new ToolStripSeparator();
-            SaveToolStripMenuItem = new ToolStripMenuItem();
-            SaveAsToolStripMenuItem = new ToolStripMenuItem();
-            toolStripMenuItem2 = new ToolStripSeparator();
-            PdfSetToolStripMenuItem = new ToolStripMenuItem();
-            SecurityToolStripMenuItem = new ToolStripMenuItem();
-            toolStripMenuItem3 = new ToolStripSeparator();
-            XToolStripMenuItem = new ToolStripMenuItem();
-            HelpToolStripMenuItem = new ToolStripMenuItem();
-            UseToolStripMenuItem = new ToolStripMenuItem();
-            VerToolStripMenuItem = new ToolStripMenuItem();
             statusStrip1 = new StatusStrip();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
             splitter1 = new Splitter();
             panel2 = new Panel();
             pdfViewer1 = new PdfiumViewer.PdfViewer();
-            tabControl1 = new TabControl();
-            tabPage1 = new TabPage();
             treeView1 = new TreeView();
             contextMenuStrip1 = new ContextMenuStrip(components);
             AddShioriToolStripMenuItem = new ToolStripMenuItem();
@@ -71,162 +54,41 @@
             ExportShioriToolStripMenuItem = new ToolStripMenuItem();
             toolStripMenuItem7 = new ToolStripSeparator();
             ShioriProToolStripMenuItem = new ToolStripMenuItem();
-            tabPage2 = new TabPage();
-            listView1 = new ListView();
             thumbnailImageList = new ImageList(components);
             panel1 = new Panel();
             panel3 = new Panel();
-            ZoomComboBox = new ComboBox();
-            NowPageTxt = new TextBox();
-            TotalPageLabel = new Label();
+            label1 = new Label();
             treeToolTip = new ToolTip(components);
-            menuStrip1.SuspendLayout();
+            toolStrip1 = new ToolStrip();
+            FiletoolStripDropDownButton = new ToolStripDropDownButton();
+            OpenToolStripMenuItem = new ToolStripMenuItem();
+            AcrobatOpenToolStripMenuItem = new ToolStripMenuItem();
+            toolStripMenuItem10 = new ToolStripSeparator();
+            SaveToolStripMenuItem = new ToolStripMenuItem();
+            SaveAsToolStripMenuItem = new ToolStripMenuItem();
+            toolStripMenuItem9 = new ToolStripSeparator();
+            PdfSetToolStripMenuItem = new ToolStripMenuItem();
+            SecurityToolStripMenuItem = new ToolStripMenuItem();
+            toolStripMenuItem11 = new ToolStripSeparator();
+            XToolStripMenuItem = new ToolStripMenuItem();
+            HelptoolStripDropDownButton = new ToolStripDropDownButton();
+            UseToolStripMenuItem = new ToolStripMenuItem();
+            VerToolStripMenuItem = new ToolStripMenuItem();
+            toolStripSeparator1 = new ToolStripSeparator();
+            NewPagetoolStripTextBox = new ToolStripTextBox();
+            TotalPagetoolStripLabel = new ToolStripLabel();
+            toolStripSeparator2 = new ToolStripSeparator();
+            ZoomtoolStripComboBox = new ToolStripComboBox();
+            panel4 = new Panel();
+            label2 = new Label();
             statusStrip1.SuspendLayout();
             panel2.SuspendLayout();
-            tabControl1.SuspendLayout();
-            tabPage1.SuspendLayout();
             contextMenuStrip1.SuspendLayout();
-            tabPage2.SuspendLayout();
             panel1.SuspendLayout();
             panel3.SuspendLayout();
+            toolStrip1.SuspendLayout();
+            panel4.SuspendLayout();
             SuspendLayout();
-            // 
-            // menuStrip1
-            // 
-            menuStrip1.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
-            menuStrip1.Items.AddRange(new ToolStripItem[] { FileToolStripMenuItem, HelpToolStripMenuItem });
-            menuStrip1.Location = new Point(0, 0);
-            menuStrip1.Name = "menuStrip1";
-            menuStrip1.Padding = new Padding(7, 2, 0, 2);
-            menuStrip1.Size = new Size(964, 29);
-            menuStrip1.TabIndex = 0;
-            menuStrip1.Text = "menuStrip1";
-            menuStrip1.MouseEnter += menuStrip1_MouseEnter;
-            menuStrip1.MouseLeave += menuStrip1_MouseLeave;
-            // 
-            // FileToolStripMenuItem
-            // 
-            FileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { OpenToolStripMenuItem, AcrobatOpenToolStripMenuItem, toolStripMenuItem9, SaveToolStripMenuItem, SaveAsToolStripMenuItem, toolStripMenuItem2, PdfSetToolStripMenuItem, SecurityToolStripMenuItem, toolStripMenuItem3, XToolStripMenuItem });
-            FileToolStripMenuItem.Name = "FileToolStripMenuItem";
-            FileToolStripMenuItem.Size = new Size(85, 25);
-            FileToolStripMenuItem.Text = "ファイル(&F)";
-            // 
-            // OpenToolStripMenuItem
-            // 
-            OpenToolStripMenuItem.Name = "OpenToolStripMenuItem";
-            OpenToolStripMenuItem.Size = new Size(256, 26);
-            OpenToolStripMenuItem.Text = "開く(&O)...";
-            OpenToolStripMenuItem.ToolTipText = "PDFファイルを開きます";
-            OpenToolStripMenuItem.Click += OpenToolStripMenuItem_Click;
-            OpenToolStripMenuItem.MouseEnter += menuStrip1_MouseEnter;
-            OpenToolStripMenuItem.MouseLeave += menuStrip1_MouseLeave;
-            // 
-            // AcrobatOpenToolStripMenuItem
-            // 
-            AcrobatOpenToolStripMenuItem.Enabled = false;
-            AcrobatOpenToolStripMenuItem.Name = "AcrobatOpenToolStripMenuItem";
-            AcrobatOpenToolStripMenuItem.Size = new Size(256, 26);
-            AcrobatOpenToolStripMenuItem.Text = "既定のPDFアプリで開く(&G)...";
-            AcrobatOpenToolStripMenuItem.ToolTipText = "開いているPDFファイルを既定のアプリで開きます";
-            AcrobatOpenToolStripMenuItem.Click += AcrobatOpenToolStripMenuItem_Click;
-            AcrobatOpenToolStripMenuItem.MouseEnter += menuStrip1_MouseEnter;
-            AcrobatOpenToolStripMenuItem.MouseLeave += menuStrip1_MouseLeave;
-            // 
-            // toolStripMenuItem9
-            // 
-            toolStripMenuItem9.Name = "toolStripMenuItem9";
-            toolStripMenuItem9.Size = new Size(253, 6);
-            // 
-            // SaveToolStripMenuItem
-            // 
-            SaveToolStripMenuItem.Enabled = false;
-            SaveToolStripMenuItem.Name = "SaveToolStripMenuItem";
-            SaveToolStripMenuItem.Size = new Size(256, 26);
-            SaveToolStripMenuItem.Text = "上書き保存(&S)";
-            SaveToolStripMenuItem.ToolTipText = "開いているPDFを上書き保存します";
-            SaveToolStripMenuItem.Click += SaveToolStripMenuItem_Click;
-            SaveToolStripMenuItem.MouseEnter += menuStrip1_MouseEnter;
-            SaveToolStripMenuItem.MouseLeave += menuStrip1_MouseLeave;
-            // 
-            // SaveAsToolStripMenuItem
-            // 
-            SaveAsToolStripMenuItem.Enabled = false;
-            SaveAsToolStripMenuItem.Name = "SaveAsToolStripMenuItem";
-            SaveAsToolStripMenuItem.Size = new Size(256, 26);
-            SaveAsToolStripMenuItem.Text = "名前を付けて保存(&A)...";
-            SaveAsToolStripMenuItem.ToolTipText = "開いているPDFに名前を付けて保存します";
-            SaveAsToolStripMenuItem.Click += SaveAsToolStripMenuItem_Click;
-            SaveAsToolStripMenuItem.MouseEnter += menuStrip1_MouseEnter;
-            SaveAsToolStripMenuItem.MouseLeave += menuStrip1_MouseLeave;
-            // 
-            // toolStripMenuItem2
-            // 
-            toolStripMenuItem2.Name = "toolStripMenuItem2";
-            toolStripMenuItem2.Size = new Size(253, 6);
-            // 
-            // PdfSetToolStripMenuItem
-            // 
-            PdfSetToolStripMenuItem.Enabled = false;
-            PdfSetToolStripMenuItem.Name = "PdfSetToolStripMenuItem";
-            PdfSetToolStripMenuItem.Size = new Size(256, 26);
-            PdfSetToolStripMenuItem.Text = "PDFのプロパティ(&D)...";
-            PdfSetToolStripMenuItem.ToolTipText = "PDFのプロパティを編集します";
-            PdfSetToolStripMenuItem.Click += PdfSetToolStripMenuItem_Click;
-            PdfSetToolStripMenuItem.MouseEnter += menuStrip1_MouseEnter;
-            PdfSetToolStripMenuItem.MouseLeave += menuStrip1_MouseLeave;
-            // 
-            // SecurityToolStripMenuItem
-            // 
-            SecurityToolStripMenuItem.Enabled = false;
-            SecurityToolStripMenuItem.Name = "SecurityToolStripMenuItem";
-            SecurityToolStripMenuItem.Size = new Size(256, 26);
-            SecurityToolStripMenuItem.Text = "セキュリティ設定(&T)...";
-            SecurityToolStripMenuItem.ToolTipText = "PDFにセキュリティを設定します";
-            SecurityToolStripMenuItem.Click += SecurityToolStripMenuItem_Click;
-            SecurityToolStripMenuItem.MouseEnter += menuStrip1_MouseEnter;
-            SecurityToolStripMenuItem.MouseLeave += menuStrip1_MouseLeave;
-            // 
-            // toolStripMenuItem3
-            // 
-            toolStripMenuItem3.Name = "toolStripMenuItem3";
-            toolStripMenuItem3.Size = new Size(253, 6);
-            // 
-            // XToolStripMenuItem
-            // 
-            XToolStripMenuItem.Name = "XToolStripMenuItem";
-            XToolStripMenuItem.Size = new Size(256, 26);
-            XToolStripMenuItem.Text = "終了(&X)";
-            XToolStripMenuItem.ToolTipText = "PDF編集帖を終了します";
-            XToolStripMenuItem.Click += XToolStripMenuItem_Click;
-            XToolStripMenuItem.MouseEnter += menuStrip1_MouseEnter;
-            XToolStripMenuItem.MouseLeave += menuStrip1_MouseLeave;
-            // 
-            // HelpToolStripMenuItem
-            // 
-            HelpToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { UseToolStripMenuItem, VerToolStripMenuItem });
-            HelpToolStripMenuItem.Name = "HelpToolStripMenuItem";
-            HelpToolStripMenuItem.Size = new Size(81, 25);
-            HelpToolStripMenuItem.Text = "ヘルプ(&H)";
-            // 
-            // UseToolStripMenuItem
-            // 
-            UseToolStripMenuItem.Name = "UseToolStripMenuItem";
-            UseToolStripMenuItem.Size = new Size(199, 26);
-            UseToolStripMenuItem.Text = "使い方(&U)...";
-            UseToolStripMenuItem.ToolTipText = "使い方を表示します";
-            UseToolStripMenuItem.Click += UseToolStripMenuItem_Click;
-            UseToolStripMenuItem.MouseEnter += menuStrip1_MouseEnter;
-            UseToolStripMenuItem.MouseLeave += menuStrip1_MouseLeave;
-            // 
-            // VerToolStripMenuItem
-            // 
-            VerToolStripMenuItem.Name = "VerToolStripMenuItem";
-            VerToolStripMenuItem.Size = new Size(199, 26);
-            VerToolStripMenuItem.Text = "バージョン情報(&A)...";
-            VerToolStripMenuItem.ToolTipText = "バージョン情報を表示します";
-            VerToolStripMenuItem.Click += VerToolStripMenuItem_Click;
-            VerToolStripMenuItem.MouseEnter += menuStrip1_MouseEnter;
-            VerToolStripMenuItem.MouseLeave += menuStrip1_MouseLeave;
             // 
             // statusStrip1
             // 
@@ -257,7 +119,6 @@
             // panel2
             // 
             panel2.BackColor = SystemColors.Control;
-            panel2.BorderStyle = BorderStyle.FixedSingle;
             panel2.Controls.Add(pdfViewer1);
             panel2.Location = new Point(263, 116);
             panel2.Name = "panel2";
@@ -266,33 +127,13 @@
             // 
             // pdfViewer1
             // 
+            pdfViewer1.BorderStyle = BorderStyle.FixedSingle;
             pdfViewer1.Location = new Point(32, 22);
             pdfViewer1.Margin = new Padding(4, 4, 4, 4);
             pdfViewer1.Name = "pdfViewer1";
             pdfViewer1.Size = new Size(150, 141);
             pdfViewer1.TabIndex = 0;
             pdfViewer1.ZoomMode = PdfiumViewer.PdfViewerZoomMode.FitBest;
-            // 
-            // tabControl1
-            // 
-            tabControl1.Controls.Add(tabPage1);
-            tabControl1.Controls.Add(tabPage2);
-            tabControl1.Location = new Point(24, 79);
-            tabControl1.Name = "tabControl1";
-            tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(145, 207);
-            tabControl1.TabIndex = 0;
-            // 
-            // tabPage1
-            // 
-            tabPage1.Controls.Add(treeView1);
-            tabPage1.Location = new Point(4, 30);
-            tabPage1.Name = "tabPage1";
-            tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(137, 173);
-            tabPage1.TabIndex = 0;
-            tabPage1.Text = "しおり";
-            tabPage1.UseVisualStyleBackColor = true;
             // 
             // treeView1
             // 
@@ -302,7 +143,7 @@
             treeView1.ContextMenuStrip = contextMenuStrip1;
             treeView1.DrawMode = TreeViewDrawMode.OwnerDrawText;
             treeView1.LabelEdit = true;
-            treeView1.Location = new Point(6, 70);
+            treeView1.Location = new Point(33, 132);
             treeView1.Name = "treeView1";
             treeView1.Size = new Size(121, 97);
             treeView1.TabIndex = 0;
@@ -325,7 +166,7 @@
             contextMenuStrip1.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             contextMenuStrip1.Items.AddRange(new ToolStripItem[] { AddShioriToolStripMenuItem, DelShioriToolStripMenuItem, toolStripMenuItem1, AllDelToolStripMenuItem, toolStripMenuItem8, SetShioriToolStripMenuItem, toolStripMenuItem4, AllShioriTenkaiToolStripMenuItem, AllShioriSyukusyouToolStripMenuItem, toolStripMenuItem5, ShioriTenkaiToolStripMenuItem, ShioriSyukusyouToolStripMenuItem, toolStripMenuItem6, ImportShioriToolStripMenuItem, ExportShioriToolStripMenuItem, toolStripMenuItem7, ShioriProToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(303, 348);
+            contextMenuStrip1.Size = new Size(303, 326);
             // 
             // AddShioriToolStripMenuItem
             // 
@@ -478,33 +319,6 @@
             ShioriProToolStripMenuItem.MouseEnter += menuStrip1_MouseEnter;
             ShioriProToolStripMenuItem.MouseLeave += menuStrip1_MouseLeave;
             // 
-            // tabPage2
-            // 
-            tabPage2.Controls.Add(listView1);
-            tabPage2.Location = new Point(4, 28);
-            tabPage2.Name = "tabPage2";
-            tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(137, 175);
-            tabPage2.TabIndex = 1;
-            tabPage2.Text = "サムネイル";
-            tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // listView1
-            // 
-            listView1.BackColor = SystemColors.Control;
-            listView1.BorderStyle = BorderStyle.FixedSingle;
-            listView1.LargeImageList = thumbnailImageList;
-            listView1.Location = new Point(6, 20);
-            listView1.MultiSelect = false;
-            listView1.Name = "listView1";
-            listView1.OwnerDraw = true;
-            listView1.Size = new Size(104, 108);
-            listView1.TabIndex = 0;
-            listView1.UseCompatibleStateImageBehavior = false;
-            listView1.DrawItem += listView1_DrawItem;
-            listView1.SelectedIndexChanged += listView1_SelectedIndexChanged;
-            listView1.Click += listView1_Click;
-            // 
             // thumbnailImageList
             // 
             thumbnailImageList.ColorDepth = ColorDepth.Depth32Bit;
@@ -514,7 +328,8 @@
             // panel1
             // 
             panel1.BackColor = SystemColors.Control;
-            panel1.Controls.Add(tabControl1);
+            panel1.Controls.Add(treeView1);
+            panel1.Controls.Add(panel3);
             panel1.Dock = DockStyle.Left;
             panel1.Location = new Point(0, 29);
             panel1.Name = "panel1";
@@ -523,47 +338,219 @@
             // 
             // panel3
             // 
-            panel3.Controls.Add(ZoomComboBox);
-            panel3.Controls.Add(NowPageTxt);
-            panel3.Controls.Add(TotalPageLabel);
+            panel3.BorderStyle = BorderStyle.FixedSingle;
+            panel3.Controls.Add(label1);
             panel3.Dock = DockStyle.Top;
-            panel3.Location = new Point(207, 29);
+            panel3.Location = new Point(0, 0);
             panel3.Name = "panel3";
-            panel3.Size = new Size(757, 36);
-            panel3.TabIndex = 5;
+            panel3.Size = new Size(199, 30);
+            panel3.TabIndex = 7;
             // 
-            // ZoomComboBox
+            // label1
             // 
-            ZoomComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            ZoomComboBox.Enabled = false;
-            ZoomComboBox.FormattingEnabled = true;
-            ZoomComboBox.Location = new Point(248, 3);
-            ZoomComboBox.Name = "ZoomComboBox";
-            ZoomComboBox.Size = new Size(169, 29);
-            ZoomComboBox.TabIndex = 2;
-            ZoomComboBox.SelectedIndexChanged += ZoomComboBox_SelectedIndexChanged;
+            label1.AutoSize = true;
+            label1.Location = new Point(4, 4);
+            label1.Name = "label1";
+            label1.Size = new Size(84, 21);
+            label1.TabIndex = 0;
+            label1.Text = "しおりパネル";
             // 
-            // NowPageTxt
+            // toolStrip1
             // 
-            NowPageTxt.Enabled = false;
-            NowPageTxt.Location = new Point(4, 4);
-            NowPageTxt.Name = "NowPageTxt";
-            NowPageTxt.Size = new Size(78, 29);
-            NowPageTxt.TabIndex = 1;
-            NowPageTxt.Text = "1";
-            NowPageTxt.TextAlign = HorizontalAlignment.Right;
-            NowPageTxt.WordWrap = false;
-            NowPageTxt.Enter += NowPageTxt_Enter;
-            NowPageTxt.KeyDown += NowPageTxt_KeyDown;
+            toolStrip1.Items.AddRange(new ToolStripItem[] { FiletoolStripDropDownButton, HelptoolStripDropDownButton, toolStripSeparator1, NewPagetoolStripTextBox, TotalPagetoolStripLabel, toolStripSeparator2, ZoomtoolStripComboBox });
+            toolStrip1.Location = new Point(0, 0);
+            toolStrip1.Name = "toolStrip1";
+            toolStrip1.Size = new Size(964, 29);
+            toolStrip1.TabIndex = 6;
+            toolStrip1.Text = "toolStrip1";
             // 
-            // TotalPageLabel
+            // FiletoolStripDropDownButton
             // 
-            TotalPageLabel.AutoSize = true;
-            TotalPageLabel.Location = new Point(88, 7);
-            TotalPageLabel.Name = "TotalPageLabel";
-            TotalPageLabel.Size = new Size(94, 21);
-            TotalPageLabel.TabIndex = 0;
-            TotalPageLabel.Text = "総ページ番号";
+            FiletoolStripDropDownButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            FiletoolStripDropDownButton.DropDownItems.AddRange(new ToolStripItem[] { OpenToolStripMenuItem, AcrobatOpenToolStripMenuItem, toolStripMenuItem10, SaveToolStripMenuItem, SaveAsToolStripMenuItem, toolStripMenuItem9, PdfSetToolStripMenuItem, SecurityToolStripMenuItem, toolStripMenuItem11, XToolStripMenuItem });
+            FiletoolStripDropDownButton.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
+            FiletoolStripDropDownButton.ImageTransparentColor = Color.Magenta;
+            FiletoolStripDropDownButton.Name = "FiletoolStripDropDownButton";
+            FiletoolStripDropDownButton.Size = new Size(86, 26);
+            FiletoolStripDropDownButton.Text = "ファイル(&F)";
+            FiletoolStripDropDownButton.ToolTipText = "ファイルメニュー";
+            FiletoolStripDropDownButton.MouseEnter += menuStrip1_MouseEnter;
+            FiletoolStripDropDownButton.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // OpenToolStripMenuItem
+            // 
+            OpenToolStripMenuItem.Name = "OpenToolStripMenuItem";
+            OpenToolStripMenuItem.Size = new Size(256, 26);
+            OpenToolStripMenuItem.Text = "開く(&O)...";
+            OpenToolStripMenuItem.ToolTipText = "PDFファイルを開きます";
+            OpenToolStripMenuItem.Click += OpenToolStripMenuItem_Click;
+            OpenToolStripMenuItem.MouseEnter += menuStrip1_MouseEnter;
+            OpenToolStripMenuItem.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // AcrobatOpenToolStripMenuItem
+            // 
+            AcrobatOpenToolStripMenuItem.Enabled = false;
+            AcrobatOpenToolStripMenuItem.Name = "AcrobatOpenToolStripMenuItem";
+            AcrobatOpenToolStripMenuItem.Size = new Size(256, 26);
+            AcrobatOpenToolStripMenuItem.Text = "既定のPDFアプリで開く(&G)...";
+            AcrobatOpenToolStripMenuItem.ToolTipText = "開いているPDFファイルを既定のアプリで開きます";
+            AcrobatOpenToolStripMenuItem.Click += AcrobatOpenToolStripMenuItem_Click;
+            AcrobatOpenToolStripMenuItem.MouseEnter += menuStrip1_MouseEnter;
+            AcrobatOpenToolStripMenuItem.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // toolStripMenuItem10
+            // 
+            toolStripMenuItem10.Name = "toolStripMenuItem10";
+            toolStripMenuItem10.Size = new Size(253, 6);
+            // 
+            // SaveToolStripMenuItem
+            // 
+            SaveToolStripMenuItem.Enabled = false;
+            SaveToolStripMenuItem.Name = "SaveToolStripMenuItem";
+            SaveToolStripMenuItem.Size = new Size(256, 26);
+            SaveToolStripMenuItem.Text = "上書き保存(&S)";
+            SaveToolStripMenuItem.ToolTipText = "開いているPDFファイルを上書き保存します";
+            SaveToolStripMenuItem.Click += SaveToolStripMenuItem_Click;
+            SaveToolStripMenuItem.MouseEnter += menuStrip1_MouseEnter;
+            SaveToolStripMenuItem.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // SaveAsToolStripMenuItem
+            // 
+            SaveAsToolStripMenuItem.Enabled = false;
+            SaveAsToolStripMenuItem.Name = "SaveAsToolStripMenuItem";
+            SaveAsToolStripMenuItem.Size = new Size(256, 26);
+            SaveAsToolStripMenuItem.Text = "名前を付けて保存(&A)...";
+            SaveAsToolStripMenuItem.ToolTipText = "開いているPDFファイルに名前を付けて保存します";
+            SaveAsToolStripMenuItem.Click += SaveAsToolStripMenuItem_Click;
+            SaveAsToolStripMenuItem.MouseEnter += menuStrip1_MouseEnter;
+            SaveAsToolStripMenuItem.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // toolStripMenuItem9
+            // 
+            toolStripMenuItem9.Name = "toolStripMenuItem9";
+            toolStripMenuItem9.Size = new Size(253, 6);
+            // 
+            // PdfSetToolStripMenuItem
+            // 
+            PdfSetToolStripMenuItem.Enabled = false;
+            PdfSetToolStripMenuItem.Name = "PdfSetToolStripMenuItem";
+            PdfSetToolStripMenuItem.Size = new Size(256, 26);
+            PdfSetToolStripMenuItem.Text = "PDFのプロパティ(&D)...";
+            PdfSetToolStripMenuItem.ToolTipText = "PDFファイルのプロパティを編集します";
+            PdfSetToolStripMenuItem.Click += PdfSetToolStripMenuItem_Click;
+            PdfSetToolStripMenuItem.MouseEnter += menuStrip1_MouseEnter;
+            PdfSetToolStripMenuItem.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // SecurityToolStripMenuItem
+            // 
+            SecurityToolStripMenuItem.Enabled = false;
+            SecurityToolStripMenuItem.Name = "SecurityToolStripMenuItem";
+            SecurityToolStripMenuItem.Size = new Size(256, 26);
+            SecurityToolStripMenuItem.Text = "セキュリティ設定(&T)...";
+            SecurityToolStripMenuItem.ToolTipText = "PDFファイルにセキュリティを設定します";
+            SecurityToolStripMenuItem.Click += SecurityToolStripMenuItem_Click;
+            SecurityToolStripMenuItem.MouseEnter += menuStrip1_MouseEnter;
+            SecurityToolStripMenuItem.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // toolStripMenuItem11
+            // 
+            toolStripMenuItem11.Name = "toolStripMenuItem11";
+            toolStripMenuItem11.Size = new Size(253, 6);
+            // 
+            // XToolStripMenuItem
+            // 
+            XToolStripMenuItem.Name = "XToolStripMenuItem";
+            XToolStripMenuItem.Size = new Size(256, 26);
+            XToolStripMenuItem.Text = "終了(&X)";
+            XToolStripMenuItem.ToolTipText = "ともさんのPDF編集帖を終了します";
+            XToolStripMenuItem.Click += XToolStripMenuItem_Click;
+            XToolStripMenuItem.MouseEnter += menuStrip1_MouseEnter;
+            XToolStripMenuItem.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // HelptoolStripDropDownButton
+            // 
+            HelptoolStripDropDownButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            HelptoolStripDropDownButton.DropDownItems.AddRange(new ToolStripItem[] { UseToolStripMenuItem, VerToolStripMenuItem });
+            HelptoolStripDropDownButton.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
+            HelptoolStripDropDownButton.ImageTransparentColor = Color.Magenta;
+            HelptoolStripDropDownButton.Name = "HelptoolStripDropDownButton";
+            HelptoolStripDropDownButton.Size = new Size(82, 26);
+            HelptoolStripDropDownButton.Text = "ヘルプ(&H)";
+            // 
+            // UseToolStripMenuItem
+            // 
+            UseToolStripMenuItem.Name = "UseToolStripMenuItem";
+            UseToolStripMenuItem.Size = new Size(199, 26);
+            UseToolStripMenuItem.Text = "使い方(&U)...";
+            UseToolStripMenuItem.ToolTipText = "使い方を表示します";
+            UseToolStripMenuItem.Click += UseToolStripMenuItem_Click;
+            UseToolStripMenuItem.MouseEnter += menuStrip1_MouseEnter;
+            UseToolStripMenuItem.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // VerToolStripMenuItem
+            // 
+            VerToolStripMenuItem.Name = "VerToolStripMenuItem";
+            VerToolStripMenuItem.Size = new Size(199, 26);
+            VerToolStripMenuItem.Text = "バージョン情報(&A)...";
+            VerToolStripMenuItem.ToolTipText = "バージョン情報を表示します";
+            VerToolStripMenuItem.Click += VerToolStripMenuItem_Click;
+            VerToolStripMenuItem.MouseEnter += menuStrip1_MouseEnter;
+            VerToolStripMenuItem.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new Size(6, 29);
+            // 
+            // NewPagetoolStripTextBox
+            // 
+            NewPagetoolStripTextBox.Enabled = false;
+            NewPagetoolStripTextBox.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
+            NewPagetoolStripTextBox.Name = "NewPagetoolStripTextBox";
+            NewPagetoolStripTextBox.Size = new Size(100, 29);
+            NewPagetoolStripTextBox.Text = "1";
+            NewPagetoolStripTextBox.TextBoxTextAlign = HorizontalAlignment.Right;
+            NewPagetoolStripTextBox.KeyDown += NewPagetoolStripTextBox_KeyDown;
+            NewPagetoolStripTextBox.Click += NewPagetoolStripTextBox_Click;
+            // 
+            // TotalPagetoolStripLabel
+            // 
+            TotalPagetoolStripLabel.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
+            TotalPagetoolStripLabel.Name = "TotalPagetoolStripLabel";
+            TotalPagetoolStripLabel.Size = new Size(88, 26);
+            TotalPagetoolStripLabel.Text = "/ 総ページ数";
+            // 
+            // toolStripSeparator2
+            // 
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new Size(6, 29);
+            // 
+            // ZoomtoolStripComboBox
+            // 
+            ZoomtoolStripComboBox.Enabled = false;
+            ZoomtoolStripComboBox.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
+            ZoomtoolStripComboBox.Name = "ZoomtoolStripComboBox";
+            ZoomtoolStripComboBox.Size = new Size(121, 29);
+            ZoomtoolStripComboBox.SelectedIndexChanged += ZoomtoolStripComboBox_SelectedIndexChanged;
+            // 
+            // panel4
+            // 
+            panel4.BorderStyle = BorderStyle.FixedSingle;
+            panel4.Controls.Add(label2);
+            panel4.Dock = DockStyle.Top;
+            panel4.Location = new Point(207, 29);
+            panel4.Name = "panel4";
+            panel4.Size = new Size(757, 30);
+            panel4.TabIndex = 7;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(3, 5);
+            label2.Name = "label2";
+            label2.Size = new Size(79, 21);
+            label2.TabIndex = 8;
+            label2.Text = "ビューパネル";
             // 
             // Form1
             // 
@@ -571,77 +558,53 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(964, 414);
             Controls.Add(panel2);
-            Controls.Add(panel3);
+            Controls.Add(panel4);
             Controls.Add(splitter1);
             Controls.Add(panel1);
             Controls.Add(statusStrip1);
-            Controls.Add(menuStrip1);
+            Controls.Add(toolStrip1);
             Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             Icon = (Icon)resources.GetObject("$this.Icon");
-            MainMenuStrip = menuStrip1;
             Name = "Form1";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "ともさんのPDF編集帖";
             FormClosing += Form1_FormClosing;
             Load += Form1_Load;
-            menuStrip1.ResumeLayout(false);
-            menuStrip1.PerformLayout();
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
             panel2.ResumeLayout(false);
-            tabControl1.ResumeLayout(false);
-            tabPage1.ResumeLayout(false);
             contextMenuStrip1.ResumeLayout(false);
-            tabPage2.ResumeLayout(false);
             panel1.ResumeLayout(false);
             panel3.ResumeLayout(false);
             panel3.PerformLayout();
+            toolStrip1.ResumeLayout(false);
+            toolStrip1.PerformLayout();
+            panel4.ResumeLayout(false);
+            panel4.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
-
-        private MenuStrip menuStrip1;
-        private ToolStripMenuItem FileToolStripMenuItem;
-        private ToolStripMenuItem OpenToolStripMenuItem;
         private StatusStrip statusStrip1;
         private Splitter splitter1;
         private Panel panel2;
-        private TabControl tabControl1;
-        private TabPage tabPage1;
-        private TabPage tabPage2;
         private Panel panel1;
         private ToolStripStatusLabel toolStripStatusLabel1;
         private TreeView treeView1;
-        private ToolStripMenuItem HelpToolStripMenuItem;
-        private ToolStripMenuItem UseToolStripMenuItem;
-        private ToolStripMenuItem VerToolStripMenuItem;
         private PdfiumViewer.PdfViewer pdfViewer1;
-        private ToolStripMenuItem SaveToolStripMenuItem;
-        private ToolStripMenuItem SaveAsToolStripMenuItem;
-        private ToolStripMenuItem XToolStripMenuItem;
         private ContextMenuStrip contextMenuStrip1;
         private ToolStripMenuItem AddShioriToolStripMenuItem;
         private ToolStripMenuItem DelShioriToolStripMenuItem;
-        private Panel panel3;
-        private Label TotalPageLabel;
-        private TextBox NowPageTxt;
         private ToolStripSeparator toolStripMenuItem1;
         private ToolStripMenuItem SetShioriToolStripMenuItem;
-        private ListView listView1;
         private ImageList thumbnailImageList;
-        private ToolStripSeparator toolStripMenuItem2;
-        private ToolStripMenuItem PdfSetToolStripMenuItem;
-        private ToolStripSeparator toolStripMenuItem3;
         private ToolStripSeparator toolStripMenuItem4;
         private ToolStripMenuItem ShioriTenkaiToolStripMenuItem;
         private ToolStripMenuItem ShioriSyukusyouToolStripMenuItem;
         private ToolStripMenuItem AllShioriTenkaiToolStripMenuItem;
         private ToolStripMenuItem AllShioriSyukusyouToolStripMenuItem;
         private ToolStripSeparator toolStripMenuItem5;
-        private ComboBox ZoomComboBox;
-        private ToolStripMenuItem SecurityToolStripMenuItem;
         private ToolStripSeparator toolStripMenuItem6;
         private ToolStripMenuItem ShioriProToolStripMenuItem;
         private ToolTip treeToolTip;
@@ -650,7 +613,29 @@
         private ToolStripSeparator toolStripMenuItem7;
         private ToolStripMenuItem AllDelToolStripMenuItem;
         private ToolStripSeparator toolStripMenuItem8;
+        private ToolStrip toolStrip1;
+        private ToolStripDropDownButton FiletoolStripDropDownButton;
+        private ToolStripMenuItem OpenToolStripMenuItem;
+        private ToolStripDropDownButton HelptoolStripDropDownButton;
+        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripTextBox NewPagetoolStripTextBox;
+        private ToolStripLabel TotalPagetoolStripLabel;
+        private ToolStripSeparator toolStripSeparator2;
+        private ToolStripComboBox ZoomtoolStripComboBox;
+        private Panel panel3;
+        private Label label1;
+        private Panel panel4;
+        private Label label2;
         private ToolStripMenuItem AcrobatOpenToolStripMenuItem;
+        private ToolStripSeparator toolStripMenuItem10;
+        private ToolStripMenuItem SaveToolStripMenuItem;
+        private ToolStripMenuItem SaveAsToolStripMenuItem;
         private ToolStripSeparator toolStripMenuItem9;
+        private ToolStripMenuItem PdfSetToolStripMenuItem;
+        private ToolStripMenuItem SecurityToolStripMenuItem;
+        private ToolStripSeparator toolStripMenuItem11;
+        private ToolStripMenuItem XToolStripMenuItem;
+        private ToolStripMenuItem UseToolStripMenuItem;
+        private ToolStripMenuItem VerToolStripMenuItem;
     }
 }
