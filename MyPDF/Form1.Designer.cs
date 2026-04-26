@@ -79,6 +79,16 @@
             TotalPagetoolStripLabel = new ToolStripLabel();
             toolStripSeparator2 = new ToolStripSeparator();
             ZoomtoolStripComboBox = new ToolStripComboBox();
+            toolStripSeparator3 = new ToolStripSeparator();
+            PageRoll = new ToolStripDropDownButton();
+            Left90Roll = new ToolStripMenuItem();
+            Right90Roll = new ToolStripMenuItem();
+            Roll180 = new ToolStripMenuItem();
+            PageSetRoll = new ToolStripMenuItem();
+            PageEdit = new ToolStripDropDownButton();
+            PageInsert = new ToolStripMenuItem();
+            PageExtract = new ToolStripMenuItem();
+            PageDelete = new ToolStripMenuItem();
             panel4 = new Panel();
             label2 = new Label();
             statusStrip1.SuspendLayout();
@@ -345,6 +355,7 @@
             panel3.Name = "panel3";
             panel3.Size = new Size(199, 30);
             panel3.TabIndex = 7;
+            panel3.Tag = "しおりの表示、追加、削除等を行うことができます";
             // 
             // label1
             // 
@@ -353,11 +364,12 @@
             label1.Name = "label1";
             label1.Size = new Size(84, 21);
             label1.TabIndex = 0;
+            label1.Tag = "しおりの表示、追加、削除等を行うことができます";
             label1.Text = "しおりパネル";
             // 
             // toolStrip1
             // 
-            toolStrip1.Items.AddRange(new ToolStripItem[] { FiletoolStripDropDownButton, HelptoolStripDropDownButton, toolStripSeparator1, NewPagetoolStripTextBox, TotalPagetoolStripLabel, toolStripSeparator2, ZoomtoolStripComboBox });
+            toolStrip1.Items.AddRange(new ToolStripItem[] { FiletoolStripDropDownButton, HelptoolStripDropDownButton, toolStripSeparator1, NewPagetoolStripTextBox, TotalPagetoolStripLabel, toolStripSeparator2, ZoomtoolStripComboBox, toolStripSeparator3, PageRoll, PageEdit });
             toolStrip1.Location = new Point(0, 0);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new Size(964, 29);
@@ -476,6 +488,9 @@
             HelptoolStripDropDownButton.Name = "HelptoolStripDropDownButton";
             HelptoolStripDropDownButton.Size = new Size(82, 26);
             HelptoolStripDropDownButton.Text = "ヘルプ(&H)";
+            HelptoolStripDropDownButton.ToolTipText = "ヘルプメニュー";
+            HelptoolStripDropDownButton.MouseEnter += menuStrip1_MouseEnter;
+            HelptoolStripDropDownButton.MouseLeave += menuStrip1_MouseLeave;
             // 
             // UseToolStripMenuItem
             // 
@@ -508,10 +523,14 @@
             NewPagetoolStripTextBox.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             NewPagetoolStripTextBox.Name = "NewPagetoolStripTextBox";
             NewPagetoolStripTextBox.Size = new Size(100, 29);
+            NewPagetoolStripTextBox.Tag = "";
             NewPagetoolStripTextBox.Text = "1";
             NewPagetoolStripTextBox.TextBoxTextAlign = HorizontalAlignment.Right;
+            NewPagetoolStripTextBox.ToolTipText = "特定のページ番号に移動します";
             NewPagetoolStripTextBox.KeyDown += NewPagetoolStripTextBox_KeyDown;
             NewPagetoolStripTextBox.Click += NewPagetoolStripTextBox_Click;
+            NewPagetoolStripTextBox.MouseEnter += menuStrip1_MouseEnter;
+            NewPagetoolStripTextBox.MouseLeave += menuStrip1_MouseLeave;
             // 
             // TotalPagetoolStripLabel
             // 
@@ -519,6 +538,9 @@
             TotalPagetoolStripLabel.Name = "TotalPagetoolStripLabel";
             TotalPagetoolStripLabel.Size = new Size(88, 26);
             TotalPagetoolStripLabel.Text = "/ 総ページ数";
+            TotalPagetoolStripLabel.ToolTipText = "開いているPDFファイルの総ページ数です";
+            TotalPagetoolStripLabel.MouseEnter += menuStrip1_MouseEnter;
+            TotalPagetoolStripLabel.MouseLeave += menuStrip1_MouseLeave;
             // 
             // toolStripSeparator2
             // 
@@ -527,11 +549,113 @@
             // 
             // ZoomtoolStripComboBox
             // 
+            ZoomtoolStripComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             ZoomtoolStripComboBox.Enabled = false;
             ZoomtoolStripComboBox.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             ZoomtoolStripComboBox.Name = "ZoomtoolStripComboBox";
-            ZoomtoolStripComboBox.Size = new Size(121, 29);
+            ZoomtoolStripComboBox.Size = new Size(150, 29);
+            ZoomtoolStripComboBox.ToolTipText = "開いているPDFファイルの表示方法を選択します";
             ZoomtoolStripComboBox.SelectedIndexChanged += ZoomtoolStripComboBox_SelectedIndexChanged;
+            ZoomtoolStripComboBox.MouseEnter += menuStrip1_MouseEnter;
+            ZoomtoolStripComboBox.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // toolStripSeparator3
+            // 
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new Size(6, 29);
+            // 
+            // PageRoll
+            // 
+            PageRoll.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            PageRoll.DropDownItems.AddRange(new ToolStripItem[] { Left90Roll, Right90Roll, Roll180, PageSetRoll });
+            PageRoll.Enabled = false;
+            PageRoll.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
+            PageRoll.Image = (Image)resources.GetObject("PageRoll.Image");
+            PageRoll.ImageTransparentColor = Color.Magenta;
+            PageRoll.Name = "PageRoll";
+            PageRoll.Size = new Size(91, 26);
+            PageRoll.Text = "ページ回転";
+            PageRoll.ToolTipText = "ページ回転方法を指定します";
+            PageRoll.MouseEnter += menuStrip1_MouseEnter;
+            PageRoll.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // Left90Roll
+            // 
+            Left90Roll.Name = "Left90Roll";
+            Left90Roll.Size = new Size(244, 26);
+            Left90Roll.Text = "左へ90°回転";
+            Left90Roll.ToolTipText = "表示しているページを左へ90°回転します";
+            Left90Roll.Click += Left90Roll_Click;
+            Left90Roll.MouseEnter += menuStrip1_MouseEnter;
+            Left90Roll.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // Right90Roll
+            // 
+            Right90Roll.Name = "Right90Roll";
+            Right90Roll.Size = new Size(244, 26);
+            Right90Roll.Text = "右へ90°回転";
+            Right90Roll.ToolTipText = "表示しているページを右へ90°回転します";
+            Right90Roll.Click += Right90Roll_Click;
+            Right90Roll.MouseEnter += menuStrip1_MouseEnter;
+            Right90Roll.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // Roll180
+            // 
+            Roll180.Name = "Roll180";
+            Roll180.Size = new Size(244, 26);
+            Roll180.Text = "180°回転";
+            Roll180.ToolTipText = "表示しているページを180°回転します";
+            Roll180.Click += Roll180_Click;
+            Roll180.MouseEnter += menuStrip1_MouseEnter;
+            Roll180.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // PageSetRoll
+            // 
+            PageSetRoll.Name = "PageSetRoll";
+            PageSetRoll.Size = new Size(244, 26);
+            PageSetRoll.Text = "ページを指定して回転(&R)...";
+            PageSetRoll.ToolTipText = "ページと回転方法を指定してページを回転します";
+            PageSetRoll.Click += PageSetRoll_Click;
+            PageSetRoll.MouseEnter += menuStrip1_MouseEnter;
+            PageSetRoll.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // PageEdit
+            // 
+            PageEdit.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            PageEdit.DropDownItems.AddRange(new ToolStripItem[] { PageInsert, PageExtract, PageDelete });
+            PageEdit.Enabled = false;
+            PageEdit.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
+            PageEdit.Image = (Image)resources.GetObject("PageEdit.Image");
+            PageEdit.ImageTransparentColor = Color.Magenta;
+            PageEdit.Name = "PageEdit";
+            PageEdit.Size = new Size(91, 26);
+            PageEdit.Text = "ページ編集";
+            PageEdit.MouseEnter += menuStrip1_MouseEnter;
+            PageEdit.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // PageInsert
+            // 
+            PageInsert.Name = "PageInsert";
+            PageInsert.Size = new Size(112, 26);
+            PageInsert.Text = "挿入";
+            PageInsert.MouseEnter += menuStrip1_MouseEnter;
+            PageInsert.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // PageExtract
+            // 
+            PageExtract.Name = "PageExtract";
+            PageExtract.Size = new Size(112, 26);
+            PageExtract.Text = "抽出";
+            PageExtract.MouseEnter += menuStrip1_MouseEnter;
+            PageExtract.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // PageDelete
+            // 
+            PageDelete.Name = "PageDelete";
+            PageDelete.Size = new Size(112, 26);
+            PageDelete.Text = "削除";
+            PageDelete.MouseEnter += menuStrip1_MouseEnter;
+            PageDelete.MouseLeave += menuStrip1_MouseLeave;
             // 
             // panel4
             // 
@@ -542,6 +666,7 @@
             panel4.Name = "panel4";
             panel4.Size = new Size(757, 30);
             panel4.TabIndex = 7;
+            panel4.Tag = "PDFファイルを表示します";
             // 
             // label2
             // 
@@ -550,6 +675,7 @@
             label2.Name = "label2";
             label2.Size = new Size(79, 21);
             label2.TabIndex = 8;
+            label2.Tag = "PDFファイルを表示します";
             label2.Text = "ビューパネル";
             // 
             // Form1
@@ -637,5 +763,15 @@
         private ToolStripMenuItem XToolStripMenuItem;
         private ToolStripMenuItem UseToolStripMenuItem;
         private ToolStripMenuItem VerToolStripMenuItem;
+        private ToolStripDropDownButton PageRoll;
+        private ToolStripMenuItem Left90Roll;
+        private ToolStripMenuItem Right90Roll;
+        private ToolStripMenuItem Roll180;
+        private ToolStripDropDownButton PageEdit;
+        private ToolStripMenuItem PageInsert;
+        private ToolStripMenuItem PageExtract;
+        private ToolStripMenuItem PageDelete;
+        private ToolStripSeparator toolStripSeparator3;
+        private ToolStripMenuItem PageSetRoll;
     }
 }

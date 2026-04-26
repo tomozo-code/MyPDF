@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form4));
             panel3 = new Panel();
             txtUserPassConfirm = new TextBox();
@@ -56,9 +57,13 @@
             btnCancel = new Button();
             btnOK = new Button();
             checkBox2 = new CheckBox();
+            statusStrip1 = new StatusStrip();
+            toolStripStatusLabel1 = new ToolStripStatusLabel();
+            toolTip1 = new ToolTip(components);
             panel3.SuspendLayout();
             panel2.SuspendLayout();
             panel1.SuspendLayout();
+            statusStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // panel3
@@ -81,6 +86,7 @@
             txtUserPassConfirm.Name = "txtUserPassConfirm";
             txtUserPassConfirm.Size = new Size(300, 29);
             txtUserPassConfirm.TabIndex = 12;
+            txtUserPassConfirm.Tag = "確認のため、閲覧パスワードと同じパスワードを入力します";
             txtUserPassConfirm.TextChanged += UserPass_TextChanged;
             // 
             // txtUserPass
@@ -91,6 +97,7 @@
             txtUserPass.Name = "txtUserPass";
             txtUserPass.Size = new Size(300, 29);
             txtUserPass.TabIndex = 11;
+            txtUserPass.Tag = "閲覧パスワードを設定し、PDFファイルを保護します";
             txtUserPass.TextChanged += UserPass_TextChanged;
             // 
             // label2
@@ -147,6 +154,7 @@
             txtOwnerPass.Name = "txtOwnerPass";
             txtOwnerPass.Size = new Size(300, 29);
             txtOwnerPass.TabIndex = 2;
+            txtOwnerPass.Tag = "権限パスワードを設定し、PDFファイルを保護します";
             txtOwnerPass.TextChanged += OwnerPass_TextChanged;
             // 
             // label1
@@ -166,6 +174,7 @@
             txtOwnerPassConfirm.Name = "txtOwnerPassConfirm";
             txtOwnerPassConfirm.Size = new Size(300, 29);
             txtOwnerPassConfirm.TabIndex = 3;
+            txtOwnerPassConfirm.Tag = "確認のため、権限パスワードと同じパスワードを入力します";
             txtOwnerPassConfirm.TextChanged += OwnerPass_TextChanged;
             // 
             // label4
@@ -175,6 +184,7 @@
             label4.Name = "label4";
             label4.Size = new Size(115, 21);
             label4.TabIndex = 11;
+            label4.Tag = "許可する項目にチェックします";
             label4.Text = "許可する項目：";
             // 
             // chkAnnot
@@ -185,6 +195,7 @@
             chkAnnot.Name = "chkAnnot";
             chkAnnot.Size = new Size(93, 25);
             chkAnnot.TabIndex = 7;
+            chkAnnot.Tag = "注釈追加を許可します";
             chkAnnot.Text = "注釈追加";
             chkAnnot.UseVisualStyleBackColor = true;
             // 
@@ -198,6 +209,7 @@
             chkPrint.Name = "chkPrint";
             chkPrint.Size = new Size(61, 25);
             chkPrint.TabIndex = 4;
+            chkPrint.Tag = "印刷を許可します";
             chkPrint.Text = "印刷";
             chkPrint.UseVisualStyleBackColor = true;
             // 
@@ -209,6 +221,7 @@
             chkCopy.Name = "chkCopy";
             chkCopy.Size = new Size(161, 25);
             chkCopy.TabIndex = 5;
+            chkCopy.Tag = "テキスト・画像のコピーを許可します";
             chkCopy.Text = "テキスト・画像のコピー";
             chkCopy.UseVisualStyleBackColor = true;
             // 
@@ -220,6 +233,7 @@
             chkForm.Name = "chkForm";
             chkForm.Size = new Size(105, 25);
             chkForm.TabIndex = 8;
+            chkForm.Tag = "フォーム入力を許可します";
             chkForm.Text = "フォーム入力";
             chkForm.UseVisualStyleBackColor = true;
             // 
@@ -231,6 +245,7 @@
             chkExtract.Name = "chkExtract";
             chkExtract.Size = new Size(106, 25);
             chkExtract.TabIndex = 9;
+            chkExtract.Tag = "内容の抽出を許可します";
             chkExtract.Text = "内容の抽出";
             chkExtract.UseVisualStyleBackColor = true;
             // 
@@ -242,6 +257,7 @@
             chkEdit.Name = "chkEdit";
             chkEdit.Size = new Size(190, 25);
             chkEdit.TabIndex = 6;
+            chkEdit.Tag = "ページの挿入・削除・回転を許可します";
             chkEdit.Text = "ページの挿入・削除・回転";
             chkEdit.UseVisualStyleBackColor = true;
             // 
@@ -252,6 +268,7 @@
             rbRC4.Name = "rbRC4";
             rbRC4.Size = new Size(132, 25);
             rbRC4.TabIndex = 15;
+            rbRC4.Tag = "互換性重視(脆弱性が見つかっているため非推奨)";
             rbRC4.Text = "RC4-128(互換)";
             rbRC4.UseVisualStyleBackColor = true;
             // 
@@ -262,6 +279,7 @@
             rbAES128.Name = "rbAES128";
             rbAES128.Size = new Size(88, 25);
             rbAES128.TabIndex = 14;
+            rbAES128.Tag = "鍵長128bitの暗号方式で保護します";
             rbAES128.Text = "AES-128";
             rbAES128.UseVisualStyleBackColor = true;
             // 
@@ -274,6 +292,7 @@
             rbAES256.Size = new Size(130, 25);
             rbAES256.TabIndex = 13;
             rbAES256.TabStop = true;
+            rbAES256.Tag = "鍵長256bitの暗号方式で保護します(推奨)";
             rbAES256.Text = "AES-256(推奨)";
             rbAES256.UseVisualStyleBackColor = true;
             // 
@@ -293,6 +312,7 @@
             label3.Name = "label3";
             label3.Size = new Size(90, 21);
             label3.TabIndex = 5;
+            label3.Tag = "PDFファイルを保護する暗号方式を指定します";
             label3.Text = "暗号方式：";
             // 
             // checkBox1
@@ -302,6 +322,7 @@
             checkBox1.Name = "checkBox1";
             checkBox1.Size = new Size(172, 25);
             checkBox1.TabIndex = 1;
+            checkBox1.Tag = "PDFファイルをパスワードで保護します";
             checkBox1.Text = "PDFをパスワードで保護";
             checkBox1.UseVisualStyleBackColor = true;
             checkBox1.CheckedChanged += checkBox1_CheckedChanged;
@@ -311,9 +332,9 @@
             panel1.Controls.Add(btnCancel);
             panel1.Controls.Add(btnOK);
             panel1.Dock = DockStyle.Bottom;
-            panel1.Location = new Point(0, 563);
+            panel1.Location = new Point(0, 455);
             panel1.Name = "panel1";
-            panel1.Size = new Size(980, 50);
+            panel1.Size = new Size(543, 50);
             panel1.TabIndex = 2;
             // 
             // btnCancel
@@ -322,6 +343,7 @@
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(100, 32);
             btnCancel.TabIndex = 16;
+            btnCancel.Tag = "編集を中止してウィンドウを閉じます";
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
             btnCancel.Click += btnCancel_Click;
@@ -332,6 +354,7 @@
             btnOK.Name = "btnOK";
             btnOK.Size = new Size(100, 32);
             btnOK.TabIndex = 17;
+            btnOK.Tag = "保護設定を確定しウィンドウを閉じます";
             btnOK.Text = "OK";
             btnOK.UseVisualStyleBackColor = true;
             btnOK.Click += btnOK_Click;
@@ -343,15 +366,33 @@
             checkBox2.Name = "checkBox2";
             checkBox2.Size = new Size(193, 25);
             checkBox2.TabIndex = 10;
+            checkBox2.Tag = "開くときのパスワードを設定します";
             checkBox2.Text = "開くときのパスワードを設定";
             checkBox2.UseVisualStyleBackColor = true;
             checkBox2.CheckedChanged += checkBox2_CheckedChanged;
+            // 
+            // statusStrip1
+            // 
+            statusStrip1.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
+            statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
+            statusStrip1.Location = new Point(0, 505);
+            statusStrip1.Name = "statusStrip1";
+            statusStrip1.Size = new Size(543, 26);
+            statusStrip1.SizingGrip = false;
+            statusStrip1.TabIndex = 25;
+            statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            toolStripStatusLabel1.Size = new Size(242, 21);
+            toolStripStatusLabel1.Text = "PDFファイルにセキュリティを設定します";
             // 
             // Form4
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(980, 613);
+            ClientSize = new Size(543, 531);
             Controls.Add(checkBox2);
             Controls.Add(checkBox1);
             Controls.Add(panel3);
@@ -362,6 +403,7 @@
             Controls.Add(rbAES256);
             Controls.Add(label3);
             Controls.Add(label5);
+            Controls.Add(statusStrip1);
             Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -377,6 +419,8 @@
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
             panel1.ResumeLayout(false);
+            statusStrip1.ResumeLayout(false);
+            statusStrip1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -409,5 +453,8 @@
         private Panel panel2;
         private Panel panel3;
         private CheckBox checkBox2;
+        private StatusStrip statusStrip1;
+        private ToolTip toolTip1;
+        private ToolStripStatusLabel toolStripStatusLabel1;
     }
 }

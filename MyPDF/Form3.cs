@@ -25,6 +25,13 @@ namespace MyPDF
             this.Width = 400;
             this.Height = 200;
 
+            // PDF変換用TextBox
+            LicenseTxtBox.ReadOnly = true;
+            LicenseTxtBox.BorderStyle = BorderStyle.FixedSingle;
+            LicenseTxtBox.BackColor = this.BackColor;
+            LicenseTxtBox.TabStop = false;
+
+
 
         }
 

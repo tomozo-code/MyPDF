@@ -19,17 +19,18 @@ namespace MyPDF
 {
     public partial class Form2 : Form
     {
-        public PdfSettings Settings { get; private set; }
+        // ツールチップに表示するヒント文字列
+        private string? toolHintTxt = null;
 
-        //private string pdfPath = "";
+        public PdfSettings Settings { get; private set; }
 
         public Form2(PdfSettings settings)
         {
             InitializeComponent();
-            
+
             // フォームサイズ
-            this.Width = 800;
-            this.Height = 500;
+            this.Width = 600;
+            this.Height = 580;
 
             // コピー（参照渡し事故防止）
             Settings = new PdfSettings
@@ -56,13 +57,79 @@ namespace MyPDF
                 Creator = settings.Creator,
                 Producer = settings.Producer
             };
-                                    
+
+            // PDF変換用TextBox
+            PdfConvertLabel.ReadOnly = true;
+            PdfConvertLabel.BorderStyle = BorderStyle.None;
+            PdfConvertLabel.BackColor = this.BackColor;
+            PdfConvertLabel.TabStop = false;
+
+            // 作成日用TextBox
+            CreationDateLabel.ReadOnly = true;
+            CreationDateLabel.BorderStyle = BorderStyle.None;
+            CreationDateLabel.BackColor = this.BackColor;
+            CreationDateLabel.TabStop = false;
+
+            // 更新日用TextBox
+            ModDateLabel.ReadOnly = true;
+            ModDateLabel.BorderStyle = BorderStyle.None;
+            ModDateLabel.BackColor = this.BackColor;
+            ModDateLabel.TabStop = false;
+
+            // アプリケーションを表示用TextBox
+            CreatorLabel.ReadOnly = true;
+            CreatorLabel.BorderStyle = BorderStyle.None;
+            CreatorLabel.BackColor = this.BackColor;
+            CreatorLabel.TabStop = false;
+
+            // PDFのバージョンを表示用TextBox
+            PdfVerLabel.ReadOnly = true;
+            PdfVerLabel.BorderStyle = BorderStyle.None;
+            PdfVerLabel.BackColor = this.BackColor;
+            PdfVerLabel.TabStop = false;
+
+            // 場所を表示用TextBox
+            PasLabel.ReadOnly = true;
+            PasLabel.BorderStyle = BorderStyle.None;
+            PasLabel.BackColor = this.BackColor;
+            PasLabel.TabStop = false;
+
+            // ファイルサイズを表示(MB / バイト)用TextBox
+            FileSizeLabel.ReadOnly = true;
+            FileSizeLabel.BorderStyle = BorderStyle.None;
+            FileSizeLabel.BackColor = this.BackColor;
+            FileSizeLabel.TabStop = false;
+
+            // ページサイズを表示(B x H mm)用TextBox
+            PageSizeLabel.ReadOnly = true;
+            PageSizeLabel.BorderStyle = BorderStyle.None;
+            PageSizeLabel.BackColor = this.BackColor;
+            PageSizeLabel.TabStop = false;
+
+            toolHintTxt = "PDFのプロパティを設定します";
+
+            toolTip1.InitialDelay = 500;   // 表示までの時間(ms)
+            toolTip1.AutoPopDelay = 5000;  // 表示時間
+            toolTip1.ReshowDelay = 100;    // 次の表示まで
+
+
             // コンボボックスの初期設定
             InitComboBoxes();
             // UIに反映
             LoadToUI();
 
         }
+
+        // ==============================
+        // フォームをロードしたとき
+        // ==============================
+        private void Form2_Load(object sender, EventArgs e)
+        {
+            // ツールチップ設定(通常コントロール用:Tagに表示させたい内容を書く)
+            SetTooltipAll(this);
+
+        }
+
 
         // ==============================
         // 読み込んだPDFプロパティをUIに反映(概要)
@@ -182,12 +249,12 @@ namespace MyPDF
                     break;
 
                 case "見開きページ":
-                //case "連続見開きページ":
+                    //case "連続見開きページ":
                     Settings.PageLayout = "TwoColumnLeft";
                     break;
 
                 case "見開きページ(表紙)":
-                //case "連続見開きページ(表紙)":
+                    //case "連続見開きページ(表紙)":
                     Settings.PageLayout = "TwoPageLeft";
                     break;
 
@@ -347,6 +414,50 @@ namespace MyPDF
                         combo.SelectedItem = item;
                         return;
                     }
+                }
+            }
+        }
+
+        // ==============================
+        // マウスONで説明(通常コントロール) Tagに書く 
+        // ==============================
+        private void Control_MouseEnter(object? sender, EventArgs e)
+        {
+            if (sender is Control ctrl)
+            {
+                toolStripStatusLabel1.Text = ctrl.Tag?.ToString() ?? "";
+            }
+        }
+
+        // ==============================
+        // マウス離脱(通常コントロール)
+        // ==============================
+        private void Control_MouseLeave(object? sender, EventArgs e)
+        {
+            // 戻す
+            toolStripStatusLabel1.Text = toolHintTxt;
+        }
+
+        // ==============================
+        // マウスONで説明の実行(通常コントロール) Tagに書いたもの 
+        // ==============================
+        private void SetTooltipAll(Control parent)
+        {
+            foreach (Control ctrl in parent.Controls)
+            {
+                if (ctrl.Tag != null)
+                {
+                    // ツールバーにヒント
+                    ctrl.MouseEnter += Control_MouseEnter;
+                    ctrl.MouseLeave += Control_MouseLeave;
+                    // ツールチップにもヒント
+                    toolTip1.SetToolTip(ctrl, ctrl.Tag.ToString());
+                }
+
+                // 子コントロールも再帰
+                if (ctrl.HasChildren)
+                {
+                    SetTooltipAll(ctrl);
                 }
             }
         }

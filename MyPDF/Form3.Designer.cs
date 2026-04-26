@@ -34,16 +34,16 @@
             labelVersion = new Label();
             labelCopyright = new Label();
             pictureBox1 = new PictureBox();
-            label1 = new Label();
+            LicenseTxtBox = new TextBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
             // button1
             // 
-            button1.Location = new Point(171, 406);
+            button1.Location = new Point(354, 44);
             button1.Name = "button1";
             button1.Size = new Size(100, 30);
-            button1.TabIndex = 0;
+            button1.TabIndex = 1;
             button1.Text = "OK";
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
@@ -85,26 +85,26 @@
             pictureBox1.TabIndex = 4;
             pictureBox1.TabStop = false;
             // 
-            // label1
+            // LicenseTxtBox
             // 
-            label1.AutoSize = true;
-            label1.Location = new Point(12, 141);
-            label1.Name = "label1";
-            label1.Size = new Size(461, 252);
-            label1.TabIndex = 5;
-            label1.Text = resources.GetString("label1.Text");
+            LicenseTxtBox.Location = new Point(3, 132);
+            LicenseTxtBox.Multiline = true;
+            LicenseTxtBox.Name = "LicenseTxtBox";
+            LicenseTxtBox.Size = new Size(484, 181);
+            LicenseTxtBox.TabIndex = 6;
+            LicenseTxtBox.Text = resources.GetString("LicenseTxtBox.Text");
             // 
             // Form3
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(676, 560);
+            Controls.Add(button1);
+            Controls.Add(LicenseTxtBox);
             Controls.Add(pictureBox1);
             Controls.Add(labelCopyright);
             Controls.Add(labelVersion);
             Controls.Add(labelTitle);
-            Controls.Add(button1);
-            Controls.Add(label1);
             Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
@@ -126,6 +126,6 @@
         private Label labelVersion;
         private Label labelCopyright;
         private PictureBox pictureBox1;
-        private Label label1;
+        private TextBox LicenseTxtBox;
     }
 }
