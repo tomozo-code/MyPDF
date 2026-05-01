@@ -41,6 +41,7 @@
             CancelBtn = new Button();
             OkBtn = new Button();
             toolTip1 = new ToolTip(components);
+            TotalPage = new Label();
             statusStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -66,39 +67,39 @@
             label1.AutoSize = true;
             label1.Location = new Point(12, 17);
             label1.Name = "label1";
-            label1.Size = new Size(126, 21);
+            label1.Size = new Size(94, 21);
             label1.TabIndex = 1;
-            label1.Text = "開始ページ番号：";
+            label1.Text = "開始ページ：";
             // 
             // label2
             // 
             label2.AutoSize = true;
             label2.Location = new Point(12, 54);
             label2.Name = "label2";
-            label2.Size = new Size(126, 21);
+            label2.Size = new Size(94, 21);
             label2.TabIndex = 2;
-            label2.Text = "終了ページ番号：";
+            label2.Text = "終了ページ：";
             // 
             // StartRollTxt
             // 
-            StartRollTxt.Location = new Point(144, 14);
+            StartRollTxt.Location = new Point(99, 14);
             StartRollTxt.Name = "StartRollTxt";
-            StartRollTxt.Size = new Size(130, 29);
+            StartRollTxt.Size = new Size(80, 29);
             StartRollTxt.TabIndex = 1;
             StartRollTxt.Tag = "開始ページを指定します";
             // 
             // EndRollTxt
             // 
-            EndRollTxt.Location = new Point(144, 51);
+            EndRollTxt.Location = new Point(99, 51);
             EndRollTxt.Name = "EndRollTxt";
-            EndRollTxt.Size = new Size(130, 29);
+            EndRollTxt.Size = new Size(80, 29);
             EndRollTxt.TabIndex = 2;
             EndRollTxt.Tag = "終了ページを指定します";
             // 
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(48, 94);
+            label3.Location = new Point(16, 94);
             label3.Name = "label3";
             label3.Size = new Size(90, 21);
             label3.TabIndex = 5;
@@ -108,7 +109,7 @@
             // 
             RollSelect.DropDownStyle = ComboBoxStyle.DropDownList;
             RollSelect.FormattingEnabled = true;
-            RollSelect.Location = new Point(144, 91);
+            RollSelect.Location = new Point(99, 91);
             RollSelect.Name = "RollSelect";
             RollSelect.Size = new Size(130, 29);
             RollSelect.TabIndex = 3;
@@ -136,11 +137,21 @@
             OkBtn.UseVisualStyleBackColor = true;
             OkBtn.Click += OkBtn_Click;
             // 
+            // TotalPage
+            // 
+            TotalPage.AutoSize = true;
+            TotalPage.Location = new Point(185, 54);
+            TotalPage.Name = "TotalPage";
+            TotalPage.Size = new Size(72, 21);
+            TotalPage.TabIndex = 6;
+            TotalPage.Text = "/ 総ページ";
+            // 
             // Form7
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(284, 235);
+            Controls.Add(TotalPage);
             Controls.Add(CancelBtn);
             Controls.Add(OkBtn);
             Controls.Add(RollSelect);
@@ -178,5 +189,6 @@
         private Button OkBtn;
         private ToolStripStatusLabel toolStripStatusLabel1;
         private ToolTip toolTip1;
+        private Label TotalPage;
     }
 }

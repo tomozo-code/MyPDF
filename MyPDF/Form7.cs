@@ -46,6 +46,9 @@ namespace MyPDF
             // 終了ページ初期値
             EndRollTxt.Text = maxPage.ToString();
 
+            // 総ページ
+            TotalPage.Text = "/ " + maxPage.ToString();
+
 
             // コンボボックス初期化
             RollSelect.Items.AddRange(new string[]
