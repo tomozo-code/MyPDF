@@ -122,8 +122,8 @@ namespace MyPDF
             treeView1.ShowLines = false;
 
             // エラー表示用
-            //Extxt.Visible = true;
-            //Extxt.Dock = DockStyle.Top;
+            Extxt.Visible = true;
+            Extxt.Dock = DockStyle.Top;
 
         }
 
@@ -547,15 +547,13 @@ namespace MyPDF
                 var info = pdf.GetDocumentInfo();
 
                 // pdfViewerのページ数取得
-                //int pageCount = pdf.GetNumberOfPages();
-
                 int pageCount = pdfViewer1.Document.PageCount;
+                // 総ページ数をデータへ
+                settings.TotalPage = pageCount;
 
                 // ステータスバーにファイル名(元ファイル)と総ページ数
                 UpdateStatus(originalPath, pageCount);
 
-                // 総ページ数
-                settings.TotalPage = pageCount;
 
                 // ファイルサイズ
                 var fi = new FileInfo(path);
@@ -3551,7 +3549,151 @@ namespace MyPDF
         // ==============================
         private void PageInsert_Click(object sender, EventArgs e)
         {
+            if (pdfViewer1.Document == null) return;
 
+            if (currentSettings == null)
+            {
+                MessageBox.Show("PDFが開かれていません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                using (OpenFileDialog ofd = new OpenFileDialog())
+                {
+                    ofd.Title = "挿入するPDFを選択";
+                    ofd.Filter = "PDFファイル (*.pdf)|*.pdf";
+
+                    if (ofd.ShowDialog() != DialogResult.OK)
+                        return;
+
+                    string insertPath = ofd.FileName;
+
+                    // 挿入位置（今見てるページを取得）
+                    int insertPage = pdfViewer1.Renderer.Page + 1;
+
+
+                    // Form10起動
+                    using (var f = new Form10(insertPath, insertPage, currentSettings.TotalPage))
+                    {
+                        if (f.ShowDialog() == DialogResult.OK)
+                        {
+
+                            //ExtractPages(f.StartPage, f.EndPage);
+                            InsertPdf(insertPath, f.TargetPage, f.InsertBefore);
+                        }
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Extxt.Text = ex.ToString();
+                MessageBox.Show("挿入エラー:\n" + ex.ToString());
+            }
+        }
+
+        // ==============================
+        // PDF挿入処理（パスなし版）
+        // ==============================
+        private void InsertPdf(string insertPath, int targetPage, bool insertBefore)
+        {
+            string tempPath = workingPath + ".tmp";
+
+            try
+            {
+                // Viewer解放
+                if (pdfViewer1.Document != null)
+                {
+                    pdfViewer1.Document.Dispose();
+                    pdfViewer1.Document = null;
+                }
+
+                //Application.DoEvents();
+
+                int insertPage;
+                int insertCount;
+
+                using (var mainReader = new PdfReader(workingPath))
+                using (var insertReader = new PdfReader(insertPath))
+                using (var writer = new PdfWriter(tempPath))
+                using (var mainPdf = new ITextDoc(mainReader, writer))
+                using (var insertPdf = new ITextDoc(insertReader))
+                {
+                    int total = mainPdf.GetNumberOfPages();
+
+                    // 挿入位置決定
+                    insertPage = insertBefore
+                        ? targetPage
+                        : targetPage + 1;
+
+                    // 補正
+                    insertPage = Math.Max(1, Math.Min(insertPage, total + 1));
+
+                    insertCount = insertPdf.GetNumberOfPages();
+
+                    insertPdf.CopyPagesTo(
+                        1,
+                        insertCount,
+                        mainPdf,
+                        insertPage
+                    );
+                }
+
+                // しおり補正
+                FixBookmarksForInsert(insertPage, insertCount);
+
+                // 上書き
+                File.Delete(workingPath);
+                File.Move(tempPath, workingPath);
+
+                // 再表示
+                var doc = PdfiumDoc.Load(workingPath);
+                pdfViewer1.Document = doc;
+
+                // 保存との整合性 作業用ファイルのデータを入れる
+                currentSettings = LoadPdfSettings(workingPath, currentPassword);
+
+                // フラグ
+                isDirty = true;
+            }
+            catch (Exception ex)
+            {
+                Extxt.Text = ex.ToString();
+                MessageBox.Show("挿入エラー:\n" + ex.ToString());
+            }
+        }
+
+        // ==============================
+        // しおりページ補正（挿入用）1
+        // ==============================
+        private void FixBookmarksForInsert(int insertPage, int insertCount)
+        {
+            foreach (TreeNode node in treeView1.Nodes)
+            {
+                FixNode(node, insertPage, insertCount);
+            }
+        }
+
+        // ==============================
+        // しおりページ補正（挿入用）2
+        // ==============================
+        private void FixNode(TreeNode node, int insertPage, int insertCount)
+        {
+            if (node.Tag is BookmarkInfo info)
+            {
+                // 挿入位置以降はズラす
+                if (info.Page >= insertPage)
+                {
+                    info.Page += insertCount;
+                }
+            }
+
+            // 子ノード再帰
+            foreach (TreeNode child in node.Nodes)
+            {
+                FixNode(child, insertPage, insertCount);
+            }
         }
     }
 }

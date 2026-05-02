@@ -857,7 +857,6 @@
         private ToolStripSeparator toolStripMenuItem2;
         private ToolStripSeparator toolStripMenuItem3;
         private ToolStripSeparator toolStripMenuItem12;
-        private ToolStripMenuItem AllShioriSyukusyouMenu;
         private ToolStripDropDownButton ShioriMenu;
     }
 }

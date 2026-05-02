@@ -16,7 +16,7 @@ namespace MyPDF
     {
         private string? toolHintTxt = null;
 
-        // 削除設定（外から取得用）
+        // 抽出設定（外から取得用）
         public int StartPage { get; private set; }
         public int EndPage { get; private set; }
         // 総ページ数
