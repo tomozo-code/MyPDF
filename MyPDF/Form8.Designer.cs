@@ -48,7 +48,7 @@
             CancelBtn.Location = new Point(143, 94);
             CancelBtn.Name = "CancelBtn";
             CancelBtn.Size = new Size(112, 35);
-            CancelBtn.TabIndex = 12;
+            CancelBtn.TabIndex = 4;
             CancelBtn.Tag = "中止してウィンドウを閉じます";
             CancelBtn.Text = "Cancel";
             CancelBtn.UseVisualStyleBackColor = true;
@@ -59,7 +59,7 @@
             OkBtn.Location = new Point(24, 94);
             OkBtn.Name = "OkBtn";
             OkBtn.Size = new Size(112, 35);
-            OkBtn.TabIndex = 11;
+            OkBtn.TabIndex = 3;
             OkBtn.Tag = "ページ指定を確定し削除を実行します";
             OkBtn.Text = "OK";
             OkBtn.UseVisualStyleBackColor = true;
@@ -70,7 +70,7 @@
             EndDelTxt.Location = new Point(99, 49);
             EndDelTxt.Name = "EndDelTxt";
             EndDelTxt.Size = new Size(80, 29);
-            EndDelTxt.TabIndex = 9;
+            EndDelTxt.TabIndex = 2;
             EndDelTxt.Tag = "終了ページを指定します";
             // 
             // StartDelTxt
@@ -78,7 +78,7 @@
             StartDelTxt.Location = new Point(99, 8);
             StartDelTxt.Name = "StartDelTxt";
             StartDelTxt.Size = new Size(80, 29);
-            StartDelTxt.TabIndex = 7;
+            StartDelTxt.TabIndex = 1;
             StartDelTxt.Tag = "開始ページを指定します";
             // 
             // label2

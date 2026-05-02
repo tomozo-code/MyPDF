@@ -74,7 +74,7 @@
             CancelBtn.Location = new Point(145, 92);
             CancelBtn.Name = "CancelBtn";
             CancelBtn.Size = new Size(112, 35);
-            CancelBtn.TabIndex = 19;
+            CancelBtn.TabIndex = 4;
             CancelBtn.Tag = "中止してウィンドウを閉じます";
             CancelBtn.Text = "Cancel";
             CancelBtn.UseVisualStyleBackColor = true;
@@ -85,8 +85,8 @@
             OkBtn.Location = new Point(26, 92);
             OkBtn.Name = "OkBtn";
             OkBtn.Size = new Size(112, 35);
-            OkBtn.TabIndex = 18;
-            OkBtn.Tag = "ページ指定を確定し削除を実行します";
+            OkBtn.TabIndex = 3;
+            OkBtn.Tag = "ページ指定を確定し抽出を実行します";
             OkBtn.Text = "OK";
             OkBtn.UseVisualStyleBackColor = true;
             OkBtn.Click += OkBtn_Click;
@@ -96,7 +96,7 @@
             StartExtractTxt.Location = new Point(101, 6);
             StartExtractTxt.Name = "StartExtractTxt";
             StartExtractTxt.Size = new Size(80, 29);
-            StartExtractTxt.TabIndex = 14;
+            StartExtractTxt.TabIndex = 1;
             StartExtractTxt.Tag = "開始ページを指定します";
             // 
             // label2
@@ -122,7 +122,7 @@
             EndExtractTxt.Location = new Point(101, 47);
             EndExtractTxt.Name = "EndExtractTxt";
             EndExtractTxt.Size = new Size(80, 29);
-            EndExtractTxt.TabIndex = 14;
+            EndExtractTxt.TabIndex = 2;
             EndExtractTxt.Tag = "終了ページを指定します";
             // 
             // Form9

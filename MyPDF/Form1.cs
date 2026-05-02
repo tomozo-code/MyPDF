@@ -12,7 +12,7 @@ using System.Buffers;
 using System.Diagnostics;
 using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+//using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using DrawingColor = System.Drawing.Color;
 using IOPath = System.IO.Path;
 using ITextDoc = iText.Kernel.Pdf.PdfDocument;
@@ -122,8 +122,8 @@ namespace MyPDF
             treeView1.ShowLines = false;
 
             // エラー表示用
-            Extxt.Visible = true;
-            Extxt.Dock = DockStyle.Top;
+            //Extxt.Visible = true;
+            //Extxt.Dock = DockStyle.Top;
 
         }
 
@@ -1146,10 +1146,12 @@ namespace MyPDF
         {
 
             // ステータスバーにフルパスと総ページ数を表示
-            toolStripStatusLabel1.Text = $"パス: {path} | 総ページ数: {pageCount}";
+            //toolStripStatusLabel1.Text = $"パス: {path} | 総ページ数: {pageCount}";
+            toolStripStatusLabel1.Text = $"パス: {path}";
             TotalPagetoolStripLabel.Text = $"/ {pageCount} ";
 
-            toolHintTxt = $"パス: {path} | 総ページ数: {pageCount}";
+            //toolHintTxt = $"パス: {path} | 総ページ数: {pageCount}";
+            toolHintTxt = $"パス: {path}";
 
         }
 
@@ -1174,8 +1176,10 @@ namespace MyPDF
 
             using (SaveFileDialog sfd = new SaveFileDialog())
             {
+                string baseName = IOPath.GetFileNameWithoutExtension(originalPath);
                 sfd.Title = "名前を付けてPDFファイルを保存";
                 sfd.Filter = "PDFファイル (*.pdf)|*.pdf";
+                sfd.FileName = baseName + "_new.pdf";
 
                 if (sfd.ShowDialog() == DialogResult.OK)
                 {
@@ -1777,6 +1781,8 @@ namespace MyPDF
             //しおり編集
             ShioriMenu.Enabled = false;
 
+            // 移動
+            PageMove.Enabled = false;
             // 挿入
             PageInsert.Enabled = false;
             // 抽出
@@ -1854,6 +1860,8 @@ namespace MyPDF
                 //しおり編集
                 ShioriMenu.Enabled = false;
 
+                // 移動
+                PageMove.Enabled = false;
                 // 挿入
                 PageInsert.Enabled = false;
                 // 抽出
@@ -1902,6 +1910,8 @@ namespace MyPDF
                 //しおり編集
                 ShioriMenu.Enabled = hasNodes; // ノードある時だけ
 
+                // 移動
+                PageMove.Enabled = true;
                 // 挿入
                 PageInsert.Enabled = true;
                 // 抽出
@@ -3569,12 +3579,12 @@ namespace MyPDF
 
                     string insertPath = ofd.FileName;
 
-                    // 挿入位置（今見てるページを取得）
-                    int insertPage = pdfViewer1.Renderer.Page + 1;
+                    // 表示しているページを取得
+                    int nowPage = pdfViewer1.Renderer.Page + 1;
 
 
                     // Form10起動
-                    using (var f = new Form10(insertPath, insertPage, currentSettings.TotalPage))
+                    using (var f = new Form10(insertPath, nowPage, currentSettings.TotalPage))
                     {
                         if (f.ShowDialog() == DialogResult.OK)
                         {
@@ -3594,11 +3604,72 @@ namespace MyPDF
         }
 
         // ==============================
-        // PDF挿入処理（パスなし版）
+        // PDF挿入処理（パスあり対応）
         // ==============================
         private void InsertPdf(string insertPath, int targetPage, bool insertBefore)
         {
+
+            string? insertPassword = null;
+
+            ReaderProperties insertProps;
+
+            PdfReader? reader = null;
+            bool canInsert = false;
+
+            while (true)
+            {
+                try
+                {
+                    if (insertPassword == null)
+                    {
+                        reader = new PdfReader(insertPath);
+                    }
+                    else
+                    {
+                        var props = new ReaderProperties()
+                            .SetPassword(Encoding.UTF8.GetBytes(insertPassword));
+
+                        reader = new PdfReader(insertPath, props);
+                    }
+
+                    using (var pdf = new ITextDoc(reader))
+                    {
+                        canInsert = reader.IsOpenedWithFullPermission();
+                    }
+
+                    break;
+                }
+                catch (iText.Kernel.Exceptions.BadPasswordException)
+                {
+                    insertPassword = ShowPasswordDialog();
+                    if (insertPassword == null) return;
+                }
+                catch (Exception ex)
+                {
+                    Extxt.Text = ex.ToString();
+                    MessageBox.Show("PDF確認エラー:\n" + ex.Message);
+                    return;
+                }
+            }
+
+            // チェック(閲覧パスなら挿入しない)
+            if (!canInsert)
+            {
+                MessageBox.Show(
+                    "入力したパスワードは閲覧パスワードです。" + Environment.NewLine +
+                    "ページ挿入するには、権限パスワードが必要です。",
+                    "挿入不可",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+                return;
+            }
+
             string tempPath = workingPath + ".tmp";
+
+            insertProps = string.IsNullOrEmpty(insertPassword)
+                ? new ReaderProperties()
+                : new ReaderProperties().SetPassword(Encoding.UTF8.GetBytes(insertPassword));
 
             try
             {
@@ -3614,8 +3685,13 @@ namespace MyPDF
                 int insertPage;
                 int insertCount;
 
-                using (var mainReader = new PdfReader(workingPath))
-                using (var insertReader = new PdfReader(insertPath))
+
+                ReaderProperties props = string.IsNullOrEmpty(currentPassword)
+                    ? new ReaderProperties()
+                    : new ReaderProperties().SetPassword(Encoding.UTF8.GetBytes(currentPassword));
+
+                using (var mainReader = new PdfReader(workingPath, props))
+                using (var insertReader = new PdfReader(insertPath, insertProps))
                 using (var writer = new PdfWriter(tempPath))
                 using (var mainPdf = new ITextDoc(mainReader, writer))
                 using (var insertPdf = new ITextDoc(insertReader))
@@ -3643,12 +3719,22 @@ namespace MyPDF
                 // しおり補正
                 FixBookmarksForInsert(insertPage, insertCount);
 
+                // 挿入PDFのしおり取得
+                //using (var insertReader2 = new PdfReader(insertPath))
+                using (var insertReader2 = new PdfReader(insertPath, insertProps))
+                using (var insertPdfDoc = new ITextDoc(insertReader2))
+                {
+                    ImportBookmarksFromPdf(insertPdfDoc, insertPage, treeView1);
+                }
+
                 // 上書き
                 File.Delete(workingPath);
                 File.Move(tempPath, workingPath);
 
                 // 再表示
-                var doc = PdfiumDoc.Load(workingPath);
+                var doc = string.IsNullOrEmpty(currentPassword)
+                    ? PdfiumDoc.Load(workingPath)
+                    : PdfiumDoc.Load(workingPath, currentPassword);
                 pdfViewer1.Document = doc;
 
                 // 保存との整合性 作業用ファイルのデータを入れる
@@ -3694,6 +3780,224 @@ namespace MyPDF
             {
                 FixNode(child, insertPage, insertCount);
             }
+        }
+
+        // ==============================
+        // 挿入PDFのしおりをTreeViewへ追加1
+        // ==============================
+        private void ImportBookmarksFromPdf(ITextDoc insertPdf, int insertPage, TreeView treeView)
+        {
+            var outlines = insertPdf.GetOutlines(false);
+            if (outlines == null) return;
+
+            var parentNode = new TreeNode("--- 挿入PDF ---");
+            treeView.Nodes.Add(parentNode);
+
+            foreach (var child in outlines.GetAllChildren())
+            {
+                var node = CreateNodeFromOutline(insertPdf, child, insertPage);
+                if (node != null)
+                {
+                    parentNode.Nodes.Add(node);
+
+                    //treeView.Nodes.Insert(treeView.Nodes.Count, node);
+                    //treeView.Nodes.Add(node);
+                }
+            }
+        }
+
+        // ==============================
+        // 挿入PDFのしおりをTreeViewへ追加2
+        // ==============================
+        private TreeNode? CreateNodeFromOutline(ITextDoc pdf, PdfOutline outline, int insertPage)
+        {
+            try
+            {
+                int page = 0;
+
+                string title = outline.GetTitle();
+
+                // Outlineの生データ取得（これが本体）
+                var dict = outline.GetContent();
+
+                PdfObject? destObj = null;
+
+                // /Dest を優先取得
+                if (dict.ContainsKey(PdfName.Dest))
+                {
+                    destObj = dict.Get(PdfName.Dest);
+                }
+
+                // /A（Action）から取得
+                else if (dict.ContainsKey(PdfName.A))
+                {
+                    var action = dict.GetAsDictionary(PdfName.A);
+                    if (action != null && action.ContainsKey(PdfName.D))
+                    {
+                        destObj = action.Get(PdfName.D);
+                    }
+                }
+
+                // ページ番号取得
+                // デバッグ出力確認
+                Debug.WriteLine("----しおり----------------------");
+                Debug.WriteLine(outline.GetTitle());
+                Debug.WriteLine(destObj?.GetType());
+                Debug.WriteLine(destObj);
+
+                if (destObj is PdfArray arr && arr.Size() > 0)
+                {
+                    var pageDict = arr.GetAsDictionary(0);
+
+                    if (pageDict != null)
+                    {
+                        var pageObj = pdf.GetPage(pageDict);
+                        page = pdf.GetPageNumber(pageObj);
+                    }
+                }
+                // Named Destination（文字列）
+                else if (destObj is PdfString name)
+                {
+                    var nameTree = pdf.GetCatalog().GetNameTree(PdfName.Dests);
+                    var names = nameTree.GetNames();
+
+                    // （string → PdfString）
+                    var key = name;
+
+                    if (names.ContainsKey(key))
+                    {
+                        var obj = names[key] as PdfArray;
+
+                        if (obj != null && obj.Size() > 0)
+                        {
+                            var pageDict = obj.GetAsDictionary(0);
+
+                            if (pageDict != null)
+                            {
+                                var pageObj = pdf.GetPage(pageDict);
+                                page = pdf.GetPageNumber(pageObj);
+                            }
+                        }
+                    }
+                }
+
+                // 挿入位置に合わせて補正
+                int newPage = page + insertPage - 1;
+
+
+                bool isOpen = true;
+
+                var countObj = dict.GetAsNumber(PdfName.Count);
+
+                if (countObj != null)
+                {
+                    isOpen = countObj.IntValue() >= 0;
+                }
+
+                // 文字の色
+                // デフォルト
+                DrawingColor selectedColor = DrawingColor.Black;
+
+                var color = outline.GetColor();
+
+                if (color != null)
+                {
+                    // iTextのColor → RGB取得
+                    var rgb = color.GetColorValue(); // ←これがfloat[]
+
+                    if (rgb != null && rgb.Length >= 3)
+                    {
+                        selectedColor = DrawingColor.FromArgb(
+                            (int)(rgb[0] * 255),
+                            (int)(rgb[1] * 255),
+                            (int)(rgb[2] * 255)
+                        );
+                    }
+                }
+
+                // 文字のスタイル
+                int style = outline.GetStyle() ?? 0;
+
+                FontStyle fontStyle = FontStyle.Regular;
+
+                // 両方通るとボールドイタリックになるはず
+                // ボールド
+                if ((style & PdfOutline.FLAG_BOLD) != 0)
+                    fontStyle |= FontStyle.Bold;
+                // イタリック
+                if ((style & PdfOutline.FLAG_ITALIC) != 0)
+                    fontStyle |= FontStyle.Italic;
+
+                FontStyle selectedStyle = fontStyle;
+
+                Debug.WriteLine("-----文字スタイル1------------------------");
+                Debug.WriteLine("selectedStyle: " + selectedStyle);
+
+                var node = new TreeNode(title)
+                {
+                    Tag = new BookmarkInfo
+                    {
+                        // しおり名
+                        BmTitle = title,
+                        //　ページ番号
+                        Page = newPage,
+                        // 展開 or 縮小
+                        IsOpen = isOpen,
+                        // 色
+                        SelectedColor = selectedColor,
+                        // スタイル
+                        SelectedStyle = selectedStyle
+
+                    }
+                };
+
+                // UIに反映
+                node.ForeColor = selectedColor;
+                node.NodeFont = new Font(treeView1.Font, selectedStyle);
+
+                //nodes.Add(node);
+
+                Debug.WriteLine("-----しおり名 → ページ番号------------------------");
+                Debug.WriteLine($"{title} → Page:{newPage}");
+
+                // 子も再帰
+                foreach (var child in outline.GetAllChildren())
+                {
+                    var childNode = CreateNodeFromOutline(pdf, child, insertPage);
+                    if (childNode != null)
+                        node.Nodes.Add(childNode);
+                }
+
+                return node;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private void PageMove_Click(object sender, EventArgs e)
+        {
+            if (currentSettings == null)
+            {
+                MessageBox.Show("PDFが開かれていません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // 表示しているページを取得
+            int nowPage = pdfViewer1.Renderer.Page + 1;
+
+            // Form11起動
+            using (var f = new Form11(nowPage, currentSettings.TotalPage))
+            {
+                if (f.ShowDialog() == DialogResult.OK)
+                {
+
+                    //ExtractPages(f.StartPage, f.EndPage);
+
+                }
+            }
+
         }
     }
 }

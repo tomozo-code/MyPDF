@@ -36,7 +36,14 @@ namespace MyPDF
             this.Height = 250;
 
             // 挿入するファイル名をセット
-            InsertFileName.Text = InsertFile;
+            InsertFileName.Text = Path.GetFileName(InsertFile);
+
+            // 挿入するファイル名用TextBox
+            InsertFileName.ReadOnly = true;
+            InsertFileName.BorderStyle = BorderStyle.None;
+            InsertFileName.BackColor = this.BackColor;
+            InsertFileName.TabStop = false;
+
 
             // 総ページ数をセット
             this.maxPage = maxPage;
@@ -53,6 +60,8 @@ namespace MyPDF
 
             // ページ指定の初期値
             setPage.Text = InsertPage.ToString();
+
+
 
             toolHintTxt = "ファイルからページを挿入します";
 

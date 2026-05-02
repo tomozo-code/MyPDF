@@ -56,7 +56,7 @@
             // 
             // InsertFileName
             // 
-            InsertFileName.Location = new Point(134, 6);
+            InsertFileName.Location = new Point(134, 8);
             InsertFileName.Name = "InsertFileName";
             InsertFileName.Size = new Size(216, 29);
             InsertFileName.TabIndex = 70;
@@ -96,6 +96,7 @@
             InsertPlace.Name = "InsertPlace";
             InsertPlace.Size = new Size(121, 29);
             InsertPlace.TabIndex = 2;
+            InsertPlace.Tag = "挿入する場所を指定します";
             // 
             // label3
             // 
@@ -112,13 +113,14 @@
             setPage.Name = "setPage";
             setPage.Size = new Size(100, 29);
             setPage.TabIndex = 1;
+            setPage.Tag = "挿入先のページを指定します";
             // 
             // CancelBtn
             // 
             CancelBtn.Location = new Point(165, 137);
             CancelBtn.Name = "CancelBtn";
             CancelBtn.Size = new Size(112, 35);
-            CancelBtn.TabIndex = 76;
+            CancelBtn.TabIndex = 4;
             CancelBtn.Tag = "中止してウィンドウを閉じます";
             CancelBtn.Text = "Cancel";
             CancelBtn.UseVisualStyleBackColor = true;
@@ -129,8 +131,8 @@
             OkBtn.Location = new Point(46, 137);
             OkBtn.Name = "OkBtn";
             OkBtn.Size = new Size(112, 35);
-            OkBtn.TabIndex = 75;
-            OkBtn.Tag = "ページ指定を確定し削除を実行します";
+            OkBtn.TabIndex = 3;
+            OkBtn.Tag = "ページ指定を確定し挿入を実行します";
             OkBtn.Text = "OK";
             OkBtn.UseVisualStyleBackColor = true;
             OkBtn.Click += OkBtn_Click;

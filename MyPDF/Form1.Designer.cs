@@ -35,18 +35,20 @@
             splitter1 = new Splitter();
             pdfViewer1 = new PdfiumViewer.PdfViewer();
             contextMenuStrip2 = new ContextMenuStrip(components);
+            PageMove = new ToolStripMenuItem();
+            toolStripMenuItem13 = new ToolStripSeparator();
             PageInsert = new ToolStripMenuItem();
             toolStripMenuItem2 = new ToolStripSeparator();
             PageExtract = new ToolStripMenuItem();
             PageExtractSetting = new ToolStripMenuItem();
             toolStripMenuItem3 = new ToolStripSeparator();
-            PageDelete = new ToolStripMenuItem();
-            PageDeleteSetting = new ToolStripMenuItem();
-            toolStripMenuItem12 = new ToolStripSeparator();
             LeftRotate90 = new ToolStripMenuItem();
             RightRotate90 = new ToolStripMenuItem();
             Rotate180 = new ToolStripMenuItem();
             RotatePagesSetting = new ToolStripMenuItem();
+            toolStripMenuItem12 = new ToolStripSeparator();
+            PageDelete = new ToolStripMenuItem();
+            PageDeleteSetting = new ToolStripMenuItem();
             PageEditMenu = new ToolStripDropDownButton();
             treeView1 = new TreeView();
             contextMenuStrip1 = new ContextMenuStrip(components);
@@ -147,16 +149,32 @@
             // contextMenuStrip2
             // 
             contextMenuStrip2.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
-            contextMenuStrip2.Items.AddRange(new ToolStripItem[] { PageInsert, toolStripMenuItem2, PageExtract, PageExtractSetting, toolStripMenuItem3, PageDelete, PageDeleteSetting, toolStripMenuItem12, LeftRotate90, RightRotate90, Rotate180, RotatePagesSetting });
+            contextMenuStrip2.Items.AddRange(new ToolStripItem[] { PageMove, toolStripMenuItem13, PageInsert, toolStripMenuItem2, PageExtract, PageExtractSetting, toolStripMenuItem3, LeftRotate90, RightRotate90, Rotate180, RotatePagesSetting, toolStripMenuItem12, PageDelete, PageDeleteSetting });
             contextMenuStrip2.Name = "contextMenuStrip2";
-            contextMenuStrip2.Size = new Size(246, 256);
+            contextMenuStrip2.Size = new Size(246, 288);
+            // 
+            // PageMove
+            // 
+            PageMove.Enabled = false;
+            PageMove.Name = "PageMove";
+            PageMove.Size = new Size(245, 26);
+            PageMove.Text = "移動(&M)...";
+            PageMove.ToolTipText = "ページを指定して移動します";
+            PageMove.Click += PageMove_Click;
+            PageMove.MouseEnter += menuStrip1_MouseEnter;
+            PageMove.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // toolStripMenuItem13
+            // 
+            toolStripMenuItem13.Name = "toolStripMenuItem13";
+            toolStripMenuItem13.Size = new Size(242, 6);
             // 
             // PageInsert
             // 
             PageInsert.Enabled = false;
             PageInsert.Name = "PageInsert";
             PageInsert.Size = new Size(245, 26);
-            PageInsert.Text = "挿入(&I)";
+            PageInsert.Text = "挿入(&I)...";
             PageInsert.ToolTipText = "ファイルからページを挿入します";
             PageInsert.Click += PageInsert_Click;
             PageInsert.MouseEnter += menuStrip1_MouseEnter;
@@ -193,33 +211,6 @@
             // 
             toolStripMenuItem3.Name = "toolStripMenuItem3";
             toolStripMenuItem3.Size = new Size(242, 6);
-            // 
-            // PageDelete
-            // 
-            PageDelete.Enabled = false;
-            PageDelete.Name = "PageDelete";
-            PageDelete.Size = new Size(245, 26);
-            PageDelete.Text = "削除(&W)";
-            PageDelete.ToolTipText = "表示しているページを削除します";
-            PageDelete.Click += PageDelete_Click;
-            PageDelete.MouseEnter += menuStrip1_MouseEnter;
-            PageDelete.MouseLeave += menuStrip1_MouseLeave;
-            // 
-            // PageDeleteSetting
-            // 
-            PageDeleteSetting.Enabled = false;
-            PageDeleteSetting.Name = "PageDeleteSetting";
-            PageDeleteSetting.Size = new Size(245, 26);
-            PageDeleteSetting.Text = "ページを指定して削除(&D)...";
-            PageDeleteSetting.ToolTipText = "ページを指定して削除します";
-            PageDeleteSetting.Click += PageDeleteSetting_Click;
-            PageDeleteSetting.MouseEnter += menuStrip1_MouseEnter;
-            PageDeleteSetting.MouseLeave += menuStrip1_MouseLeave;
-            // 
-            // toolStripMenuItem12
-            // 
-            toolStripMenuItem12.Name = "toolStripMenuItem12";
-            toolStripMenuItem12.Size = new Size(242, 6);
             // 
             // LeftRotate90
             // 
@@ -264,6 +255,33 @@
             RotatePagesSetting.Click += RotatePagesSetting_Click;
             RotatePagesSetting.MouseEnter += menuStrip1_MouseEnter;
             RotatePagesSetting.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // toolStripMenuItem12
+            // 
+            toolStripMenuItem12.Name = "toolStripMenuItem12";
+            toolStripMenuItem12.Size = new Size(242, 6);
+            // 
+            // PageDelete
+            // 
+            PageDelete.Enabled = false;
+            PageDelete.Name = "PageDelete";
+            PageDelete.Size = new Size(245, 26);
+            PageDelete.Text = "削除(&W)";
+            PageDelete.ToolTipText = "表示しているページを削除します";
+            PageDelete.Click += PageDelete_Click;
+            PageDelete.MouseEnter += menuStrip1_MouseEnter;
+            PageDelete.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // PageDeleteSetting
+            // 
+            PageDeleteSetting.Enabled = false;
+            PageDeleteSetting.Name = "PageDeleteSetting";
+            PageDeleteSetting.Size = new Size(245, 26);
+            PageDeleteSetting.Text = "ページを指定して削除(&D)...";
+            PageDeleteSetting.ToolTipText = "ページを指定して削除します";
+            PageDeleteSetting.Click += PageDeleteSetting_Click;
+            PageDeleteSetting.MouseEnter += menuStrip1_MouseEnter;
+            PageDeleteSetting.MouseLeave += menuStrip1_MouseLeave;
             // 
             // PageEditMenu
             // 
@@ -858,5 +876,7 @@
         private ToolStripSeparator toolStripMenuItem3;
         private ToolStripSeparator toolStripMenuItem12;
         private ToolStripDropDownButton ShioriMenu;
+        private ToolStripMenuItem PageMove;
+        private ToolStripSeparator toolStripMenuItem13;
     }
 }

@@ -106,6 +106,13 @@ namespace MyPDF
             PageSizeLabel.BackColor = this.BackColor;
             PageSizeLabel.TabStop = false;
 
+            // ファイル名表示用TextBox
+            FileNamelabel2.ReadOnly = true;
+            FileNamelabel2.BorderStyle = BorderStyle.None;
+            FileNamelabel2.BackColor = this.BackColor;
+            FileNamelabel2.TabStop = false;
+
+
             toolHintTxt = "PDFのプロパティを設定します";
 
             toolTip1.InitialDelay = 500;   // 表示までの時間(ms)
@@ -137,7 +144,7 @@ namespace MyPDF
         private void LoadToUI()
         {
             // ファイル名
-            FileNamelabel.Text = Settings.PdfFileName;
+            FileNamelabel2.Text = Settings.PdfFileName;
             // パス
             PasLabel.Text = Settings.PdfPath;
             // 総ページ数

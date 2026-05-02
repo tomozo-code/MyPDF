@@ -40,7 +40,7 @@
             // 
             // button1
             // 
-            button1.Location = new Point(354, 44);
+            button1.Location = new Point(314, 44);
             button1.Name = "button1";
             button1.Size = new Size(100, 30);
             button1.TabIndex = 1;
@@ -87,10 +87,10 @@
             // 
             // LicenseTxtBox
             // 
-            LicenseTxtBox.Location = new Point(3, 132);
+            LicenseTxtBox.Location = new Point(12, 132);
             LicenseTxtBox.Multiline = true;
             LicenseTxtBox.Name = "LicenseTxtBox";
-            LicenseTxtBox.Size = new Size(484, 181);
+            LicenseTxtBox.Size = new Size(442, 181);
             LicenseTxtBox.TabIndex = 6;
             LicenseTxtBox.Text = resources.GetString("LicenseTxtBox.Text");
             // 

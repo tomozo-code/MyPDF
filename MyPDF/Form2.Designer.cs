@@ -55,7 +55,6 @@
             TitleTxt = new TextBox();
             SubTitleTxt = new TextBox();
             label5 = new Label();
-            FileNamelabel = new Label();
             label4 = new Label();
             AuthorTxt = new TextBox();
             label3 = new Label();
@@ -73,6 +72,7 @@
             toolTip1 = new ToolTip(components);
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
+            FileNamelabel2 = new TextBox();
             label11 = new Label();
             tabPage2 = new TabPage();
             panel1.SuspendLayout();
@@ -317,15 +317,6 @@
             label5.TabIndex = 35;
             label5.Text = "キーワード:";
             // 
-            // FileNamelabel
-            // 
-            FileNamelabel.AutoSize = true;
-            FileNamelabel.Location = new Point(124, 16);
-            FileNamelabel.Name = "FileNamelabel";
-            FileNamelabel.Size = new Size(115, 21);
-            FileNamelabel.TabIndex = 34;
-            FileNamelabel.Text = "ファイル名を表示";
-            // 
             // label4
             // 
             label4.AutoSize = true;
@@ -364,7 +355,7 @@
             // 
             // PageSizeLabel
             // 
-            PageSizeLabel.Location = new Point(126, 231);
+            PageSizeLabel.Location = new Point(126, 233);
             PageSizeLabel.Name = "PageSizeLabel";
             PageSizeLabel.Size = new Size(440, 29);
             PageSizeLabel.TabIndex = 76;
@@ -372,7 +363,7 @@
             // 
             // FileSizeLabel
             // 
-            FileSizeLabel.Location = new Point(126, 200);
+            FileSizeLabel.Location = new Point(126, 202);
             FileSizeLabel.Name = "FileSizeLabel";
             FileSizeLabel.Size = new Size(440, 29);
             FileSizeLabel.TabIndex = 75;
@@ -380,7 +371,7 @@
             // 
             // PasLabel
             // 
-            PasLabel.Location = new Point(126, 169);
+            PasLabel.Location = new Point(126, 171);
             PasLabel.Name = "PasLabel";
             PasLabel.Size = new Size(440, 29);
             PasLabel.TabIndex = 74;
@@ -388,7 +379,7 @@
             // 
             // PdfVerLabel
             // 
-            PdfVerLabel.Location = new Point(126, 138);
+            PdfVerLabel.Location = new Point(126, 140);
             PdfVerLabel.Name = "PdfVerLabel";
             PdfVerLabel.Size = new Size(440, 29);
             PdfVerLabel.TabIndex = 73;
@@ -396,7 +387,7 @@
             // 
             // CreatorLabel
             // 
-            CreatorLabel.Location = new Point(126, 107);
+            CreatorLabel.Location = new Point(126, 109);
             CreatorLabel.Name = "CreatorLabel";
             CreatorLabel.Size = new Size(440, 29);
             CreatorLabel.TabIndex = 72;
@@ -404,7 +395,7 @@
             // 
             // ModDateLabel
             // 
-            ModDateLabel.Location = new Point(126, 76);
+            ModDateLabel.Location = new Point(126, 78);
             ModDateLabel.Name = "ModDateLabel";
             ModDateLabel.Size = new Size(440, 29);
             ModDateLabel.TabIndex = 71;
@@ -412,7 +403,7 @@
             // 
             // CreationDateLabel
             // 
-            CreationDateLabel.Location = new Point(126, 45);
+            CreationDateLabel.Location = new Point(126, 47);
             CreationDateLabel.Name = "CreationDateLabel";
             CreationDateLabel.Size = new Size(440, 29);
             CreationDateLabel.TabIndex = 70;
@@ -420,7 +411,7 @@
             // 
             // PdfConvertLabel
             // 
-            PdfConvertLabel.Location = new Point(126, 14);
+            PdfConvertLabel.Location = new Point(126, 16);
             PdfConvertLabel.Name = "PdfConvertLabel";
             PdfConvertLabel.Size = new Size(440, 29);
             PdfConvertLabel.TabIndex = 69;
@@ -458,6 +449,7 @@
             // 
             tabPage1.BackColor = SystemColors.Control;
             tabPage1.BorderStyle = BorderStyle.FixedSingle;
+            tabPage1.Controls.Add(FileNamelabel2);
             tabPage1.Controls.Add(label11);
             tabPage1.Controls.Add(label1);
             tabPage1.Controls.Add(SubTitleTxt);
@@ -465,7 +457,6 @@
             tabPage1.Controls.Add(TotalPageLabel1);
             tabPage1.Controls.Add(TitleTxt);
             tabPage1.Controls.Add(PageTxt);
-            tabPage1.Controls.Add(FileNamelabel);
             tabPage1.Controls.Add(KeywordTxt);
             tabPage1.Controls.Add(MagComboBox);
             tabPage1.Controls.Add(label4);
@@ -484,6 +475,14 @@
             tabPage1.Size = new Size(576, 431);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "概要";
+            // 
+            // FileNamelabel2
+            // 
+            FileNamelabel2.Location = new Point(124, 15);
+            FileNamelabel2.Name = "FileNamelabel2";
+            FileNamelabel2.Size = new Size(440, 29);
+            FileNamelabel2.TabIndex = 58;
+            FileNamelabel2.Text = "ファイル名を表示";
             // 
             // label11
             // 
@@ -577,7 +576,6 @@
         private TextBox TitleTxt;
         private TextBox SubTitleTxt;
         private Label label5;
-        private Label FileNamelabel;
         private Label label4;
         private TextBox AuthorTxt;
         private Label label3;
@@ -597,5 +595,6 @@
         private TabPage tabPage1;
         private TabPage tabPage2;
         private Label label11;
+        private TextBox FileNamelabel2;
     }
 }
