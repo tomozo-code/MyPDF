@@ -44,7 +44,7 @@
             label4 = new Label();
             CancelBtn = new Button();
             OkBtn = new Button();
-            MovePageTxt = new TextBox();
+            TargetPageTxt = new TextBox();
             statusStrip1.SuspendLayout();
             groupBox1.SuspendLayout();
             SuspendLayout();
@@ -173,20 +173,20 @@
             OkBtn.UseVisualStyleBackColor = true;
             OkBtn.Click += OkBtn_Click;
             // 
-            // MovePageTxt
+            // TargetPageTxt
             // 
-            MovePageTxt.Location = new Point(117, 130);
-            MovePageTxt.Name = "MovePageTxt";
-            MovePageTxt.Size = new Size(80, 29);
-            MovePageTxt.TabIndex = 3;
-            MovePageTxt.Tag = "移動先ページを指定します";
+            TargetPageTxt.Location = new Point(117, 130);
+            TargetPageTxt.Name = "TargetPageTxt";
+            TargetPageTxt.Size = new Size(80, 29);
+            TargetPageTxt.TabIndex = 3;
+            TargetPageTxt.Tag = "移動先ページを指定します";
             // 
             // Form11
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(324, 281);
-            Controls.Add(MovePageTxt);
+            Controls.Add(TargetPageTxt);
             Controls.Add(CancelBtn);
             Controls.Add(OkBtn);
             Controls.Add(MovePlace);
@@ -227,6 +227,6 @@
         private Label label4;
         private Button CancelBtn;
         private Button OkBtn;
-        private TextBox MovePageTxt;
+        private TextBox TargetPageTxt;
     }
 }

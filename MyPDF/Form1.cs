@@ -3730,6 +3730,8 @@ namespace MyPDF
                 // 上書き
                 File.Delete(workingPath);
                 File.Move(tempPath, workingPath);
+                File.Delete(tempPath);
+
 
                 // 再表示
                 var doc = string.IsNullOrEmpty(currentPassword)
@@ -3976,6 +3978,9 @@ namespace MyPDF
             }
         }
 
+        // ==============================
+        // ページ移動
+        // ==============================
         private void PageMove_Click(object sender, EventArgs e)
         {
             if (currentSettings == null)
@@ -3993,11 +3998,168 @@ namespace MyPDF
                 if (f.ShowDialog() == DialogResult.OK)
                 {
 
-                    //ExtractPages(f.StartPage, f.EndPage);
+                    MovePdfPage(f.StartPage, f.EndPage, f.TargetPage, f.MoveBefore);
 
                 }
             }
 
+        }
+
+        // ==============================
+        // ページ移動処理
+        // ==============================
+        private void MovePdfPage(int start, int end, int target, bool before)
+        {
+            string tempPath = workingPath + ".tmp";
+
+            Dictionary<int, int> pageMap = new Dictionary<int, int>();
+
+            Debug.WriteLine("--- ページ移動 ---------------------");
+            Debug.WriteLine("start: " + start);
+            Debug.WriteLine("end: " + end);
+            Debug.WriteLine("target: " + target);
+            Debug.WriteLine("before: " + before);
+
+            try
+            {
+                // Viewer解放
+                pdfViewer1.Document?.Dispose();
+                pdfViewer1.Document = null;
+
+                ReaderProperties props = string.IsNullOrEmpty(currentPassword)
+                    ? new ReaderProperties()
+                    : new ReaderProperties().SetPassword(Encoding.UTF8.GetBytes(currentPassword));
+
+                using (var reader = new PdfReader(workingPath, props))
+                using (var writer = new PdfWriter(tempPath))
+                using (var srcPdf = new ITextDoc(reader))
+                using (var destPdf = new ITextDoc(writer))
+                {
+                    int total = srcPdf.GetNumberOfPages();
+                    int count = end - start + 1;
+
+                    // 移動先決定
+                    int insertIndex = before ? target : target + 1;
+
+                    // 同一範囲チェック
+                    if (insertIndex >= start && insertIndex <= end + 1)
+                        return;
+
+                    // 後ろに移動する場合補正
+                    if (insertIndex > end)
+                    {
+                        insertIndex -= count;
+                    }
+
+                    int currentPos = 1;
+
+                    for (int i = 1; i <= total; i++)
+                    {
+                        // 挿入位置に来たら先に挿入
+                        if (currentPos == insertIndex)
+                        {
+                            srcPdf.CopyPagesTo(start, end, destPdf);
+                            currentPos += count;
+                        }
+
+                        // 移動対象はスキップ
+                        if (i >= start && i <= end) continue;
+
+                        srcPdf.CopyPagesTo(i, i, destPdf);
+                        currentPos++;
+                    }
+
+                    // 最後に入れるケース
+                    if (currentPos <= insertIndex)
+                    {
+                        srcPdf.CopyPagesTo(start, end, destPdf);
+                    }
+
+                    // しおり補正ロジック
+                    int newPage = 1;
+
+                    for (int i = 1; i <= total; i++)
+                    {
+                        // 挿入位置
+                        if (newPage == insertIndex)
+                        {
+                            for (int p = start; p <= end; p++)
+                            {
+                                pageMap[p] = newPage++;
+                            }
+                        }
+
+                        if (i >= start && i <= end) continue;
+
+                        pageMap[i] = newPage++;
+                    }
+
+                    // 最後に入る場合
+                    if (newPage <= total)
+                    {
+                        for (int p = start; p <= end; p++)
+                        {
+                            pageMap[p] = newPage++;
+                        }
+                    }
+                }
+
+                // しおり補正
+                FixBookmarksForMove(pageMap);
+
+
+                // 上書き
+                File.Delete(workingPath);
+                File.Move(tempPath, workingPath);
+                File.Delete(tempPath);
+
+
+                // 再表示
+                var doc = string.IsNullOrEmpty(currentPassword)
+                    ? PdfiumDoc.Load(workingPath)
+                    : PdfiumDoc.Load(workingPath, currentPassword);
+
+                pdfViewer1.Document = doc;
+
+                currentSettings = LoadPdfSettings(workingPath, currentPassword);
+
+                isDirty = true;
+            }
+            catch (Exception ex)
+            {
+                Extxt.Text = ex.ToString(); 
+                MessageBox.Show("移動エラー:\n" + ex.ToString());
+            }
+        }
+
+        // ==============================
+        // ページ移動(しおり補正1)
+        // ==============================
+        private void FixBookmarksForMove(Dictionary<int, int> pageMap)
+        {
+            foreach (TreeNode node in treeView1.Nodes)
+            {
+                FixNodeMove(node, pageMap);
+            }
+        }
+
+        // ==============================
+        // ページ移動(しおり補正2)
+        // ==============================
+        private void FixNodeMove(TreeNode node, Dictionary<int, int> pageMap)
+        {
+            if (node.Tag is BookmarkInfo info)
+            {
+                if (pageMap.ContainsKey(info.Page))
+                {
+                    info.Page = pageMap[info.Page];
+                }
+            }
+
+            foreach (TreeNode child in node.Nodes)
+            {
+                FixNodeMove(child, pageMap);
+            }
         }
     }
 }

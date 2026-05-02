@@ -5,12 +5,19 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace MyPDF
 {
     public partial class Form11 : Form
     {
         private string? toolHintTxt = null;
+        // 移動設定（外から取得用）
+        public int StartPage { get; private set; }
+        public int EndPage { get; private set; }
+        public int TargetPage { get; private set; }
+        // 前 or 後
+        public bool MoveBefore { get; private set; }
 
         // 総ページ数
         private int maxPage;
@@ -64,6 +71,42 @@ namespace MyPDF
         // ==============================
         private void OkBtn_Click(object sender, EventArgs e)
         {
+            int start, end,target;
+
+            if (!int.TryParse(StartMoveTxt.Text, out start) || !int.TryParse(EndMoveTxt.Text, out end) || !int.TryParse(TargetPageTxt.Text, out target))
+            {
+                MessageBox.Show("数値を入力してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (start < 1 || end < 1 || target < 1)
+            {
+                MessageBox.Show("1以上の値を入力してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (start > end)
+            {
+                MessageBox.Show("開始ページは終了ページ以下にしてください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (start > maxPage || end > maxPage || target > maxPage)
+            {
+                MessageBox.Show("総ページ数以下の値を入力してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+
+            }
+
+            StartPage = start;
+            EndPage = end;
+            TargetPage = target;
+
+            // 前 or 後
+            MoveBefore = (MovePlace.SelectedIndex == 0);
+
+            this.DialogResult = DialogResult.OK;
+            this.Close();
 
         }
 
