@@ -255,8 +255,14 @@ namespace MyPDF
             }
             catch (Exception ex)
             {
+#if DEBUG
                 Extxt.Text = ex.Message;
-                MessageBox.Show("外部アプリで開けませんでした。\n" + ex.Message, "外部アプリオープンエラー", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("外部アプリで開けませんでした。\n" + ex.Message, "外部アプリオープン失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+#else
+                MessageBox.Show("外部アプリで開けませんでした。", "外部アプリオープン失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+#endif
+
             }
         }
 
@@ -500,8 +506,13 @@ namespace MyPDF
             }
             catch (Exception ex)
             {
+#if DEBUG
                 Extxt.Text = ex.ToString();
                 MessageBox.Show("開くエラー:\n" + ex.ToString());
+#else
+                MessageBox.Show("PDFファイルを開けませんでした。", "PDFファイルオープン失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+#endif
             }
         }
 
@@ -855,7 +866,14 @@ namespace MyPDF
             }
             catch (Exception ex)
             {
+#if DEBUG
+                Extxt.Text = ex.Message;
                 MessageBox.Show($"エラー:\n{ex.Message}", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+#else
+
+                MessageBox.Show("しおりの取得に失敗しました。", "しおり取得失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+#endif
             }
         }
 
@@ -1567,8 +1585,14 @@ namespace MyPDF
             }
             catch (Exception ex)
             {
+#if DEBUG
                 Extxt.Text = ex.ToString();
                 MessageBox.Show("保存エラー:\n" + ex.ToString());
+#else
+                MessageBox.Show("保存に失敗しました。", "保存失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+
+#endif
             }
 
         }
@@ -1615,8 +1639,16 @@ namespace MyPDF
             }
             catch (Exception ex)
             {
+#if DEBUG
                 Extxt.Text = ex.ToString();
                 MessageBox.Show("作業用ファイル削除エラー:\n" + ex.ToString());
+#else
+                MessageBox.Show("作業用ファイルが削除できませんでした。" + Environment.NewLine +
+                    "「C:\\Users\\<ユーザー名>\\AppData\\Local\\Temp\\」に" + Environment.NewLine +
+                    "「MyPDFwork_***.pdf」および「MyPDFwork_***.pdf.tmp」という作業用ファイル残っているため" + Environment.NewLine +
+                    "手動で削除してください。", "作業用ファイル削除失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+#endif
             }
         }
 
@@ -2677,40 +2709,22 @@ namespace MyPDF
         {
             try
             {
-                string htmlPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
-                    "help",
-                    "manual.html"
-                    );
-
-                if (!File.Exists(htmlPath))
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
                 {
-                    MessageBox.Show(
-                        "マニュアルファイルが見当たりません。",
-                        "確認：マニュアルがない",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information
-                        );
-                    return;
-                }
-
-                // 既定ブラウザで開く
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = htmlPath,
+                    FileName = "sample.pdf",
                     UseShellExecute = true
                 });
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    "マニュアルファイルが開けません。"
-                    + Environment.NewLine
-                    + ""
-                    + ex.Message,
-                    "確認：マニュアルが開けない",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information
-                    );
+#if DEBUG
+                Extxt.Text = ex.Message;
+                MessageBox.Show("外部アプリで開けませんでした。\n" + ex.Message, "外部アプリオープン失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+#else
+                MessageBox.Show("外部アプリで開けませんでした。", "外部アプリオープン失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+#endif
+
             }
 
         }
@@ -2924,7 +2938,14 @@ namespace MyPDF
                 }
                 catch (Exception ex)
                 {
+#if DEBUG
+                    Extxt.Text = ex.Message;
                     MessageBox.Show("インポート失敗:\n" + ex.Message, "インポート失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+#else
+                    MessageBox.Show("しおりファイル(CSVファイル)をインポートできませんでした。" + Environment.NewLine +
+                        "しおりファイルの内部データを確認してください。", "しおりファイルインポート失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    System.Diagnostics.Debug.WriteLine(ex.ToString());
+#endif
                 }
 
             }
@@ -3058,7 +3079,13 @@ namespace MyPDF
                 }
                 catch (Exception ex)
                 {
+#if DEBUG
+                    Extxt.Text = ex.Message;
                     MessageBox.Show("エクスポート失敗:\n" + ex.Message, "エクスポート失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+#else
+                    MessageBox.Show("しおりのエプスポートに失敗しました。", "しおりエクスポート失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    System.Diagnostics.Debug.WriteLine(ex.ToString());
+#endif
                 }
             }
         }
@@ -3220,8 +3247,13 @@ namespace MyPDF
             }
             catch (Exception ex)
             {
+#if DEBUG
                 Extxt.Text = ex.ToString();
                 MessageBox.Show("回転エラー:\n" + ex.ToString());
+#else
+                MessageBox.Show("回転中にエラーが発生しました。", "回転失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+#endif
             }
         }
 
@@ -3355,8 +3387,13 @@ namespace MyPDF
             }
             catch (Exception ex)
             {
+#if DEBUG
                 Extxt.Text = ex.ToString();
                 MessageBox.Show("削除エラー:\n" + ex.ToString());
+#else
+                MessageBox.Show("削除中にエラーが発生しました。", "削除失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+#endif
             }
         }
 
@@ -3540,8 +3577,13 @@ namespace MyPDF
                         }
                         catch (Exception ex)
                         {
+#if DEBUG
                             Extxt.Text = ex.Message;
                             MessageBox.Show("外部アプリで開けませんでした。\n" + ex.Message, "外部アプリオープンエラー", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+#else
+                            MessageBox.Show("外部アプリで開けませんでした。", "外部アプリオープン失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            System.Diagnostics.Debug.WriteLine(ex.ToString());
+#endif
                         }
 
                     }
@@ -3549,8 +3591,13 @@ namespace MyPDF
             }
             catch (Exception ex)
             {
+#if DEBUG
                 Extxt.Text = ex.ToString();
                 MessageBox.Show("抽出エラー:\n" + ex.ToString());
+#else
+                MessageBox.Show("抽出中にエラーが発生しました。", "抽出失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+#endif
             }
 
         }
@@ -3674,8 +3721,13 @@ namespace MyPDF
             }
             catch (Exception ex)
             {
+#if DEBUG
                 Extxt.Text = ex.ToString();
                 MessageBox.Show("挿入エラー:\n" + ex.ToString());
+#else
+                MessageBox.Show("挿入中にエラーが発生しました。", "挿入失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+#endif
             }
         }
 
@@ -3722,8 +3774,13 @@ namespace MyPDF
                 }
                 catch (Exception ex)
                 {
+#if DEBUG
                     Extxt.Text = ex.ToString();
                     MessageBox.Show("PDF確認エラー:\n" + ex.Message);
+#else
+                    MessageBox.Show("挿入するファイルが開けませんでした。", "挿入するファイルオープン失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    System.Diagnostics.Debug.WriteLine(ex.ToString());
+#endif
                     return;
                 }
             }
@@ -3827,8 +3884,13 @@ namespace MyPDF
             }
             catch (Exception ex)
             {
+#if DEBUG
                 Extxt.Text = ex.ToString();
                 MessageBox.Show("挿入エラー:\n" + ex.ToString());
+#else
+                MessageBox.Show("挿入中にエラーが発生しました。", "挿入失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+#endif
             }
         }
 
@@ -4237,8 +4299,13 @@ namespace MyPDF
             }
             catch (Exception ex)
             {
+#if DEBUG
                 Extxt.Text = ex.ToString();
                 MessageBox.Show("移動エラー:\n" + ex.ToString());
+#else
+                MessageBox.Show("移動中にエラーが発生しました。", "移動失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+#endif
             }
         }
 
@@ -4315,8 +4382,13 @@ namespace MyPDF
             }
             catch (Exception ex)
             {
+#if DEBUG
                 Extxt.Text = ex.ToString();
                 MessageBox.Show("置換エラー:\n" + ex.ToString());
+#else
+                MessageBox.Show("置換中にエラーが発生しました。", "置換失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+#endif
             }
         }
 
@@ -4365,8 +4437,13 @@ namespace MyPDF
                 }
                 catch (Exception ex)
                 {
+#if DEBUG
                     Extxt.Text = ex.ToString();
                     MessageBox.Show("PDF確認エラー:\n" + ex.Message);
+#else
+                    MessageBox.Show("置換ファイルが開けませんでした。", "置換ファイルオープン失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    System.Diagnostics.Debug.WriteLine(ex.ToString());
+#endif
                     return;
                 }
 
@@ -4464,7 +4541,13 @@ namespace MyPDF
             }
             catch (Exception ex)
             {
+#if DEBUG
+                Extxt.Text = ex.Message;
                 MessageBox.Show("置換エラー:\n" + ex.ToString());
+#else
+                MessageBox.Show("置換中にエラーが発生しました。", "置換失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+#endif
             }
         }
 
