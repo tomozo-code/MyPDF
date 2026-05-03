@@ -1,7 +1,6 @@
- <img width="100" height="100" alt="icon" src="https://github.com/user-attachments/assets/3b9ef9d9-3f9c-4304-a03f-b941cf0952bc" />
-# ともさんのPDF編集帖（MyPDF）
+ # ともさんのPDF編集帖（MyPDF）
 「ともさんのPDF編集帖」はC#で作成したPDF編集ツールです。
-
+<img width="100" height="100" alt="icon" src="https://github.com/user-attachments/assets/3b9ef9d9-3f9c-4304-a03f-b941cf0952bc" />
 PDFの閲覧・編集・管理をシンプルに行うことを目的としています。
 
 ---
