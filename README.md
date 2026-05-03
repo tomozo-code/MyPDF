@@ -203,6 +203,11 @@ https://pdfium.googlesource.com/pdfium/
 
 ---
 
+## 📥 ダウンロード
+👉 [最新版はこちら](https://github.com/tomozo-code/MyPDF/releases)
+
+---
+
 ## 🔮 今後の予定
 - サムネイル表示(高速表示等)
 - UI改善
