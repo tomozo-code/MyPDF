@@ -166,8 +166,12 @@ namespace MyPDF
             ExportShioriToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.E;
             // 指定して回転
             RotatePagesSetting.ShortcutKeys = Keys.Shift | Keys.Control | Keys.R;
+            // 移動
+            PageMove.ShortcutKeys = Keys.Shift | Keys.Control | Keys.M;
             // 挿入
             PageInsert.ShortcutKeys = Keys.Shift | Keys.Control | Keys.I;
+            // 置換
+            ReplacementMenu.ShortcutKeys = Keys.Shift | Keys.Control | Keys.K;
             // 指定して抽出
             PageExtractSetting.ShortcutKeys = Keys.Shift | Keys.Control | Keys.X;
             // 指定して削除
@@ -1785,6 +1789,8 @@ namespace MyPDF
             PageMove.Enabled = false;
             // 挿入
             PageInsert.Enabled = false;
+            // 置換
+            ReplacementMenu.Enabled = false;
             // 抽出
             PageExtract.Enabled = false;
             PageExtractSetting.Enabled = false;
@@ -1864,6 +1870,8 @@ namespace MyPDF
                 PageMove.Enabled = false;
                 // 挿入
                 PageInsert.Enabled = false;
+                // 置換
+                ReplacementMenu.Enabled = false;
                 // 抽出
                 PageExtract.Enabled = false;
                 PageExtractSetting.Enabled = false;
@@ -1914,6 +1922,8 @@ namespace MyPDF
                 PageMove.Enabled = true;
                 // 挿入
                 PageInsert.Enabled = true;
+                // 置換
+                ReplacementMenu.Enabled = true;
                 // 抽出
                 PageExtract.Enabled = true;
                 PageExtractSetting.Enabled = true;
@@ -3724,7 +3734,11 @@ namespace MyPDF
                 using (var insertReader2 = new PdfReader(insertPath, insertProps))
                 using (var insertPdfDoc = new ITextDoc(insertReader2))
                 {
-                    ImportBookmarksFromPdf(insertPdfDoc, insertPage, treeView1);
+                    ImportBookmarksFromPdf(insertPdfDoc, insertPage, treeView1, false);
+
+                    Debug.WriteLine("--- 挿入 -----------------");
+                    Debug.WriteLine("inserPage：" + insertPage);
+
                 }
 
                 // 上書き
@@ -3785,34 +3799,52 @@ namespace MyPDF
         }
 
         // ==============================
-        // 挿入PDFのしおりをTreeViewへ追加1
+        // しおりをTreeViewへ追加(挿入、置換用)1
         // ==============================
-        private void ImportBookmarksFromPdf(ITextDoc insertPdf, int insertPage, TreeView treeView)
+        private void ImportBookmarksFromPdf(ITextDoc insertPdf, int insertPage, TreeView treeView, bool isReplace)
         {
             var outlines = insertPdf.GetOutlines(false);
             if (outlines == null) return;
 
-            var parentNode = new TreeNode("--- 挿入PDF ---");
-            treeView.Nodes.Add(parentNode);
+
+            int insertIndex = FindInsertIndex(treeView.Nodes, insertPage);
 
             foreach (var child in outlines.GetAllChildren())
             {
-                var node = CreateNodeFromOutline(insertPdf, child, insertPage);
+                var node = CreateNodeFromOutline(insertPdf, child, insertPage, isReplace);
                 if (node != null)
                 {
-                    parentNode.Nodes.Add(node);
-
-                    //treeView.Nodes.Insert(treeView.Nodes.Count, node);
-                    //treeView.Nodes.Add(node);
+                    treeView.Nodes.Insert(insertIndex, node);
+                    insertIndex++;
                 }
             }
+
         }
 
         // ==============================
-        // 挿入PDFのしおりをTreeViewへ追加2
+        // しおりをTreeViewへ追加(挿入、置換用)2
         // ==============================
-        private TreeNode? CreateNodeFromOutline(ITextDoc pdf, PdfOutline outline, int insertPage)
+        private int FindInsertIndex(TreeNodeCollection nodes, int insertPage)
         {
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                if (nodes[i].Tag is BookmarkInfo info)
+                {
+                    if (info.Page >= insertPage)
+                        return i;
+                }
+            }
+            return nodes.Count;
+        }
+
+        // ==============================
+        // しおりをTreeViewへ追加(挿入、置換用)3
+        // ==============================
+        private TreeNode? CreateNodeFromOutline(ITextDoc pdf, PdfOutline outline, int insertPage, bool isReplace)
+        {
+
+            // isReplace true:置換、false:挿入
+
             try
             {
                 int page = 0;
@@ -3884,7 +3916,19 @@ namespace MyPDF
                 }
 
                 // 挿入位置に合わせて補正
-                int newPage = page + insertPage - 1;
+                //int newPage = page + insertPage - 1;
+                int newPage;
+
+                if (isReplace)
+                {
+                    // 置換
+                    newPage = insertPage + page - 1;
+                }
+                else
+                {
+                    // 挿入
+                    newPage = insertPage + page - 1;
+                }
 
 
                 bool isOpen = true;
@@ -3965,7 +4009,7 @@ namespace MyPDF
                 // 子も再帰
                 foreach (var child in outline.GetAllChildren())
                 {
-                    var childNode = CreateNodeFromOutline(pdf, child, insertPage);
+                    var childNode = CreateNodeFromOutline(pdf, child, insertPage, isReplace);
                     if (childNode != null)
                         node.Nodes.Add(childNode);
                 }
@@ -4127,7 +4171,7 @@ namespace MyPDF
             }
             catch (Exception ex)
             {
-                Extxt.Text = ex.ToString(); 
+                Extxt.Text = ex.ToString();
                 MessageBox.Show("移動エラー:\n" + ex.ToString());
             }
         }
@@ -4159,6 +4203,267 @@ namespace MyPDF
             foreach (TreeNode child in node.Nodes)
             {
                 FixNodeMove(child, pageMap);
+            }
+        }
+
+        // ==============================
+        // 置換
+        // ==============================
+        private void ReplacementMenu_Click(object sender, EventArgs e)
+        {
+            if (pdfViewer1.Document == null) return;
+
+            if (currentSettings == null)
+            {
+                MessageBox.Show("PDFが開かれていません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                using (OpenFileDialog ofd = new OpenFileDialog())
+                {
+                    ofd.Title = "置換するPDFを選択";
+                    ofd.Filter = "PDFファイル (*.pdf)|*.pdf";
+
+                    if (ofd.ShowDialog() != DialogResult.OK)
+                        return;
+
+                    string replacementPath = ofd.FileName;
+
+                    // 表示しているページを取得
+                    int nowPage = pdfViewer1.Renderer.Page + 1;
+
+
+                    // Form12起動
+                    using (var f = new Form12(replacementPath, nowPage, currentSettings.TotalPage))
+                    {
+                        if (f.ShowDialog() == DialogResult.OK)
+                        {
+
+                            OkikaePdfPage(replacementPath, f.StartPage, f.EndPage);
+                        }
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Extxt.Text = ex.ToString();
+                MessageBox.Show("置換エラー:\n" + ex.ToString());
+            }
+        }
+
+        // ==============================
+        // ページ置換処理
+        // ==============================
+        private void OkikaePdfPage(string okikaePath, int start, int end)
+        {
+
+            string? okikaePassword = null;
+
+            ReaderProperties okikaeProps;
+
+            PdfReader? reader = null;
+            bool canOkikae = false;
+
+
+
+            while (true)
+            {
+                try
+                {
+                    if (okikaePassword == null)
+                    {
+                        reader = new PdfReader(okikaePath);
+                    }
+                    else
+                    {
+                        var props = new ReaderProperties()
+                            .SetPassword(Encoding.UTF8.GetBytes(okikaePassword));
+
+                        reader = new PdfReader(okikaePath, props);
+                    }
+
+                    using (var pdf = new ITextDoc(reader))
+                    {
+                        canOkikae = reader.IsOpenedWithFullPermission();
+                    }
+
+                    break;
+                }
+                catch (iText.Kernel.Exceptions.BadPasswordException)
+                {
+                    okikaePassword = ShowPasswordDialog();
+                    if (okikaePassword == null) return;
+                }
+                catch (Exception ex)
+                {
+                    Extxt.Text = ex.ToString();
+                    MessageBox.Show("PDF確認エラー:\n" + ex.Message);
+                    return;
+                }
+
+            }
+
+            // チェック(閲覧パスなら挿入しない)
+            if (!canOkikae)
+            {
+                MessageBox.Show(
+                    "入力したパスワードは閲覧パスワードです。" + Environment.NewLine +
+                    "ページ置換するには、権限パスワードが必要です。",
+                    "挿入不可",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+                return;
+            }
+
+
+            string tempPath = workingPath + ".tmp";
+
+
+            okikaeProps = string.IsNullOrEmpty(okikaePassword)
+                ? new ReaderProperties()
+                : new ReaderProperties().SetPassword(Encoding.UTF8.GetBytes(okikaePassword));
+
+            try
+            {
+                pdfViewer1.Document?.Dispose();
+                pdfViewer1.Document = null;
+
+                ReaderProperties props = string.IsNullOrEmpty(currentPassword)
+                    ? new ReaderProperties()
+                    : new ReaderProperties().SetPassword(Encoding.UTF8.GetBytes(currentPassword));
+
+                using (var mainReader = new PdfReader(workingPath, props))
+                using (var repReader = new PdfReader(okikaePath, okikaeProps))
+                using (var writer = new PdfWriter(tempPath))
+                using (var mainPdf = new ITextDoc(mainReader))
+                using (var repPdf = new ITextDoc(repReader))
+                using (var destPdf = new ITextDoc(writer))
+                {
+                    int total = mainPdf.GetNumberOfPages();
+                    int repCount = repPdf.GetNumberOfPages();
+
+                    for (int i = 1; i <= total; i++)
+                    {
+                        // 置換開始位置
+                        if (i == start)
+                        {
+                            // 置換PDFを全部コピー
+                            repPdf.CopyPagesTo(1, repCount, destPdf);
+                        }
+
+                        // 置換対象はスキップ
+                        if (i >= start && i <= end)
+                            continue;
+
+                        // 通常コピー
+                        mainPdf.CopyPagesTo(i, i, destPdf);
+                    }
+
+                    // しおり補正
+                    RemoveBookmarksInRange(start, end);
+                    ShiftBookmarksAfter(start, end, repCount);
+
+                    // 置換PDFのしおり追加
+                    using (var repReader2 = new PdfReader(okikaePath, okikaeProps))
+                    using (var repPdfDoc = new ITextDoc(repReader2))
+                    {
+                        ImportBookmarksFromPdf(repPdfDoc, start, treeView1, true);
+
+                        Debug.WriteLine("--- 置換 -----------------");
+                        Debug.WriteLine("start：" + start);
+
+                    }
+
+                }
+
+                // 上書き
+                File.Delete(workingPath);
+                File.Move(tempPath, workingPath);
+                File.Delete(tempPath);
+
+                // 再表示
+                var doc = string.IsNullOrEmpty(currentPassword)
+                    ? PdfiumDoc.Load(workingPath)
+                    : PdfiumDoc.Load(workingPath, currentPassword);
+
+                pdfViewer1.Document = doc;
+
+                currentSettings = LoadPdfSettings(workingPath, currentPassword);
+
+                isDirty = true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("置換エラー:\n" + ex.ToString());
+            }
+        }
+
+        // ==============================
+        // ページ置換処理(しおり補正1)
+        // ==============================
+        private void RemoveBookmarksInRange(int start, int end)
+        {
+            for (int i = treeView1.Nodes.Count - 1; i >= 0; i--)
+            {
+                RemoveNode(treeView1.Nodes[i], start, end);
+            }
+        }
+
+        // ==============================
+        // ページ置換処理(しおり補正2)
+        // ==============================
+        private void RemoveNode(TreeNode node, int start, int end)
+        {
+            if (node.Tag is BookmarkInfo info)
+            {
+                if (info.Page >= start && info.Page <= end)
+                {
+                    node.Remove();
+                    return;
+                }
+            }
+
+            for (int i = node.Nodes.Count - 1; i >= 0; i--)
+            {
+                RemoveNode(node.Nodes[i], start, end);
+            }
+        }
+
+        // ==============================
+        // ページ置換処理(しおり補正3)
+        // ==============================
+        private void ShiftBookmarksAfter(int start, int end, int repCount)
+        {
+            int removed = end - start + 1;
+            int diff = repCount - removed;
+
+            foreach (TreeNode node in treeView1.Nodes)
+            {
+                ShiftNode(node, start, end, diff);
+            }
+        }
+
+        // ==============================
+        // ページ置換処理(しおり補正4)
+        // ==============================
+        private void ShiftNode(TreeNode node, int start, int end, int diff)
+        {
+
+            if (node.Tag is BookmarkInfo info)
+            {
+                if (info.Page > end)
+                {
+                    info.Page += diff;
+                }
+            }
+
+            foreach (TreeNode child in node.Nodes)
+            {
+                ShiftNode(child, start, end, diff);
             }
         }
     }

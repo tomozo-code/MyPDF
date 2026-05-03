@@ -39,6 +39,8 @@
             toolStripMenuItem13 = new ToolStripSeparator();
             PageInsert = new ToolStripMenuItem();
             toolStripMenuItem2 = new ToolStripSeparator();
+            ReplacementMenu = new ToolStripMenuItem();
+            toolStripMenuItem14 = new ToolStripSeparator();
             PageExtract = new ToolStripMenuItem();
             PageExtractSetting = new ToolStripMenuItem();
             toolStripMenuItem3 = new ToolStripSeparator();
@@ -149,9 +151,9 @@
             // contextMenuStrip2
             // 
             contextMenuStrip2.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
-            contextMenuStrip2.Items.AddRange(new ToolStripItem[] { PageMove, toolStripMenuItem13, PageInsert, toolStripMenuItem2, PageExtract, PageExtractSetting, toolStripMenuItem3, LeftRotate90, RightRotate90, Rotate180, RotatePagesSetting, toolStripMenuItem12, PageDelete, PageDeleteSetting });
+            contextMenuStrip2.Items.AddRange(new ToolStripItem[] { PageMove, toolStripMenuItem13, PageInsert, toolStripMenuItem2, ReplacementMenu, toolStripMenuItem14, PageExtract, PageExtractSetting, toolStripMenuItem3, LeftRotate90, RightRotate90, Rotate180, RotatePagesSetting, toolStripMenuItem12, PageDelete, PageDeleteSetting });
             contextMenuStrip2.Name = "contextMenuStrip2";
-            contextMenuStrip2.Size = new Size(246, 288);
+            contextMenuStrip2.Size = new Size(246, 320);
             // 
             // PageMove
             // 
@@ -184,6 +186,22 @@
             // 
             toolStripMenuItem2.Name = "toolStripMenuItem2";
             toolStripMenuItem2.Size = new Size(242, 6);
+            // 
+            // ReplacementMenu
+            // 
+            ReplacementMenu.Enabled = false;
+            ReplacementMenu.Name = "ReplacementMenu";
+            ReplacementMenu.Size = new Size(245, 26);
+            ReplacementMenu.Text = "置換(&K)...";
+            ReplacementMenu.ToolTipText = "ファイルからページを置換します";
+            ReplacementMenu.Click += ReplacementMenu_Click;
+            ReplacementMenu.MouseEnter += menuStrip1_MouseEnter;
+            ReplacementMenu.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // toolStripMenuItem14
+            // 
+            toolStripMenuItem14.Name = "toolStripMenuItem14";
+            toolStripMenuItem14.Size = new Size(242, 6);
             // 
             // PageExtract
             // 
@@ -878,5 +896,7 @@
         private ToolStripDropDownButton ShioriMenu;
         private ToolStripMenuItem PageMove;
         private ToolStripSeparator toolStripMenuItem13;
+        private ToolStripMenuItem ReplacementMenu;
+        private ToolStripSeparator toolStripMenuItem14;
     }
 }
