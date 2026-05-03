@@ -57,12 +57,18 @@ namespace MyPDF
             toolTip1.ReshowDelay = 100;    // 次の表示まで
 
 
+            // EnterキーをOKボタンに割り当て
+            this.AcceptButton = OkBtn;
+            //  EscキーをCancelボタンに割り当て
+            this.CancelButton = CancelBtn;
+
+
         }
 
         // ==============================
         // Cancelボタンを押したとき
         // ==============================
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void CancelBtn_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.Cancel;
             this.Close();
@@ -153,8 +159,9 @@ namespace MyPDF
         // ==============================
         // OKボタンを押したとき
         // ==============================
-        private void btnOK_Click(object sender, EventArgs e)
+        private void OkBtn_Click(object sender, EventArgs e)
         {
+
             // パスワード一致チェック
             if (txtOwnerPass.Text != txtOwnerPassConfirm.Text)
             {
@@ -352,7 +359,7 @@ namespace MyPDF
             txtUserPass.Text = Settings.UserPassword;
 
             switch (Settings.Encryption)
-                {
+            {
                 // AES-256(推奨) = 1
                 case EncryptionConstants.ENCRYPTION_AES_256:
                     rbAES256.Checked = true;
@@ -365,7 +372,7 @@ namespace MyPDF
                 case EncryptionConstants.STANDARD_ENCRYPTION_128:
                     rbRC4.Checked = true;
                     break;
-                }
+            }
 
             // ツールチップ設定(通常コントロール用:Tagに表示させたい内容を書く)
             SetTooltipAll(this);

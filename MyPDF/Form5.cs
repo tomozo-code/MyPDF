@@ -25,15 +25,19 @@ namespace MyPDF
             this.Width = 500;
             this.Height = 300;
 
+            // EnterキーをOKボタンに割り当て
+            this.AcceptButton = OkBtn;
+            //  EscキーをCancelボタンに割り当て
+            this.CancelButton = CancelBtn;
+
 
         }
 
         // ==============================
         // OKボタンをクリックしたとき
         // ==============================
-        private void btnOk_Click(object sender, EventArgs e)
+        private void OkBtn_Click(object sender, EventArgs e)
         {
-
             Password = PasswordTxt.Text;
             this.DialogResult = DialogResult.OK;
             this.Close();
@@ -43,13 +47,13 @@ namespace MyPDF
         // ==============================
         // Cancelボタンをクリックしたとき
         // ==============================
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void CancelBtn_Click(object sender, EventArgs e)
         {
-
             Password = null;
             this.DialogResult = DialogResult.Cancel;
             this.Close();
 
         }
+
     }
 }

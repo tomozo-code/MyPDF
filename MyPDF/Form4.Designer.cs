@@ -54,8 +54,8 @@
             label3 = new Label();
             checkBox1 = new CheckBox();
             panel1 = new Panel();
-            btnCancel = new Button();
-            btnOK = new Button();
+            CancelBtn = new Button();
+            OkBtn = new Button();
             checkBox2 = new CheckBox();
             statusStrip1 = new StatusStrip();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
@@ -329,35 +329,35 @@
             // 
             // panel1
             // 
-            panel1.Controls.Add(btnCancel);
-            panel1.Controls.Add(btnOK);
+            panel1.Controls.Add(CancelBtn);
+            panel1.Controls.Add(OkBtn);
             panel1.Dock = DockStyle.Bottom;
             panel1.Location = new Point(0, 455);
             panel1.Name = "panel1";
             panel1.Size = new Size(543, 50);
             panel1.TabIndex = 2;
             // 
-            // btnCancel
+            // CancelBtn
             // 
-            btnCancel.Location = new Point(118, 6);
-            btnCancel.Name = "btnCancel";
-            btnCancel.Size = new Size(100, 32);
-            btnCancel.TabIndex = 16;
-            btnCancel.Tag = "編集を中止してウィンドウを閉じます";
-            btnCancel.Text = "Cancel";
-            btnCancel.UseVisualStyleBackColor = true;
-            btnCancel.Click += btnCancel_Click;
+            CancelBtn.Location = new Point(118, 6);
+            CancelBtn.Name = "CancelBtn";
+            CancelBtn.Size = new Size(100, 32);
+            CancelBtn.TabIndex = 16;
+            CancelBtn.Tag = "編集を中止してウィンドウを閉じます";
+            CancelBtn.Text = "Cancel";
+            CancelBtn.UseVisualStyleBackColor = true;
+            CancelBtn.Click += CancelBtn_Click;
             // 
-            // btnOK
+            // OkBtn
             // 
-            btnOK.Location = new Point(12, 6);
-            btnOK.Name = "btnOK";
-            btnOK.Size = new Size(100, 32);
-            btnOK.TabIndex = 17;
-            btnOK.Tag = "保護設定を確定しウィンドウを閉じます";
-            btnOK.Text = "OK";
-            btnOK.UseVisualStyleBackColor = true;
-            btnOK.Click += btnOK_Click;
+            OkBtn.Location = new Point(12, 6);
+            OkBtn.Name = "OkBtn";
+            OkBtn.Size = new Size(100, 32);
+            OkBtn.TabIndex = 17;
+            OkBtn.Tag = "保護設定を確定しウィンドウを閉じます";
+            OkBtn.Text = "OK";
+            OkBtn.UseVisualStyleBackColor = true;
+            OkBtn.Click += OkBtn_Click;
             // 
             // checkBox2
             // 
@@ -427,8 +427,8 @@
 
         #endregion
         private Panel panel1;
-        private Button btnCancel;
-        private Button btnOK;
+        private Button CancelBtn;
+        private Button OkBtn;
         private CheckBox checkBox1;
         private CheckBox chkCopy;
         private CheckBox chkPrint;

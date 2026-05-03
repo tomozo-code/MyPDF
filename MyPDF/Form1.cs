@@ -21,27 +21,42 @@ using PdfiumDoc = PdfiumViewer.PdfDocument;
 
 
 // ==============================
-// パッケージ：iText、PdfiumViewer.core
-// PDFを表示、編集
-// ==============================
+// ライブラリ：iText、PdfiumViewer.core
+// PDFの閲覧・編集・管理をシンプルに行う
 
+// --- 役割 ---
 // PDF表示 → PdfiumViewer.Core
 // しおり操作 → TreeView
 // 保存 → iText
 
-// セキュリティ設定の仕様
+// --- セキュリティ設定の仕様 ---
 // パスなし → 編集可能
 // 開くパス(User) → パス要求 → 閲覧モード(編集不可)
-// 制限パス(Owner) → パス要求 → 編集モード(編集可能)
+// 権限パス(Owner) → パス要求 → 編集モード(編集可能)
 // 開くパス(User) + 制限パス(Owner) → どのパスで開いたかで　閲覧 or 編集
+// 開くパスのみの設定は不可
+// 権限パスのみの設定は可
+
+// --- フォーム ---
+// Form1:メインフォーム
+// Form2:PDFのプロパティ
+// Form3:バージョン情報
+// Form4:セキュリティ設定
+// Form5:保護パスワード入力
+// Form6:しおりプロパティ設定
+// Form7:指定ページの回転
+// Form8:指定ページの削除
+// Form9:指定ページの抽出
+// Form10:ファイル挿入
+// Form11:指定ページの移動
+// Form12:指定ページの置換
+// ==============================
+
 
 namespace MyPDF
 {
     public partial class Form1 : Form
     {
-        // 現在開いているPDFのパス(保存・再読み込みで使う)
-        //private string currentPdfPath = "";
-        //private string? currentPdfPath = null;
 
         // ドラッグ＆ドロップ用
         // dropTargetNode → ドロップ先
@@ -3494,6 +3509,18 @@ namespace MyPDF
 
                         // ページコピー
                         srcPdf.CopyPagesTo(startPage, endPage, destPdf);
+
+                        // しおり抽出
+                        AdjustBookmarksForExtract(startPage, endPage);
+
+                        var destOutlines = destPdf.GetOutlines(true);
+
+                        foreach (TreeNode node in treeView1.Nodes)
+                        {
+                            AddOutlineFromNode(destPdf, destOutlines, node);
+                        }
+
+
                     }
 
                     MessageBox.Show("抽出完了", "抽出確認", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -3524,6 +3551,42 @@ namespace MyPDF
             }
 
         }
+
+        // ==============================
+        // しおり抽出処理1
+        // ==============================
+        private void AdjustBookmarksForExtract(int start, int end)
+        {
+            for (int i = treeView1.Nodes.Count - 1; i >= 0; i--)
+            {
+                AdjustNodeForExtract(treeView1.Nodes[i], start, end);
+            }
+        }
+
+        // ==============================
+        // しおり抽出処理2
+        // ==============================
+        private void AdjustNodeForExtract(TreeNode node, int start, int end)
+        {
+            if (node.Tag is BookmarkInfo info)
+            {
+                // 範囲外は削除
+                if (info.Page < start || info.Page > end)
+                {
+                    node.Remove();
+                    return;
+                }
+
+                // ページ再マッピング
+                info.Page = info.Page - start + 1;
+            }
+
+            for (int i = node.Nodes.Count - 1; i >= 0; i--)
+            {
+                AdjustNodeForExtract(node.Nodes[i], start, end);
+            }
+        }
+
 
         // ==============================
         // 抽出を押したとき

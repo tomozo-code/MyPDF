@@ -34,8 +34,8 @@
             label2 = new Label();
             comboBox1 = new ComboBox();
             colorDialog1 = new ColorDialog();
-            btnOk = new Button();
-            btnCancel = new Button();
+            OkBtn = new Button();
+            CancelBtn = new Button();
             btnColor = new Button();
             label3 = new Label();
             BmTitleTxtBox = new TextBox();
@@ -78,27 +78,27 @@
             comboBox1.TabIndex = 3;
             comboBox1.Tag = "しおりの文字スタイルを指定します";
             // 
-            // btnOk
+            // OkBtn
             // 
-            btnOk.Location = new Point(12, 5);
-            btnOk.Name = "btnOk";
-            btnOk.Size = new Size(100, 32);
-            btnOk.TabIndex = 5;
-            btnOk.Tag = "しおりのプロパティを確定しウィンドウを閉じます";
-            btnOk.Text = "OK";
-            btnOk.UseVisualStyleBackColor = true;
-            btnOk.Click += btnOk_Click;
+            OkBtn.Location = new Point(12, 5);
+            OkBtn.Name = "OkBtn";
+            OkBtn.Size = new Size(100, 32);
+            OkBtn.TabIndex = 5;
+            OkBtn.Tag = "しおりのプロパティを確定しウィンドウを閉じます";
+            OkBtn.Text = "OK";
+            OkBtn.UseVisualStyleBackColor = true;
+            OkBtn.Click += OkBtn_Click;
             // 
-            // btnCancel
+            // CancelBtn
             // 
-            btnCancel.Location = new Point(123, 5);
-            btnCancel.Name = "btnCancel";
-            btnCancel.Size = new Size(100, 32);
-            btnCancel.TabIndex = 6;
-            btnCancel.Tag = "編集を中止してウィンドウを閉じます";
-            btnCancel.Text = "Cancel";
-            btnCancel.UseVisualStyleBackColor = true;
-            btnCancel.Click += btnCancel_Click;
+            CancelBtn.Location = new Point(123, 5);
+            CancelBtn.Name = "CancelBtn";
+            CancelBtn.Size = new Size(100, 32);
+            CancelBtn.TabIndex = 6;
+            CancelBtn.Tag = "編集を中止してウィンドウを閉じます";
+            CancelBtn.Text = "Cancel";
+            CancelBtn.UseVisualStyleBackColor = true;
+            CancelBtn.Click += CancelBtn_Click;
             // 
             // btnColor
             // 
@@ -175,8 +175,8 @@
             // 
             // panel1
             // 
-            panel1.Controls.Add(btnOk);
-            panel1.Controls.Add(btnCancel);
+            panel1.Controls.Add(OkBtn);
+            panel1.Controls.Add(CancelBtn);
             panel1.Dock = DockStyle.Bottom;
             panel1.Location = new Point(0, 185);
             panel1.Name = "panel1";
@@ -220,8 +220,8 @@
         private Label label2;
         private ComboBox comboBox1;
         private ColorDialog colorDialog1;
-        private Button btnOk;
-        private Button btnCancel;
+        private Button OkBtn;
+        private Button CancelBtn;
         private Button btnColor;
         private Label label3;
         private TextBox BmTitleTxtBox;

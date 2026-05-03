@@ -89,6 +89,12 @@ namespace MyPDF
             toolTip1.AutoPopDelay = 5000;  // 表示時間
             toolTip1.ReshowDelay = 100;    // 次の表示まで
 
+            // EnterキーをOKボタンに割り当て
+            this.AcceptButton = OkBtn;
+            //  EscキーをCancelボタンに割り当て
+            this.CancelButton = CancelBtn;
+
+
         }
 
         // ==============================
@@ -149,8 +155,9 @@ namespace MyPDF
         // ==============================
         // OKボタンをクリックしたとき
         // ==============================
-        private void btnOk_Click(object sender, EventArgs e)
+        private void OkBtn_Click(object sender, EventArgs e)
         {
+
             // しおり名チェック（空白・スペースのみNG）
             if (string.IsNullOrWhiteSpace(BmTitleTxtBox.Text))
             {
@@ -193,7 +200,7 @@ namespace MyPDF
         // ==============================
         // Cancelボタンをクリックしたとき
         // ==============================
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void CancelBtn_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.Cancel;
             this.Close();

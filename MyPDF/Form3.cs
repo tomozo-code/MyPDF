@@ -31,7 +31,10 @@ namespace MyPDF
             LicenseTxtBox.BackColor = this.BackColor;
             LicenseTxtBox.TabStop = false;
 
-
+            // EnterキーをOKボタンに割り当て
+            this.AcceptButton = OkBtn;
+            //  EscキーをOKボタンに割り当て
+            this.CancelButton = OkBtn;
 
         }
 
@@ -51,7 +54,7 @@ namespace MyPDF
 
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void OkBtn_Click(object sender, EventArgs e)
         {
             // 現在のフォームを閉じる
             this.Close();

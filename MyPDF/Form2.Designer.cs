@@ -32,7 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form2));
             panel1 = new Panel();
             CancelBtn = new Button();
-            SaveBtn = new Button();
+            OkBtn = new Button();
             label10 = new Label();
             label6 = new Label();
             label9 = new Label();
@@ -85,7 +85,7 @@
             // panel1
             // 
             panel1.Controls.Add(CancelBtn);
-            panel1.Controls.Add(SaveBtn);
+            panel1.Controls.Add(OkBtn);
             panel1.Dock = DockStyle.Bottom;
             panel1.Location = new Point(0, 465);
             panel1.Name = "panel1";
@@ -103,16 +103,16 @@
             CancelBtn.UseVisualStyleBackColor = true;
             CancelBtn.Click += CancelBtn_Click;
             // 
-            // SaveBtn
+            // OkBtn
             // 
-            SaveBtn.Location = new Point(12, 6);
-            SaveBtn.Name = "SaveBtn";
-            SaveBtn.Size = new Size(100, 32);
-            SaveBtn.TabIndex = 10;
-            SaveBtn.Tag = "PDFのプロパティを確定しウィンドウを閉じます";
-            SaveBtn.Text = "OK";
-            SaveBtn.UseVisualStyleBackColor = true;
-            SaveBtn.Click += SaveBtn_Click;
+            OkBtn.Location = new Point(12, 6);
+            OkBtn.Name = "OkBtn";
+            OkBtn.Size = new Size(100, 32);
+            OkBtn.TabIndex = 10;
+            OkBtn.Tag = "PDFのプロパティを確定しウィンドウを閉じます";
+            OkBtn.Text = "OK";
+            OkBtn.UseVisualStyleBackColor = true;
+            OkBtn.Click += OkBtn_Click;
             // 
             // label10
             // 
@@ -513,10 +513,10 @@
             tabPage2.Controls.Add(label9);
             tabPage2.Controls.Add(PdfConvertLabel);
             tabPage2.Controls.Add(label10);
-            tabPage2.Location = new Point(4, 30);
+            tabPage2.Location = new Point(4, 28);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(576, 431);
+            tabPage2.Size = new Size(576, 433);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "詳細情報";
             // 
@@ -552,7 +552,7 @@
 
         #endregion
         private Panel panel1;
-        private Button SaveBtn;
+        private Button OkBtn;
         private Button CancelBtn;
         private Label label10;
         private Label label6;

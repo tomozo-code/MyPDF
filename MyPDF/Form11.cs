@@ -7,6 +7,10 @@ using System.Text;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
+// ==============================
+// 指定ページの移動フォーム
+// ==============================
+
 namespace MyPDF
 {
     public partial class Form11 : Form
@@ -53,6 +57,11 @@ namespace MyPDF
             toolTip1.InitialDelay = 500;   // 表示までの時間(ms)
             toolTip1.AutoPopDelay = 5000;  // 表示時間
             toolTip1.ReshowDelay = 100;    // 次の表示まで
+
+            // EnterキーをOKボタンに割り当て
+            this.AcceptButton = OkBtn;
+            //  EscキーをCancelボタンに割り当て
+            this.CancelButton = CancelBtn;
 
         }
 

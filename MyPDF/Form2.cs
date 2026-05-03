@@ -125,6 +125,12 @@ namespace MyPDF
             // UIに反映
             LoadToUI();
 
+            // EnterキーをOKボタンに割り当て
+            this.AcceptButton = OkBtn;
+            //  EscキーをCancelボタンに割り当て
+            this.CancelButton = CancelBtn;
+
+
         }
 
         // ==============================
@@ -208,7 +214,7 @@ namespace MyPDF
         // ==============================
         // OKボタンを押したとき
         // ==============================
-        private void SaveBtn_Click(object sender, EventArgs e)
+        private void OkBtn_Click(object sender, EventArgs e)
         {
             Settings.Title = TitleTxt.Text;
             Settings.Author = AuthorTxt.Text;

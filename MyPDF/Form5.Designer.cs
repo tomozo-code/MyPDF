@@ -31,8 +31,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form5));
             label1 = new Label();
             PasswordTxt = new TextBox();
-            btnOk = new Button();
-            btnCancel = new Button();
+            OkBtn = new Button();
+            CancelBtn = new Button();
             label2 = new Label();
             SuspendLayout();
             // 
@@ -53,25 +53,25 @@
             PasswordTxt.Size = new Size(458, 29);
             PasswordTxt.TabIndex = 1;
             // 
-            // btnOk
+            // OkBtn
             // 
-            btnOk.Location = new Point(14, 217);
-            btnOk.Name = "btnOk";
-            btnOk.Size = new Size(100, 32);
-            btnOk.TabIndex = 2;
-            btnOk.Text = "OK";
-            btnOk.UseVisualStyleBackColor = true;
-            btnOk.Click += btnOk_Click;
+            OkBtn.Location = new Point(14, 217);
+            OkBtn.Name = "OkBtn";
+            OkBtn.Size = new Size(100, 32);
+            OkBtn.TabIndex = 2;
+            OkBtn.Text = "OK";
+            OkBtn.UseVisualStyleBackColor = true;
+            OkBtn.Click += OkBtn_Click;
             // 
-            // btnCancel
+            // CancelBtn
             // 
-            btnCancel.Location = new Point(120, 217);
-            btnCancel.Name = "btnCancel";
-            btnCancel.Size = new Size(100, 32);
-            btnCancel.TabIndex = 2;
-            btnCancel.Text = "Cancel";
-            btnCancel.UseVisualStyleBackColor = true;
-            btnCancel.Click += btnCancel_Click;
+            CancelBtn.Location = new Point(120, 217);
+            CancelBtn.Name = "CancelBtn";
+            CancelBtn.Size = new Size(100, 32);
+            CancelBtn.TabIndex = 2;
+            CancelBtn.Text = "Cancel";
+            CancelBtn.UseVisualStyleBackColor = true;
+            CancelBtn.Click += CancelBtn_Click;
             // 
             // label2
             // 
@@ -84,12 +84,12 @@
             // 
             // Form5
             // 
-            AcceptButton = btnOk;
+            AcceptButton = OkBtn;
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(484, 261);
-            Controls.Add(btnCancel);
-            Controls.Add(btnOk);
+            Controls.Add(CancelBtn);
+            Controls.Add(OkBtn);
             Controls.Add(PasswordTxt);
             Controls.Add(label2);
             Controls.Add(label1);
@@ -110,8 +110,8 @@
 
         private Label label1;
         private TextBox PasswordTxt;
-        private Button btnOk;
-        private Button btnCancel;
+        private Button OkBtn;
+        private Button CancelBtn;
         private Label label2;
     }
 }

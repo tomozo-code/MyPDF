@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form3));
-            button1 = new Button();
+            OkBtn = new Button();
             labelTitle = new Label();
             labelVersion = new Label();
             labelCopyright = new Label();
@@ -38,15 +38,15 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
-            // button1
+            // OkBtn
             // 
-            button1.Location = new Point(314, 44);
-            button1.Name = "button1";
-            button1.Size = new Size(100, 30);
-            button1.TabIndex = 1;
-            button1.Text = "OK";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            OkBtn.Location = new Point(314, 44);
+            OkBtn.Name = "OkBtn";
+            OkBtn.Size = new Size(100, 30);
+            OkBtn.TabIndex = 1;
+            OkBtn.Text = "OK";
+            OkBtn.UseVisualStyleBackColor = true;
+            OkBtn.Click += OkBtn_Click;
             // 
             // labelTitle
             // 
@@ -99,7 +99,7 @@
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(676, 560);
-            Controls.Add(button1);
+            Controls.Add(OkBtn);
             Controls.Add(LicenseTxtBox);
             Controls.Add(pictureBox1);
             Controls.Add(labelCopyright);
@@ -121,7 +121,7 @@
 
         #endregion
 
-        private Button button1;
+        private Button OkBtn;
         private Label labelTitle;
         private Label labelVersion;
         private Label labelCopyright;
