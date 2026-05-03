@@ -12,7 +12,6 @@ using System.Buffers;
 using System.Diagnostics;
 using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
-//using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using DrawingColor = System.Drawing.Color;
 using IOPath = System.IO.Path;
 using ITextDoc = iText.Kernel.Pdf.PdfDocument;
@@ -2918,12 +2917,16 @@ namespace MyPDF
 
                     BuildTreeFromCsv(list);
 
+                    // 更新
+                    isDirty = true;
+
                     MessageBox.Show("しおりをインポートしました。", "インポート", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("インポート失敗:\n" + ex.Message, "インポート失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
+
             }
         }
 
