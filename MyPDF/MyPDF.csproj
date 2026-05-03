@@ -12,7 +12,7 @@
 	<Version>1.0.0</Version> <!-- 表示用(NuGetとか) -->
 	<FileVersion>1.0.0.0</FileVersion> <!--ファイルプロパティ -->
 	<AssemblyVersion>1.0.0.0</AssemblyVersion> <!-- 内部識別 -->
-	<InformationalVersion>1.0.0</InformationalVersion> <!-- 表示(製品バージョン) -->
+	<InformationalVersion>1.0.0</InformationalVersion> <!-- 表示(製品バージョン -->
   </PropertyGroup>
 
   <ItemGroup>
