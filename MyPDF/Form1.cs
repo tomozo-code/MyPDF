@@ -1384,7 +1384,7 @@ namespace MyPDF
                     info.SetSubject(subject);
 
                     // Info（セミコロン区切り）
-                    info.SetKeywords(string.Join("; ", keywordList));
+                    //info.SetKeywords(string.Join("; ", keywordList));
 
                     //info.SetProducer(producer);
                     //info.SetCreator(appName);
