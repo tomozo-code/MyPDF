@@ -40,6 +40,9 @@ namespace MyPDF
 
         }
 
+        // ==============================
+        // Formをロードしたとき 
+        // ==============================
         private void Form3_Load(object sender, EventArgs e)
         {
 
@@ -52,10 +55,11 @@ namespace MyPDF
             labelVersion.Text = $"Version: {version}";
             labelCopyright.Text = "Copyright(c) 2026 ともさん";
 
-
-
         }
 
+        // ==============================
+        // OKボタンを押したとき 
+        // ==============================
         private void OkBtn_Click(object sender, EventArgs e)
         {
             // 現在のフォームを閉じる

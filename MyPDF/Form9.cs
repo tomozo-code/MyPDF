@@ -61,7 +61,6 @@ namespace MyPDF
             //  EscキーをCancelボタンに割り当て
             this.CancelButton = CancelBtn;
 
-
         }
 
         // ==============================

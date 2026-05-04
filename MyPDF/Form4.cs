@@ -205,8 +205,6 @@ namespace MyPDF
                 return;
             }
 
-
-
             // 設定をまとめる
             SecuritySettings settings = new SecuritySettings();
 
