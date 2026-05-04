@@ -20,10 +20,12 @@ namespace MyPDF
         {
             InitializeComponent();
             // レイアウト
-            this.AutoSize = true;
-            this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            this.Width = 400;
-            this.Height = 200;
+            //this.AutoSize = true;
+            //this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            this.Width = 500;
+            this.Height = 400;
+            this.MinimumSize = new Size(400, 300);
+            //this.AutoScaleDimensions = new SizeF(96F, 96F);
 
             // PDF変換用TextBox
             LicenseTxtBox.ReadOnly = true;

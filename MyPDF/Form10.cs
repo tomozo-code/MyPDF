@@ -33,7 +33,9 @@ namespace MyPDF
 
             // フォームサイズ
             this.Width = 400;
-            this.Height = 250;
+            this.Height = 270;
+            this.MinimumSize = new Size(220, 200);
+            //this.AutoScaleDimensions = new SizeF(96F, 96F);
 
             // 挿入するファイル名をセット
             InsertFileName.Text = Path.GetFileName(InsertFile);

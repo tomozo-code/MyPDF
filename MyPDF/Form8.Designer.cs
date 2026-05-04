@@ -40,12 +40,16 @@
             toolStripStatusLabel1 = new ToolStripStatusLabel();
             toolTip1 = new ToolTip(components);
             TotalPage = new Label();
+            panel1 = new Panel();
+            panel2 = new Panel();
             statusStrip1.SuspendLayout();
+            panel1.SuspendLayout();
+            panel2.SuspendLayout();
             SuspendLayout();
             // 
             // CancelBtn
             // 
-            CancelBtn.Location = new Point(143, 94);
+            CancelBtn.Location = new Point(127, 8);
             CancelBtn.Name = "CancelBtn";
             CancelBtn.Size = new Size(112, 35);
             CancelBtn.TabIndex = 4;
@@ -56,7 +60,7 @@
             // 
             // OkBtn
             // 
-            OkBtn.Location = new Point(24, 94);
+            OkBtn.Location = new Point(8, 8);
             OkBtn.Name = "OkBtn";
             OkBtn.Size = new Size(112, 35);
             OkBtn.TabIndex = 3;
@@ -67,7 +71,7 @@
             // 
             // EndDelTxt
             // 
-            EndDelTxt.Location = new Point(99, 49);
+            EndDelTxt.Location = new Point(112, 49);
             EndDelTxt.Name = "EndDelTxt";
             EndDelTxt.Size = new Size(80, 29);
             EndDelTxt.TabIndex = 2;
@@ -75,7 +79,7 @@
             // 
             // StartDelTxt
             // 
-            StartDelTxt.Location = new Point(99, 8);
+            StartDelTxt.Location = new Point(112, 8);
             StartDelTxt.Name = "StartDelTxt";
             StartDelTxt.Size = new Size(80, 29);
             StartDelTxt.TabIndex = 1;
@@ -84,7 +88,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(10, 52);
+            label2.Location = new Point(12, 52);
             label2.Name = "label2";
             label2.Size = new Size(94, 21);
             label2.TabIndex = 10;
@@ -93,7 +97,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(10, 11);
+            label1.Location = new Point(12, 11);
             label1.Name = "label1";
             label1.Size = new Size(94, 21);
             label1.TabIndex = 8;
@@ -103,11 +107,10 @@
             // 
             statusStrip1.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
-            statusStrip1.Location = new Point(0, 135);
+            statusStrip1.Location = new Point(0, 178);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Padding = new Padding(1, 0, 16, 0);
-            statusStrip1.Size = new Size(284, 26);
-            statusStrip1.SizingGrip = false;
+            statusStrip1.Size = new Size(314, 26);
             statusStrip1.TabIndex = 6;
             statusStrip1.Text = "statusStrip1";
             // 
@@ -120,36 +123,57 @@
             // TotalPage
             // 
             TotalPage.AutoSize = true;
-            TotalPage.Location = new Point(185, 52);
+            TotalPage.Location = new Point(198, 52);
             TotalPage.Name = "TotalPage";
             TotalPage.Size = new Size(72, 21);
             TotalPage.TabIndex = 13;
             TotalPage.Text = "/ 総ページ";
             // 
+            // panel1
+            // 
+            panel1.Controls.Add(CancelBtn);
+            panel1.Controls.Add(OkBtn);
+            panel1.Dock = DockStyle.Bottom;
+            panel1.Location = new Point(0, 128);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(314, 50);
+            panel1.TabIndex = 14;
+            // 
+            // panel2
+            // 
+            panel2.AutoScroll = true;
+            panel2.Controls.Add(label1);
+            panel2.Controls.Add(label2);
+            panel2.Controls.Add(StartDelTxt);
+            panel2.Controls.Add(TotalPage);
+            panel2.Controls.Add(EndDelTxt);
+            panel2.Dock = DockStyle.Fill;
+            panel2.Location = new Point(0, 0);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(314, 128);
+            panel2.TabIndex = 15;
+            // 
             // Form8
             // 
-            AutoScaleDimensions = new SizeF(9F, 21F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(284, 161);
-            Controls.Add(TotalPage);
-            Controls.Add(CancelBtn);
-            Controls.Add(OkBtn);
-            Controls.Add(EndDelTxt);
-            Controls.Add(StartDelTxt);
-            Controls.Add(label2);
-            Controls.Add(label1);
+            AutoScaleDimensions = new SizeF(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
+            ClientSize = new Size(314, 204);
+            Controls.Add(panel2);
+            Controls.Add(panel1);
             Controls.Add(statusStrip1);
             Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
-            FormBorderStyle = FormBorderStyle.FixedDialog;
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "Form8";
-            StartPosition = FormStartPosition.CenterScreen;
+            StartPosition = FormStartPosition.CenterParent;
             Text = "ページを指定して削除";
             Load += Form8_Load;
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
+            panel1.ResumeLayout(false);
+            panel2.ResumeLayout(false);
+            panel2.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -166,5 +190,7 @@
         private ToolStripStatusLabel toolStripStatusLabel1;
         private ToolTip toolTip1;
         private Label TotalPage;
+        private Panel panel1;
+        private Panel panel2;
     }
 }

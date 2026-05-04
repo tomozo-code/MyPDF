@@ -97,7 +97,7 @@
             CancelBtn.Location = new Point(118, 6);
             CancelBtn.Name = "CancelBtn";
             CancelBtn.Size = new Size(100, 32);
-            CancelBtn.TabIndex = 9;
+            CancelBtn.TabIndex = 10;
             CancelBtn.Tag = "編集を中止してウィンドウを閉じます";
             CancelBtn.Text = "Cancel";
             CancelBtn.UseVisualStyleBackColor = true;
@@ -108,7 +108,7 @@
             OkBtn.Location = new Point(12, 6);
             OkBtn.Name = "OkBtn";
             OkBtn.Size = new Size(100, 32);
-            OkBtn.TabIndex = 10;
+            OkBtn.TabIndex = 9;
             OkBtn.Tag = "PDFのプロパティを確定しウィンドウを閉じます";
             OkBtn.Text = "OK";
             OkBtn.UseVisualStyleBackColor = true;
@@ -273,6 +273,7 @@
             // 
             // KeywordTxt
             // 
+            KeywordTxt.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             KeywordTxt.Location = new Point(124, 152);
             KeywordTxt.Multiline = true;
             KeywordTxt.Name = "KeywordTxt";
@@ -292,6 +293,7 @@
             // 
             // TitleTxt
             // 
+            TitleTxt.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             TitleTxt.Location = new Point(124, 46);
             TitleTxt.Name = "TitleTxt";
             TitleTxt.Size = new Size(440, 29);
@@ -301,6 +303,7 @@
             // 
             // SubTitleTxt
             // 
+            SubTitleTxt.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             SubTitleTxt.Location = new Point(124, 117);
             SubTitleTxt.Name = "SubTitleTxt";
             SubTitleTxt.Size = new Size(440, 29);
@@ -328,6 +331,7 @@
             // 
             // AuthorTxt
             // 
+            AuthorTxt.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             AuthorTxt.Location = new Point(124, 82);
             AuthorTxt.Name = "AuthorTxt";
             AuthorTxt.Size = new Size(440, 29);
@@ -355,6 +359,7 @@
             // 
             // PageSizeLabel
             // 
+            PageSizeLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             PageSizeLabel.Location = new Point(126, 233);
             PageSizeLabel.Name = "PageSizeLabel";
             PageSizeLabel.Size = new Size(440, 29);
@@ -363,6 +368,7 @@
             // 
             // FileSizeLabel
             // 
+            FileSizeLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             FileSizeLabel.Location = new Point(126, 202);
             FileSizeLabel.Name = "FileSizeLabel";
             FileSizeLabel.Size = new Size(440, 29);
@@ -371,6 +377,7 @@
             // 
             // PasLabel
             // 
+            PasLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             PasLabel.Location = new Point(126, 171);
             PasLabel.Name = "PasLabel";
             PasLabel.Size = new Size(440, 29);
@@ -379,6 +386,7 @@
             // 
             // PdfVerLabel
             // 
+            PdfVerLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             PdfVerLabel.Location = new Point(126, 140);
             PdfVerLabel.Name = "PdfVerLabel";
             PdfVerLabel.Size = new Size(440, 29);
@@ -387,6 +395,7 @@
             // 
             // CreatorLabel
             // 
+            CreatorLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             CreatorLabel.Location = new Point(126, 109);
             CreatorLabel.Name = "CreatorLabel";
             CreatorLabel.Size = new Size(440, 29);
@@ -395,6 +404,7 @@
             // 
             // ModDateLabel
             // 
+            ModDateLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             ModDateLabel.Location = new Point(126, 78);
             ModDateLabel.Name = "ModDateLabel";
             ModDateLabel.Size = new Size(440, 29);
@@ -403,6 +413,7 @@
             // 
             // CreationDateLabel
             // 
+            CreationDateLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             CreationDateLabel.Location = new Point(126, 47);
             CreationDateLabel.Name = "CreationDateLabel";
             CreationDateLabel.Size = new Size(440, 29);
@@ -411,6 +422,7 @@
             // 
             // PdfConvertLabel
             // 
+            PdfConvertLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             PdfConvertLabel.Location = new Point(126, 16);
             PdfConvertLabel.Name = "PdfConvertLabel";
             PdfConvertLabel.Size = new Size(440, 29);
@@ -424,7 +436,6 @@
             statusStrip1.Location = new Point(0, 515);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(584, 26);
-            statusStrip1.SizingGrip = false;
             statusStrip1.TabIndex = 70;
             statusStrip1.Text = "statusStrip1";
             // 
@@ -447,6 +458,7 @@
             // 
             // tabPage1
             // 
+            tabPage1.AutoScroll = true;
             tabPage1.BackColor = SystemColors.Control;
             tabPage1.BorderStyle = BorderStyle.FixedSingle;
             tabPage1.Controls.Add(FileNamelabel2);
@@ -478,6 +490,7 @@
             // 
             // FileNamelabel2
             // 
+            FileNamelabel2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             FileNamelabel2.Location = new Point(124, 15);
             FileNamelabel2.Name = "FileNamelabel2";
             FileNamelabel2.Size = new Size(440, 29);
@@ -522,20 +535,19 @@
             // 
             // Form2
             // 
-            AutoScaleDimensions = new SizeF(9F, 21F);
-            AutoScaleMode = AutoScaleMode.Font;
+            AutoScaleDimensions = new SizeF(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
             ClientSize = new Size(584, 541);
             Controls.Add(tabControl1);
             Controls.Add(panel1);
             Controls.Add(statusStrip1);
             Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
-            FormBorderStyle = FormBorderStyle.FixedDialog;
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "Form2";
             SizeGripStyle = SizeGripStyle.Show;
-            StartPosition = FormStartPosition.CenterScreen;
+            StartPosition = FormStartPosition.CenterParent;
             Text = "PDFのプロパティ";
             Load += Form2_Load;
             panel1.ResumeLayout(false);

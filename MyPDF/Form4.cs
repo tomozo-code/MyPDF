@@ -27,8 +27,10 @@ namespace MyPDF
             InitializeComponent();
 
             // フォームサイズ
-            this.Width = 500;
-            this.Height = 570;
+            this.Width = 550;
+            this.Height = 600;
+            this.MinimumSize = new Size(400, 300);
+            //this.AutoScaleDimensions = new SizeF(96F, 96F);
 
             // null対策
             settings ??= new SecuritySettings();

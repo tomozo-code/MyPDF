@@ -43,19 +43,22 @@
             StartKaeTxt = new TextBox();
             label2 = new Label();
             label3 = new Label();
+            panel1 = new Panel();
+            panel2 = new Panel();
             statusStrip1.SuspendLayout();
             groupBox1.SuspendLayout();
+            panel1.SuspendLayout();
+            panel2.SuspendLayout();
             SuspendLayout();
             // 
             // statusStrip1
             // 
             statusStrip1.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
-            statusStrip1.Location = new Point(0, 215);
+            statusStrip1.Location = new Point(0, 235);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Padding = new Padding(1, 0, 16, 0);
-            statusStrip1.Size = new Size(384, 26);
-            statusStrip1.SizingGrip = false;
+            statusStrip1.Size = new Size(355, 26);
             statusStrip1.TabIndex = 0;
             statusStrip1.Text = "statusStrip1";
             // 
@@ -67,9 +70,10 @@
             // 
             // KaeFileName
             // 
+            KaeFileName.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             KaeFileName.Location = new Point(134, 8);
             KaeFileName.Name = "KaeFileName";
-            KaeFileName.Size = new Size(216, 29);
+            KaeFileName.Size = new Size(206, 29);
             KaeFileName.TabIndex = 72;
             KaeFileName.Text = "置換するファイル名が表示される";
             // 
@@ -84,7 +88,7 @@
             // 
             // CancelBtn
             // 
-            CancelBtn.Location = new Point(176, 168);
+            CancelBtn.Location = new Point(127, 7);
             CancelBtn.Name = "CancelBtn";
             CancelBtn.Size = new Size(112, 35);
             CancelBtn.TabIndex = 74;
@@ -95,7 +99,7 @@
             // 
             // OkBtn
             // 
-            OkBtn.Location = new Point(57, 168);
+            OkBtn.Location = new Point(8, 7);
             OkBtn.Name = "OkBtn";
             OkBtn.Size = new Size(112, 35);
             OkBtn.TabIndex = 73;
@@ -106,6 +110,7 @@
             // 
             // groupBox1
             // 
+            groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             groupBox1.Controls.Add(TotalPage);
             groupBox1.Controls.Add(EndKaeTxt);
             groupBox1.Controls.Add(StartKaeTxt);
@@ -113,7 +118,7 @@
             groupBox1.Controls.Add(label3);
             groupBox1.Location = new Point(12, 43);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(338, 110);
+            groupBox1.Size = new Size(328, 110);
             groupBox1.TabIndex = 75;
             groupBox1.TabStop = false;
             groupBox1.Text = "元のページ";
@@ -161,30 +166,51 @@
             label3.TabIndex = 23;
             label3.Text = "開始ページ：";
             // 
+            // panel1
+            // 
+            panel1.Controls.Add(OkBtn);
+            panel1.Controls.Add(CancelBtn);
+            panel1.Dock = DockStyle.Bottom;
+            panel1.Location = new Point(0, 185);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(355, 50);
+            panel1.TabIndex = 76;
+            // 
+            // panel2
+            // 
+            panel2.AutoScroll = true;
+            panel2.Controls.Add(label1);
+            panel2.Controls.Add(KaeFileName);
+            panel2.Controls.Add(groupBox1);
+            panel2.Dock = DockStyle.Fill;
+            panel2.Location = new Point(0, 0);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(355, 185);
+            panel2.TabIndex = 77;
+            // 
             // Form12
             // 
-            AutoScaleDimensions = new SizeF(9F, 21F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(384, 241);
-            Controls.Add(groupBox1);
-            Controls.Add(CancelBtn);
-            Controls.Add(OkBtn);
-            Controls.Add(KaeFileName);
-            Controls.Add(label1);
+            AutoScaleDimensions = new SizeF(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
+            ClientSize = new Size(355, 261);
+            Controls.Add(panel2);
+            Controls.Add(panel1);
             Controls.Add(statusStrip1);
             Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
-            FormBorderStyle = FormBorderStyle.FixedDialog;
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "Form12";
-            StartPosition = FormStartPosition.CenterScreen;
+            StartPosition = FormStartPosition.CenterParent;
             Text = "ページを置換";
             Load += Form12_Load;
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
+            panel1.ResumeLayout(false);
+            panel2.ResumeLayout(false);
+            panel2.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -204,5 +230,7 @@
         private TextBox StartKaeTxt;
         private Label label2;
         private Label label3;
+        private Panel panel1;
+        private Panel panel2;
     }
 }

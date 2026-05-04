@@ -102,6 +102,7 @@
             ZoomtoolStripComboBox = new ToolStripComboBox();
             toolStripSeparator3 = new ToolStripSeparator();
             toolStrip1 = new ToolStrip();
+            panel2 = new Panel();
             statusStrip1.SuspendLayout();
             contextMenuStrip2.SuspendLayout();
             contextMenuStrip1.SuspendLayout();
@@ -109,6 +110,7 @@
             panel3.SuspendLayout();
             panel4.SuspendLayout();
             toolStrip1.SuspendLayout();
+            panel2.SuspendLayout();
             SuspendLayout();
             // 
             // statusStrip1
@@ -131,7 +133,7 @@
             // splitter1
             // 
             splitter1.Cursor = Cursors.SizeWE;
-            splitter1.Location = new Point(199, 35);
+            splitter1.Location = new Point(200, 35);
             splitter1.Name = "splitter1";
             splitter1.Size = new Size(8, 353);
             splitter1.TabIndex = 3;
@@ -141,10 +143,10 @@
             // 
             pdfViewer1.BorderStyle = BorderStyle.FixedSingle;
             pdfViewer1.ContextMenuStrip = contextMenuStrip2;
-            pdfViewer1.Location = new Point(543, 97);
+            pdfViewer1.Location = new Point(339, 100);
             pdfViewer1.Margin = new Padding(4, 4, 4, 4);
             pdfViewer1.Name = "pdfViewer1";
-            pdfViewer1.Size = new Size(310, 225);
+            pdfViewer1.Size = new Size(180, 129);
             pdfViewer1.TabIndex = 0;
             pdfViewer1.ZoomMode = PdfiumViewer.PdfViewerZoomMode.FitBest;
             // 
@@ -526,8 +528,10 @@
             panel1.Controls.Add(panel3);
             panel1.Dock = DockStyle.Left;
             panel1.Location = new Point(0, 35);
+            panel1.MaximumSize = new Size(500, 0);
+            panel1.MinimumSize = new Size(50, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(199, 353);
+            panel1.Size = new Size(200, 353);
             panel1.TabIndex = 2;
             // 
             // panel3
@@ -537,7 +541,7 @@
             panel3.Dock = DockStyle.Top;
             panel3.Location = new Point(0, 0);
             panel3.Name = "panel3";
-            panel3.Size = new Size(199, 30);
+            panel3.Size = new Size(200, 30);
             panel3.TabIndex = 7;
             panel3.Tag = "しおりの表示、追加、削除等を行うことができます";
             // 
@@ -556,9 +560,9 @@
             panel4.BorderStyle = BorderStyle.FixedSingle;
             panel4.Controls.Add(label2);
             panel4.Dock = DockStyle.Top;
-            panel4.Location = new Point(207, 35);
+            panel4.Location = new Point(0, 0);
             panel4.Name = "panel4";
-            panel4.Size = new Size(757, 30);
+            panel4.Size = new Size(756, 30);
             panel4.TabIndex = 7;
             panel4.Tag = "PDFファイルを表示します";
             // 
@@ -574,11 +578,11 @@
             // 
             // Extxt
             // 
-            Extxt.Location = new Point(213, 71);
+            Extxt.Location = new Point(47, 132);
             Extxt.Multiline = true;
             Extxt.Name = "Extxt";
             Extxt.ReadOnly = true;
-            Extxt.Size = new Size(252, 85);
+            Extxt.Size = new Size(195, 103);
             Extxt.TabIndex = 8;
             Extxt.Visible = false;
             // 
@@ -791,14 +795,23 @@
             toolStrip1.TabIndex = 6;
             toolStrip1.Text = "toolStrip1";
             // 
+            // panel2
+            // 
+            panel2.Controls.Add(pdfViewer1);
+            panel2.Controls.Add(panel4);
+            panel2.Controls.Add(Extxt);
+            panel2.Dock = DockStyle.Fill;
+            panel2.Location = new Point(208, 35);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(756, 353);
+            panel2.TabIndex = 9;
+            // 
             // Form1
             // 
-            AutoScaleDimensions = new SizeF(9F, 21F);
-            AutoScaleMode = AutoScaleMode.Font;
+            AutoScaleDimensions = new SizeF(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
             ClientSize = new Size(964, 414);
-            Controls.Add(pdfViewer1);
-            Controls.Add(Extxt);
-            Controls.Add(panel4);
+            Controls.Add(panel2);
             Controls.Add(splitter1);
             Controls.Add(panel1);
             Controls.Add(statusStrip1);
@@ -821,6 +834,8 @@
             panel4.PerformLayout();
             toolStrip1.ResumeLayout(false);
             toolStrip1.PerformLayout();
+            panel2.ResumeLayout(false);
+            panel2.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -898,5 +913,6 @@
         private ToolStripSeparator toolStripMenuItem13;
         private ToolStripMenuItem ReplacementMenu;
         private ToolStripSeparator toolStripMenuItem14;
+        private Panel panel2;
     }
 }

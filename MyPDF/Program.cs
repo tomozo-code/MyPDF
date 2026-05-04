@@ -8,13 +8,15 @@ namespace MyPDF
         [STAThread]
         static void Main()
         {
+            Application.SetHighDpiMode(HighDpiMode.PerMonitorV2);
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
 
+
             // ここでpdfium.dllがあるかチェック
             // 発行するときは /* と */ を外す
-            
+
             if (!CheckPdfiumDll())
             {
                 MessageBox.Show(

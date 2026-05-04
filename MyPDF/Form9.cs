@@ -28,8 +28,10 @@ namespace MyPDF
             InitializeComponent();
 
             // フォームサイズ
-            this.Width = 300;
-            this.Height = 200;
+            this.Width = 350;
+            this.Height = 250;
+            this.MinimumSize = new Size(220, 200);
+            //this.AutoScaleDimensions = new SizeF(96F, 96F);
 
             // 総ページ数をセット
             this.maxPage = maxPage;

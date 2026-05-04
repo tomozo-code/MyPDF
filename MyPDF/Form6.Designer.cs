@@ -46,14 +46,16 @@
             toolTip1 = new ToolTip(components);
             TotalPageLabel = new Label();
             panel1 = new Panel();
+            panel2 = new Panel();
             statusStrip1.SuspendLayout();
             panel1.SuspendLayout();
+            panel2.SuspendLayout();
             SuspendLayout();
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(29, 104);
+            label1.Location = new Point(32, 100);
             label1.Name = "label1";
             label1.Size = new Size(74, 21);
             label1.TabIndex = 0;
@@ -62,7 +64,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(29, 143);
+            label2.Location = new Point(32, 139);
             label2.Name = "label2";
             label2.Size = new Size(74, 21);
             label2.TabIndex = 1;
@@ -72,7 +74,7 @@
             // 
             comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(113, 101);
+            comboBox1.Location = new Point(107, 97);
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(161, 29);
             comboBox1.TabIndex = 3;
@@ -102,7 +104,7 @@
             // 
             // btnColor
             // 
-            btnColor.Location = new Point(113, 137);
+            btnColor.Location = new Point(107, 133);
             btnColor.Name = "btnColor";
             btnColor.Size = new Size(38, 32);
             btnColor.TabIndex = 4;
@@ -113,7 +115,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(26, 19);
+            label3.Location = new Point(29, 15);
             label3.Name = "label3";
             label3.Size = new Size(77, 21);
             label3.TabIndex = 5;
@@ -122,16 +124,16 @@
             // BmTitleTxtBox
             // 
             BmTitleTxtBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            BmTitleTxtBox.Location = new Point(113, 16);
+            BmTitleTxtBox.Location = new Point(107, 12);
             BmTitleTxtBox.Name = "BmTitleTxtBox";
-            BmTitleTxtBox.Size = new Size(259, 29);
+            BmTitleTxtBox.Size = new Size(273, 29);
             BmTitleTxtBox.TabIndex = 1;
             BmTitleTxtBox.Tag = "しおり名を修正します";
             // 
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(12, 61);
+            label4.Location = new Point(15, 57);
             label4.Name = "label4";
             label4.Size = new Size(94, 21);
             label4.TabIndex = 7;
@@ -140,7 +142,7 @@
             // PageNoTxtBox
             // 
             PageNoTxtBox.ImeMode = ImeMode.NoControl;
-            PageNoTxtBox.Location = new Point(113, 58);
+            PageNoTxtBox.Location = new Point(107, 54);
             PageNoTxtBox.Name = "PageNoTxtBox";
             PageNoTxtBox.Size = new Size(79, 29);
             PageNoTxtBox.TabIndex = 2;
@@ -151,9 +153,9 @@
             // 
             statusStrip1.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
-            statusStrip1.Location = new Point(0, 235);
+            statusStrip1.Location = new Point(0, 327);
             statusStrip1.Name = "statusStrip1";
-            statusStrip1.Size = new Size(384, 26);
+            statusStrip1.Size = new Size(404, 26);
             statusStrip1.TabIndex = 9;
             statusStrip1.Text = "statusStrip1";
             // 
@@ -166,7 +168,7 @@
             // TotalPageLabel
             // 
             TotalPageLabel.AutoSize = true;
-            TotalPageLabel.Location = new Point(198, 61);
+            TotalPageLabel.Location = new Point(192, 57);
             TotalPageLabel.Name = "TotalPageLabel";
             TotalPageLabel.Size = new Size(88, 21);
             TotalPageLabel.TabIndex = 10;
@@ -178,38 +180,50 @@
             panel1.Controls.Add(OkBtn);
             panel1.Controls.Add(CancelBtn);
             panel1.Dock = DockStyle.Bottom;
-            panel1.Location = new Point(0, 185);
+            panel1.Location = new Point(0, 277);
             panel1.Name = "panel1";
-            panel1.Size = new Size(384, 50);
+            panel1.Size = new Size(404, 50);
             panel1.TabIndex = 11;
+            // 
+            // panel2
+            // 
+            panel2.AutoScroll = true;
+            panel2.Controls.Add(label3);
+            panel2.Controls.Add(label1);
+            panel2.Controls.Add(label2);
+            panel2.Controls.Add(TotalPageLabel);
+            panel2.Controls.Add(comboBox1);
+            panel2.Controls.Add(PageNoTxtBox);
+            panel2.Controls.Add(btnColor);
+            panel2.Controls.Add(label4);
+            panel2.Controls.Add(BmTitleTxtBox);
+            panel2.Dock = DockStyle.Fill;
+            panel2.Location = new Point(0, 0);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(404, 277);
+            panel2.TabIndex = 12;
             // 
             // Form6
             // 
-            AutoScaleDimensions = new SizeF(9F, 21F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(384, 261);
+            AutoScaleDimensions = new SizeF(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
+            ClientSize = new Size(404, 353);
+            Controls.Add(panel2);
             Controls.Add(panel1);
             Controls.Add(statusStrip1);
-            Controls.Add(TotalPageLabel);
-            Controls.Add(PageNoTxtBox);
-            Controls.Add(label4);
-            Controls.Add(BmTitleTxtBox);
-            Controls.Add(label3);
-            Controls.Add(btnColor);
-            Controls.Add(comboBox1);
-            Controls.Add(label2);
-            Controls.Add(label1);
             Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "Form6";
-            StartPosition = FormStartPosition.CenterScreen;
+            StartPosition = FormStartPosition.CenterParent;
             Text = "しおりのプロパティ";
             Load += Form6_Load;
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
             panel1.ResumeLayout(false);
+            panel2.ResumeLayout(false);
+            panel2.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -232,5 +246,6 @@
         private ToolTip toolTip1;
         private Label TotalPageLabel;
         private Panel panel1;
+        private Panel panel2;
     }
 }

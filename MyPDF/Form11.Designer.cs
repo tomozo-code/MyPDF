@@ -45,18 +45,21 @@
             CancelBtn = new Button();
             OkBtn = new Button();
             TargetPageTxt = new TextBox();
+            panel1 = new Panel();
+            panel2 = new Panel();
             statusStrip1.SuspendLayout();
             groupBox1.SuspendLayout();
+            panel1.SuspendLayout();
+            panel2.SuspendLayout();
             SuspendLayout();
             // 
             // statusStrip1
             // 
             statusStrip1.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
-            statusStrip1.Location = new Point(0, 255);
+            statusStrip1.Location = new Point(0, 282);
             statusStrip1.Name = "statusStrip1";
-            statusStrip1.Size = new Size(324, 26);
-            statusStrip1.SizingGrip = false;
+            statusStrip1.Size = new Size(392, 26);
             statusStrip1.TabIndex = 0;
             statusStrip1.Text = "statusStrip1";
             // 
@@ -68,14 +71,15 @@
             // 
             // groupBox1
             // 
+            groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             groupBox1.Controls.Add(TotalPage);
             groupBox1.Controls.Add(EndMoveTxt);
             groupBox1.Controls.Add(StartMoveTxt);
             groupBox1.Controls.Add(label2);
             groupBox1.Controls.Add(label1);
-            groupBox1.Location = new Point(12, 12);
+            groupBox1.Location = new Point(12, 7);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(301, 107);
+            groupBox1.Size = new Size(361, 107);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "移動するページ";
@@ -83,7 +87,7 @@
             // TotalPage
             // 
             TotalPage.AutoSize = true;
-            TotalPage.Location = new Point(191, 66);
+            TotalPage.Location = new Point(202, 66);
             TotalPage.Name = "TotalPage";
             TotalPage.Size = new Size(72, 21);
             TotalPage.TabIndex = 25;
@@ -91,7 +95,7 @@
             // 
             // EndMoveTxt
             // 
-            EndMoveTxt.Location = new Point(105, 63);
+            EndMoveTxt.Location = new Point(116, 63);
             EndMoveTxt.Name = "EndMoveTxt";
             EndMoveTxt.Size = new Size(80, 29);
             EndMoveTxt.TabIndex = 2;
@@ -99,7 +103,7 @@
             // 
             // StartMoveTxt
             // 
-            StartMoveTxt.Location = new Point(105, 22);
+            StartMoveTxt.Location = new Point(116, 22);
             StartMoveTxt.Name = "StartMoveTxt";
             StartMoveTxt.Size = new Size(80, 29);
             StartMoveTxt.TabIndex = 1;
@@ -126,7 +130,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(12, 133);
+            label3.Location = new Point(12, 128);
             label3.Name = "label3";
             label3.Size = new Size(110, 21);
             label3.TabIndex = 2;
@@ -136,7 +140,7 @@
             // 
             MovePlace.DropDownStyle = ComboBoxStyle.DropDownList;
             MovePlace.FormattingEnabled = true;
-            MovePlace.Location = new Point(116, 165);
+            MovePlace.Location = new Point(127, 160);
             MovePlace.Name = "MovePlace";
             MovePlace.Size = new Size(121, 29);
             MovePlace.TabIndex = 4;
@@ -145,7 +149,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(7, 168);
+            label4.Location = new Point(7, 163);
             label4.Name = "label4";
             label4.Size = new Size(115, 21);
             label4.TabIndex = 74;
@@ -153,7 +157,7 @@
             // 
             // CancelBtn
             // 
-            CancelBtn.Location = new Point(154, 206);
+            CancelBtn.Location = new Point(126, 7);
             CancelBtn.Name = "CancelBtn";
             CancelBtn.Size = new Size(112, 35);
             CancelBtn.TabIndex = 6;
@@ -164,7 +168,7 @@
             // 
             // OkBtn
             // 
-            OkBtn.Location = new Point(35, 206);
+            OkBtn.Location = new Point(7, 7);
             OkBtn.Name = "OkBtn";
             OkBtn.Size = new Size(112, 35);
             OkBtn.TabIndex = 5;
@@ -175,38 +179,59 @@
             // 
             // TargetPageTxt
             // 
-            TargetPageTxt.Location = new Point(117, 130);
+            TargetPageTxt.Location = new Point(128, 125);
             TargetPageTxt.Name = "TargetPageTxt";
             TargetPageTxt.Size = new Size(80, 29);
             TargetPageTxt.TabIndex = 3;
             TargetPageTxt.Tag = "移動先ページを指定します";
             // 
+            // panel1
+            // 
+            panel1.Controls.Add(OkBtn);
+            panel1.Controls.Add(CancelBtn);
+            panel1.Dock = DockStyle.Bottom;
+            panel1.Location = new Point(0, 232);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(392, 50);
+            panel1.TabIndex = 75;
+            // 
+            // panel2
+            // 
+            panel2.AutoScroll = true;
+            panel2.Controls.Add(label3);
+            panel2.Controls.Add(groupBox1);
+            panel2.Controls.Add(label4);
+            panel2.Controls.Add(TargetPageTxt);
+            panel2.Controls.Add(MovePlace);
+            panel2.Dock = DockStyle.Fill;
+            panel2.Location = new Point(0, 0);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(392, 232);
+            panel2.TabIndex = 76;
+            // 
             // Form11
             // 
-            AutoScaleDimensions = new SizeF(9F, 21F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(324, 281);
-            Controls.Add(TargetPageTxt);
-            Controls.Add(CancelBtn);
-            Controls.Add(OkBtn);
-            Controls.Add(MovePlace);
-            Controls.Add(label4);
-            Controls.Add(label3);
-            Controls.Add(groupBox1);
+            AutoScaleDimensions = new SizeF(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
+            ClientSize = new Size(392, 308);
+            Controls.Add(panel2);
+            Controls.Add(panel1);
             Controls.Add(statusStrip1);
             Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
-            FormBorderStyle = FormBorderStyle.FixedDialog;
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "Form11";
-            StartPosition = FormStartPosition.CenterScreen;
+            StartPosition = FormStartPosition.CenterParent;
             Text = "ページを移動";
             Load += Form11_Load;
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
+            panel1.ResumeLayout(false);
+            panel2.ResumeLayout(false);
+            panel2.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -228,5 +253,7 @@
         private Button CancelBtn;
         private Button OkBtn;
         private TextBox TargetPageTxt;
+        private Panel panel1;
+        private Panel panel2;
     }
 }

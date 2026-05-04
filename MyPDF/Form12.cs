@@ -31,7 +31,9 @@ namespace MyPDF
 
             // フォームサイズ
             this.Width = 400;
-            this.Height = 280;
+            this.Height = 350;
+            this.MinimumSize = new Size(220, 200);
+            //this.AutoScaleDimensions = new SizeF(96F, 96F);
 
 
             // 置換するファイル名をセット

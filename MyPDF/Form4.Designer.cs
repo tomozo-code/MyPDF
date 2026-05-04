@@ -60,42 +60,47 @@
             statusStrip1 = new StatusStrip();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
             toolTip1 = new ToolTip(components);
+            panel4 = new Panel();
             panel3.SuspendLayout();
             panel2.SuspendLayout();
             panel1.SuspendLayout();
             statusStrip1.SuspendLayout();
+            panel4.SuspendLayout();
             SuspendLayout();
             // 
             // panel3
             // 
+            panel3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             panel3.BorderStyle = BorderStyle.FixedSingle;
             panel3.Controls.Add(txtUserPassConfirm);
             panel3.Controls.Add(txtUserPass);
             panel3.Controls.Add(label2);
             panel3.Controls.Add(label7);
-            panel3.Location = new Point(10, 246);
+            panel3.Location = new Point(8, 250);
             panel3.Name = "panel3";
-            panel3.Size = new Size(460, 95);
+            panel3.Size = new Size(465, 95);
             panel3.TabIndex = 24;
             // 
             // txtUserPassConfirm
             // 
+            txtUserPassConfirm.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             txtUserPassConfirm.Enabled = false;
             txtUserPassConfirm.ImeMode = ImeMode.Disable;
             txtUserPassConfirm.Location = new Point(135, 57);
             txtUserPassConfirm.Name = "txtUserPassConfirm";
-            txtUserPassConfirm.Size = new Size(300, 29);
+            txtUserPassConfirm.Size = new Size(305, 29);
             txtUserPassConfirm.TabIndex = 12;
             txtUserPassConfirm.Tag = "確認のため、閲覧パスワードと同じパスワードを入力します";
             txtUserPassConfirm.TextChanged += UserPass_TextChanged;
             // 
             // txtUserPass
             // 
+            txtUserPass.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             txtUserPass.Enabled = false;
             txtUserPass.ImeMode = ImeMode.Disable;
             txtUserPass.Location = new Point(135, 21);
             txtUserPass.Name = "txtUserPass";
-            txtUserPass.Size = new Size(300, 29);
+            txtUserPass.Size = new Size(305, 29);
             txtUserPass.TabIndex = 11;
             txtUserPass.Tag = "閲覧パスワードを設定し、PDFファイルを保護します";
             txtUserPass.TextChanged += UserPass_TextChanged;
@@ -120,6 +125,7 @@
             // 
             // panel2
             // 
+            panel2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             panel2.BorderStyle = BorderStyle.FixedSingle;
             panel2.Controls.Add(label6);
             panel2.Controls.Add(txtOwnerPass);
@@ -132,9 +138,9 @@
             panel2.Controls.Add(chkForm);
             panel2.Controls.Add(chkExtract);
             panel2.Controls.Add(chkEdit);
-            panel2.Location = new Point(10, 15);
+            panel2.Location = new Point(8, 19);
             panel2.Name = "panel2";
-            panel2.Size = new Size(460, 214);
+            panel2.Size = new Size(465, 214);
             panel2.TabIndex = 23;
             // 
             // label6
@@ -148,11 +154,12 @@
             // 
             // txtOwnerPass
             // 
+            txtOwnerPass.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             txtOwnerPass.Enabled = false;
             txtOwnerPass.ImeMode = ImeMode.Disable;
             txtOwnerPass.Location = new Point(135, 16);
             txtOwnerPass.Name = "txtOwnerPass";
-            txtOwnerPass.Size = new Size(300, 29);
+            txtOwnerPass.Size = new Size(305, 29);
             txtOwnerPass.TabIndex = 2;
             txtOwnerPass.Tag = "権限パスワードを設定し、PDFファイルを保護します";
             txtOwnerPass.TextChanged += OwnerPass_TextChanged;
@@ -168,11 +175,12 @@
             // 
             // txtOwnerPassConfirm
             // 
+            txtOwnerPassConfirm.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             txtOwnerPassConfirm.Enabled = false;
             txtOwnerPassConfirm.ImeMode = ImeMode.Disable;
             txtOwnerPassConfirm.Location = new Point(135, 55);
             txtOwnerPassConfirm.Name = "txtOwnerPassConfirm";
-            txtOwnerPassConfirm.Size = new Size(300, 29);
+            txtOwnerPassConfirm.Size = new Size(305, 29);
             txtOwnerPassConfirm.TabIndex = 3;
             txtOwnerPassConfirm.Tag = "確認のため、権限パスワードと同じパスワードを入力します";
             txtOwnerPassConfirm.TextChanged += OwnerPass_TextChanged;
@@ -264,7 +272,7 @@
             // rbRC4
             // 
             rbRC4.AutoSize = true;
-            rbRC4.Location = new Point(304, 372);
+            rbRC4.Location = new Point(302, 376);
             rbRC4.Name = "rbRC4";
             rbRC4.Size = new Size(132, 25);
             rbRC4.TabIndex = 15;
@@ -275,7 +283,7 @@
             // rbAES128
             // 
             rbAES128.AutoSize = true;
-            rbAES128.Location = new Point(191, 372);
+            rbAES128.Location = new Point(189, 376);
             rbAES128.Name = "rbAES128";
             rbAES128.Size = new Size(88, 25);
             rbAES128.TabIndex = 14;
@@ -287,7 +295,7 @@
             // 
             rbAES256.AutoSize = true;
             rbAES256.Checked = true;
-            rbAES256.Location = new Point(44, 372);
+            rbAES256.Location = new Point(42, 376);
             rbAES256.Name = "rbAES256";
             rbAES256.Size = new Size(130, 25);
             rbAES256.TabIndex = 13;
@@ -299,7 +307,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(25, 400);
+            label5.Location = new Point(23, 404);
             label5.Name = "label5";
             label5.Size = new Size(384, 42);
             label5.TabIndex = 11;
@@ -308,7 +316,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(25, 348);
+            label3.Location = new Point(23, 352);
             label3.Name = "label3";
             label3.Size = new Size(90, 21);
             label3.TabIndex = 5;
@@ -318,7 +326,7 @@
             // checkBox1
             // 
             checkBox1.AutoSize = true;
-            checkBox1.Location = new Point(25, 3);
+            checkBox1.Location = new Point(23, 7);
             checkBox1.Name = "checkBox1";
             checkBox1.Size = new Size(172, 25);
             checkBox1.TabIndex = 1;
@@ -332,14 +340,14 @@
             panel1.Controls.Add(CancelBtn);
             panel1.Controls.Add(OkBtn);
             panel1.Dock = DockStyle.Bottom;
-            panel1.Location = new Point(0, 455);
+            panel1.Location = new Point(0, 464);
             panel1.Name = "panel1";
-            panel1.Size = new Size(543, 50);
+            panel1.Size = new Size(489, 50);
             panel1.TabIndex = 2;
             // 
             // CancelBtn
             // 
-            CancelBtn.Location = new Point(118, 6);
+            CancelBtn.Location = new Point(115, 9);
             CancelBtn.Name = "CancelBtn";
             CancelBtn.Size = new Size(100, 32);
             CancelBtn.TabIndex = 16;
@@ -350,7 +358,7 @@
             // 
             // OkBtn
             // 
-            OkBtn.Location = new Point(12, 6);
+            OkBtn.Location = new Point(9, 9);
             OkBtn.Name = "OkBtn";
             OkBtn.Size = new Size(100, 32);
             OkBtn.TabIndex = 17;
@@ -362,7 +370,7 @@
             // checkBox2
             // 
             checkBox2.AutoSize = true;
-            checkBox2.Location = new Point(25, 235);
+            checkBox2.Location = new Point(23, 239);
             checkBox2.Name = "checkBox2";
             checkBox2.Size = new Size(193, 25);
             checkBox2.TabIndex = 10;
@@ -375,10 +383,9 @@
             // 
             statusStrip1.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
-            statusStrip1.Location = new Point(0, 505);
+            statusStrip1.Location = new Point(0, 514);
             statusStrip1.Name = "statusStrip1";
-            statusStrip1.Size = new Size(543, 26);
-            statusStrip1.SizingGrip = false;
+            statusStrip1.Size = new Size(489, 26);
             statusStrip1.TabIndex = 25;
             statusStrip1.Text = "statusStrip1";
             // 
@@ -388,30 +395,39 @@
             toolStripStatusLabel1.Size = new Size(242, 21);
             toolStripStatusLabel1.Text = "PDFファイルにセキュリティを設定します";
             // 
+            // panel4
+            // 
+            panel4.AutoScroll = true;
+            panel4.Controls.Add(checkBox2);
+            panel4.Controls.Add(label5);
+            panel4.Controls.Add(label3);
+            panel4.Controls.Add(rbAES256);
+            panel4.Controls.Add(checkBox1);
+            panel4.Controls.Add(rbAES128);
+            panel4.Controls.Add(panel3);
+            panel4.Controls.Add(rbRC4);
+            panel4.Controls.Add(panel2);
+            panel4.Dock = DockStyle.Fill;
+            panel4.Location = new Point(0, 0);
+            panel4.Name = "panel4";
+            panel4.Size = new Size(489, 464);
+            panel4.TabIndex = 26;
+            // 
             // Form4
             // 
-            AutoScaleDimensions = new SizeF(9F, 21F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(543, 531);
-            Controls.Add(checkBox2);
-            Controls.Add(checkBox1);
-            Controls.Add(panel3);
-            Controls.Add(panel2);
-            Controls.Add(rbRC4);
+            AutoScaleDimensions = new SizeF(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
+            ClientSize = new Size(489, 540);
+            Controls.Add(panel4);
             Controls.Add(panel1);
-            Controls.Add(rbAES128);
-            Controls.Add(rbAES256);
-            Controls.Add(label3);
-            Controls.Add(label5);
             Controls.Add(statusStrip1);
             Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
-            FormBorderStyle = FormBorderStyle.FixedDialog;
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "Form4";
             SizeGripStyle = SizeGripStyle.Hide;
-            StartPosition = FormStartPosition.CenterScreen;
+            StartPosition = FormStartPosition.CenterParent;
             Text = "セキュリティ設定";
             Load += Form4_Load;
             panel3.ResumeLayout(false);
@@ -421,6 +437,8 @@
             panel1.ResumeLayout(false);
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
+            panel4.ResumeLayout(false);
+            panel4.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -456,5 +474,6 @@
         private StatusStrip statusStrip1;
         private ToolTip toolTip1;
         private ToolStripStatusLabel toolStripStatusLabel1;
+        private Panel panel4;
     }
 }

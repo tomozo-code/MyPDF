@@ -53,7 +53,9 @@ namespace MyPDF
 
             // フォームサイズ
             this.Width = 400;
-            this.Height = 300;
+            this.Height = 350;
+            this.MinimumSize = new Size(300, 200);
+            //this.AutoScaleDimensions = new SizeF(96F, 96F);
 
             colorDialog = new ColorDialog();
 

@@ -111,6 +111,7 @@ namespace MyPDF
             // フォームサイズ
             this.Width = 900;
             this.Height = 600;
+            this.MinimumSize = new Size(400, 400);
 
             // フォーム最大化
             //this.WindowState = FormWindowState.Maximized;
@@ -137,7 +138,7 @@ namespace MyPDF
 
             // エラー表示用
             //Extxt.Visible = true;
-            //Extxt.Dock = DockStyle.Top;
+            //Extxt.Dock = DockStyle.Bottom;
 
         }
 
@@ -2032,7 +2033,7 @@ namespace MyPDF
             newNode.Tag = new BookmarkInfo
             {
                 // しおり名
-                BmTitle = "",
+                BmTitle = "新しいしおり",
                 // 表示されているページ
                 Page = currentPage,
                 // 色は黒(デフォルト)
@@ -3475,7 +3476,10 @@ namespace MyPDF
         private void ResetPdfViewer()
         {
             // 親から外す
-            this.Controls.Remove(pdfViewer1);
+            //this.Controls.Remove(pdfViewer1);
+
+            // Panel2から外す
+            panel2.Controls.Remove(pdfViewer1);
 
             // 念のため破棄
             try
@@ -3498,7 +3502,8 @@ namespace MyPDF
             pdfViewer1.ContextMenuStrip = contextMenuStrip2;
 
             // 再追加
-            this.Controls.Add(pdfViewer1);
+            //this.Controls.Add(pdfViewer1);
+            panel2.Controls.Add(pdfViewer1);
             pdfViewer1.BringToFront();
 
             // メニューリセット

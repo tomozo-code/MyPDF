@@ -35,12 +35,14 @@
             labelCopyright = new Label();
             pictureBox1 = new PictureBox();
             LicenseTxtBox = new TextBox();
+            panel1 = new Panel();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            panel1.SuspendLayout();
             SuspendLayout();
             // 
             // OkBtn
             // 
-            OkBtn.Location = new Point(314, 44);
+            OkBtn.Location = new Point(11, 8);
             OkBtn.Name = "OkBtn";
             OkBtn.Size = new Size(100, 30);
             OkBtn.TabIndex = 1;
@@ -60,7 +62,7 @@
             // labelVersion
             // 
             labelVersion.AutoSize = true;
-            labelVersion.Location = new Point(139, 53);
+            labelVersion.Location = new Point(139, 59);
             labelVersion.Name = "labelVersion";
             labelVersion.Size = new Size(68, 21);
             labelVersion.TabIndex = 2;
@@ -69,7 +71,7 @@
             // labelCopyright
             // 
             labelCopyright.AutoSize = true;
-            labelCopyright.Location = new Point(139, 74);
+            labelCopyright.Location = new Point(139, 86);
             labelCopyright.Name = "labelCopyright";
             labelCopyright.Size = new Size(75, 21);
             labelCopyright.TabIndex = 3;
@@ -87,19 +89,29 @@
             // 
             // LicenseTxtBox
             // 
+            LicenseTxtBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             LicenseTxtBox.Location = new Point(12, 132);
             LicenseTxtBox.Multiline = true;
             LicenseTxtBox.Name = "LicenseTxtBox";
-            LicenseTxtBox.Size = new Size(442, 181);
+            LicenseTxtBox.Size = new Size(442, 182);
             LicenseTxtBox.TabIndex = 6;
             LicenseTxtBox.Text = resources.GetString("LicenseTxtBox.Text");
             // 
+            // panel1
+            // 
+            panel1.Controls.Add(OkBtn);
+            panel1.Dock = DockStyle.Bottom;
+            panel1.Location = new Point(0, 319);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(464, 50);
+            panel1.TabIndex = 7;
+            // 
             // Form3
             // 
-            AutoScaleDimensions = new SizeF(9F, 21F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(676, 560);
-            Controls.Add(OkBtn);
+            AutoScaleDimensions = new SizeF(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
+            ClientSize = new Size(464, 369);
+            Controls.Add(panel1);
             Controls.Add(LicenseTxtBox);
             Controls.Add(pictureBox1);
             Controls.Add(labelCopyright);
@@ -111,10 +123,11 @@
             MinimizeBox = false;
             Name = "Form3";
             SizeGripStyle = SizeGripStyle.Hide;
-            StartPosition = FormStartPosition.CenterScreen;
+            StartPosition = FormStartPosition.CenterParent;
             Text = "バージョン情報";
             Load += Form3_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            panel1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -127,5 +140,6 @@
         private Label labelCopyright;
         private PictureBox pictureBox1;
         private TextBox LicenseTxtBox;
+        private Panel panel1;
     }
 }
