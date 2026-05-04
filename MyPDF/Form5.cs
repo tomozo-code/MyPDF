@@ -19,10 +19,12 @@ namespace MyPDF
         // ツールチップに表示するヒント文字列
         private string? toolHintTxt = null;
 
+        private string PassMessage;
+
 
         public string? Password { get; private set; }
 
-        public Form5()
+        public Form5(string PassMessage)
         {
             InitializeComponent();
 
@@ -36,9 +38,10 @@ namespace MyPDF
             NoteTxt.BorderStyle = BorderStyle.FixedSingle;
             NoteTxt.BackColor = this.BackColor;
             NoteTxt.TabStop = false;
-           
 
-            toolHintTxt = "保護パスワードを入力して下さい";
+            NoteTxt.Text = PassMessage;
+
+            toolHintTxt = "パスワードを入力してください";
 
             toolTip1.InitialDelay = 500;   // 表示までの時間(ms)
             toolTip1.AutoPopDelay = 5000;  // 表示時間

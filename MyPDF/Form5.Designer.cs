@@ -62,7 +62,7 @@
             PasswordTxt.Name = "PasswordTxt";
             PasswordTxt.Size = new Size(469, 29);
             PasswordTxt.TabIndex = 0;
-            PasswordTxt.Tag = "パスワードを入力して下さい";
+            PasswordTxt.Tag = "パスワードを入力してください";
             // 
             // CancelBtn
             // 
