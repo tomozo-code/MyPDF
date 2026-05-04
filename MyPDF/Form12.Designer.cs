@@ -71,9 +71,9 @@
             // KaeFileName
             // 
             KaeFileName.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            KaeFileName.Location = new Point(134, 8);
+            KaeFileName.Location = new Point(146, 8);
             KaeFileName.Name = "KaeFileName";
-            KaeFileName.Size = new Size(206, 29);
+            KaeFileName.Size = new Size(194, 29);
             KaeFileName.TabIndex = 72;
             KaeFileName.Text = "置換するファイル名が表示される";
             // 
@@ -126,7 +126,7 @@
             // TotalPage
             // 
             TotalPage.AutoSize = true;
-            TotalPage.Location = new Point(209, 66);
+            TotalPage.Location = new Point(220, 66);
             TotalPage.Name = "TotalPage";
             TotalPage.Size = new Size(72, 21);
             TotalPage.TabIndex = 25;
@@ -134,7 +134,7 @@
             // 
             // EndKaeTxt
             // 
-            EndKaeTxt.Location = new Point(123, 63);
+            EndKaeTxt.Location = new Point(134, 63);
             EndKaeTxt.Name = "EndKaeTxt";
             EndKaeTxt.Size = new Size(80, 29);
             EndKaeTxt.TabIndex = 22;
@@ -142,7 +142,7 @@
             // 
             // StartKaeTxt
             // 
-            StartKaeTxt.Location = new Point(123, 22);
+            StartKaeTxt.Location = new Point(134, 22);
             StartKaeTxt.Name = "StartKaeTxt";
             StartKaeTxt.Size = new Size(80, 29);
             StartKaeTxt.TabIndex = 21;

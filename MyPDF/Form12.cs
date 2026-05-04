@@ -47,6 +47,7 @@ namespace MyPDF
 
             // 今表示しているページをセット
             StartKaeTxt.Text = nowPage.ToString();
+            EndKaeTxt.Text = nowPage.ToString();
 
             // 総ページ
             TotalPage.Text = "/ " + maxPage.ToString();

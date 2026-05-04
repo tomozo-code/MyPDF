@@ -21,11 +21,14 @@ namespace MyPDF
         // 削除設定（外から取得用）
         public int StartPage { get; private set; }
         public int EndPage { get; private set; }
+
+        // 今のページ
+        private int nowPage;
         // 総ページ数
         private int maxPage;
 
 
-        public Form8(int maxPage)
+        public Form8(int nowPage, int maxPage)
         {
             InitializeComponent();
 
@@ -35,14 +38,16 @@ namespace MyPDF
             this.MinimumSize = new Size(220, 200);
             //this.AutoScaleDimensions = new SizeF(96F, 96F);
 
+            // 今のページセット
+            this.nowPage = nowPage;
             // 総ページ数をセット
             this.maxPage = maxPage;
 
-            // 開始ページ初期値
-            StartDelTxt.Text = "1";
+            // 開始ページ初期値(今のページ)
+            StartDelTxt.Text = nowPage.ToString();
 
-            // 終了ページ初期値
-            EndDelTxt.Text = maxPage.ToString();
+            // 終了ページ初期値(今のページ)
+            EndDelTxt.Text = nowPage.ToString();
 
             // 総ページ
             TotalPage.Text = "/ " + maxPage.ToString();

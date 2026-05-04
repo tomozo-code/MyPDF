@@ -3253,8 +3253,8 @@ namespace MyPDF
         private void LeftRotate90_Click(object sender, EventArgs e)
         {
             // 左なので-90°だがプラスで設定 → 270°
-            int p = pdfViewer1.Renderer.Page + 1;
-            RotatePages(p, p, 270);
+            int page = pdfViewer1.Renderer.Page + 1;
+            RotatePages(page, page, 270);
         }
 
         // ==============================
@@ -3262,8 +3262,8 @@ namespace MyPDF
         // ==============================
         private void RightRotate90_Click(object sender, EventArgs e)
         {
-            int p = pdfViewer1.Renderer.Page + 1;
-            RotatePages(p, p, 90);
+            int page = pdfViewer1.Renderer.Page + 1;
+            RotatePages(page, page, 90);
         }
 
         // ==============================
@@ -3271,8 +3271,8 @@ namespace MyPDF
         // ==============================
         private void Rotate180_Click(object sender, EventArgs e)
         {
-            int p = pdfViewer1.Renderer.Page + 1;
-            RotatePages(p, p, 180);
+            int page = pdfViewer1.Renderer.Page + 1;
+            RotatePages(page, page, 180);
         }
 
         // ==============================
@@ -3286,9 +3286,10 @@ namespace MyPDF
                 return;
             }
 
+            int page = pdfViewer1.Renderer.Page + 1;
 
             // Form7起動
-            using (var f = new Form7(currentSettings.TotalPage))
+            using (var f = new Form7(page, currentSettings.TotalPage))
             {
                 if (f.ShowDialog() == DialogResult.OK)
                 {
@@ -3409,8 +3410,10 @@ namespace MyPDF
                 return;
             }
 
+            int page = pdfViewer1.Renderer.Page + 1;
+
             // Form8起動
-            using (var f = new Form8(currentSettings.TotalPage))
+            using (var f = new Form8(page, currentSettings.TotalPage))
             {
                 if (f.ShowDialog() == DialogResult.OK)
                 {
@@ -3656,9 +3659,10 @@ namespace MyPDF
                 return;
             }
 
+            int page = pdfViewer1.Renderer.Page + 1;
 
             // Form9起動
-            using (var f = new Form9(currentSettings.TotalPage))
+            using (var f = new Form9(page, currentSettings.TotalPage))
             {
                 if (f.ShowDialog() == DialogResult.OK)
                 {

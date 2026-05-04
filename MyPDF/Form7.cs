@@ -25,11 +25,13 @@ namespace MyPDF
         public int EndPage { get; private set; }
         public int RotationAngle { get; private set; }
 
+        // 今のページ
+        private int nowPage;
         // 総ページ数
         private int maxPage;
 
 
-        public Form7(int maxPage)
+        public Form7(int nowPage, int maxPage)
         {
             InitializeComponent();
 
@@ -39,14 +41,16 @@ namespace MyPDF
             this.MinimumSize = new Size(300, 200);
             //this.AutoScaleDimensions = new SizeF(96F, 96F);
 
+            // 今のページをセット
+            this.nowPage = nowPage;
             // 総ページ数をセット
             this.maxPage = maxPage;
 
-            // 開始ページ初期値
-            StartRollTxt.Text = "1";
+            // 開始ページ初期値(今のページ)
+            StartRollTxt.Text = nowPage.ToString();
 
-            // 終了ページ初期値
-            EndRollTxt.Text = maxPage.ToString();
+            // 終了ページ初期値(今のページ)
+            EndRollTxt.Text = nowPage.ToString();
 
             // 総ページ
             TotalPage.Text = "/ " + maxPage.ToString();

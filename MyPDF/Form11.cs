@@ -42,6 +42,7 @@ namespace MyPDF
 
             // 今表示しているページをセット
             StartMoveTxt.Text = nowPage.ToString();
+            EndMoveTxt.Text = nowPage.ToString();
 
             // 総ページ
             TotalPage.Text = "/ " + maxPage.ToString();
