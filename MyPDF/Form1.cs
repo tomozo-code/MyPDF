@@ -405,7 +405,7 @@ namespace MyPDF
                     break;
 
                 }
-                catch
+                catch (iText.Kernel.Exceptions.BadPasswordException)
                 {
                     Debug.WriteLine("失敗したので再度パス入力");
                     // 失敗したらパス入力
@@ -416,6 +416,20 @@ namespace MyPDF
                         return;
                     }
                 }
+                catch (iText.Kernel.Exceptions.PdfException)
+                {
+                    // PDF破損
+                    MessageBox.Show(
+                        "PDFファイルが壊れている可能性があります。",
+                        "ファイルエラー",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
+                    return;
+                }
+
+
+
             }
 
             treeView1.LabelEdit = canEdit;
