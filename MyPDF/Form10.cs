@@ -33,7 +33,7 @@ namespace MyPDF
 
             // フォームサイズ
             this.Width = 400;
-            this.Height = 270;
+            this.Height = 350;
             this.MinimumSize = new Size(220, 200);
             //this.AutoScaleDimensions = new SizeF(96F, 96F);
 
