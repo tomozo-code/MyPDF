@@ -1827,10 +1827,6 @@ namespace MyPDF
             ImportShioriToolStripMenuItem.Enabled = false;
             // しおりエクスポート
             ExportShioriToolStripMenuItem.Enabled = false;
-            // ページ編集
-            PageEditMenu.Enabled = false;
-            //しおり編集
-            ShioriMenu.Enabled = false;
 
             // 移動
             PageMove.Enabled = false;
@@ -1908,10 +1904,6 @@ namespace MyPDF
                 ImportShioriToolStripMenuItem.Enabled = false;
                 // しおりエクスポート
                 ExportShioriToolStripMenuItem.Enabled = false;
-                // ページ編集
-                PageEditMenu.Enabled = false;
-                //しおり編集
-                ShioriMenu.Enabled = false;
 
                 // 移動
                 PageMove.Enabled = false;
@@ -1957,13 +1949,9 @@ namespace MyPDF
                 // しおりのプロパティ
                 ShioriProToolStripMenuItem.Enabled = hasNodes; // ノードある時だけ
                 // しおりインポート                               
-                ImportShioriToolStripMenuItem.Enabled = hasNodes; // ノードある時だけ
+                ImportShioriToolStripMenuItem.Enabled = true;     // 常にOK
                 // しおりエクスポート
                 ExportShioriToolStripMenuItem.Enabled = hasNodes; // ノードある時だけ
-                // ページ編集
-                PageEditMenu.Enabled = true;
-                //しおり編集
-                ShioriMenu.Enabled = hasNodes; // ノードある時だけ
 
                 // 移動
                 PageMove.Enabled = true;

@@ -307,7 +307,6 @@
             // 
             PageEditMenu.DisplayStyle = ToolStripItemDisplayStyle.Text;
             PageEditMenu.DropDown = contextMenuStrip2;
-            PageEditMenu.Enabled = false;
             PageEditMenu.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             PageEditMenu.Image = (Image)resources.GetObject("PageEditMenu.Image");
             PageEditMenu.ImageTransparentColor = Color.Magenta;
@@ -506,7 +505,6 @@
             // 
             ShioriMenu.DisplayStyle = ToolStripItemDisplayStyle.Text;
             ShioriMenu.DropDown = contextMenuStrip1;
-            ShioriMenu.Enabled = false;
             ShioriMenu.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             ShioriMenu.Image = (Image)resources.GetObject("ShioriMenu.Image");
             ShioriMenu.ImageTransparentColor = Color.Magenta;
