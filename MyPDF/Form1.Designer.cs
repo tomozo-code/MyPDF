@@ -157,6 +157,7 @@
             contextMenuStrip2.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             contextMenuStrip2.Items.AddRange(new ToolStripItem[] { PageMove, toolStripMenuItem13, PageInsert, toolStripMenuItem2, ReplacementMenu, toolStripMenuItem14, PageExtract, PageExtractSetting, toolStripMenuItem3, LeftRotate90, RightRotate90, Rotate180, RotatePagesSetting, toolStripMenuItem12, PageDelete, PageDeleteSetting });
             contextMenuStrip2.Name = "contextMenuStrip2";
+            contextMenuStrip2.OwnerItem = PageEditMenu;
             contextMenuStrip2.Size = new Size(246, 320);
             // 
             // PageMove
@@ -350,6 +351,7 @@
             contextMenuStrip1.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             contextMenuStrip1.Items.AddRange(new ToolStripItem[] { AddShioriToolStripMenuItem, DelShioriToolStripMenuItem, toolStripMenuItem1, AllDelToolStripMenuItem, toolStripMenuItem8, SetShioriToolStripMenuItem, toolStripMenuItem4, AllShioriTenkaiToolStripMenuItem, AllShioriSyukusyouToolStripMenuItem, toolStripMenuItem5, ShioriTenkaiToolStripMenuItem, ShioriSyukusyouToolStripMenuItem, toolStripMenuItem6, ImportShioriToolStripMenuItem, ExportShioriToolStripMenuItem, toolStripMenuItem7, ShioriProToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
+            contextMenuStrip1.OwnerItem = ShioriMenu;
             contextMenuStrip1.Size = new Size(303, 326);
             // 
             // AddShioriToolStripMenuItem
@@ -630,7 +632,10 @@
             ConvPdf.Name = "ConvPdf";
             ConvPdf.Size = new Size(256, 26);
             ConvPdf.Text = "画像をPDFに変換(&J)...";
+            ConvPdf.ToolTipText = "画像ファイル(jpg/png/bmp/tif)をPDFに変換します(複数画像ファイル選択可)";
             ConvPdf.Click += ConvPdf_Click;
+            ConvPdf.MouseEnter += menuStrip1_MouseEnter;
+            ConvPdf.MouseLeave += menuStrip1_MouseLeave;
             // 
             // toolStripMenuItem15
             // 
