@@ -82,9 +82,9 @@
             Extxt = new TextBox();
             FileMenu = new ToolStripDropDownButton();
             OpenMenu = new ToolStripMenuItem();
-            ConvPdf = new ToolStripMenuItem();
             AcrobatOpenMenu = new ToolStripMenuItem();
             toolStripMenuItem10 = new ToolStripSeparator();
+            ConvPdf = new ToolStripMenuItem();
             SaveMenu = new ToolStripMenuItem();
             SaveAsMenu = new ToolStripMenuItem();
             toolStripMenuItem9 = new ToolStripSeparator();
@@ -104,6 +104,7 @@
             toolStripSeparator3 = new ToolStripSeparator();
             toolStrip1 = new ToolStrip();
             panel2 = new Panel();
+            toolStripMenuItem15 = new ToolStripSeparator();
             statusStrip1.SuspendLayout();
             contextMenuStrip2.SuspendLayout();
             contextMenuStrip1.SuspendLayout();
@@ -156,6 +157,7 @@
             contextMenuStrip2.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             contextMenuStrip2.Items.AddRange(new ToolStripItem[] { PageMove, toolStripMenuItem13, PageInsert, toolStripMenuItem2, ReplacementMenu, toolStripMenuItem14, PageExtract, PageExtractSetting, toolStripMenuItem3, LeftRotate90, RightRotate90, Rotate180, RotatePagesSetting, toolStripMenuItem12, PageDelete, PageDeleteSetting });
             contextMenuStrip2.Name = "contextMenuStrip2";
+            contextMenuStrip2.OwnerItem = PageEditMenu;
             contextMenuStrip2.Size = new Size(246, 320);
             // 
             // PageMove
@@ -349,6 +351,7 @@
             contextMenuStrip1.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             contextMenuStrip1.Items.AddRange(new ToolStripItem[] { AddShioriToolStripMenuItem, DelShioriToolStripMenuItem, toolStripMenuItem1, AllDelToolStripMenuItem, toolStripMenuItem8, SetShioriToolStripMenuItem, toolStripMenuItem4, AllShioriTenkaiToolStripMenuItem, AllShioriSyukusyouToolStripMenuItem, toolStripMenuItem5, ShioriTenkaiToolStripMenuItem, ShioriSyukusyouToolStripMenuItem, toolStripMenuItem6, ImportShioriToolStripMenuItem, ExportShioriToolStripMenuItem, toolStripMenuItem7, ShioriProToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
+            contextMenuStrip1.OwnerItem = ShioriMenu;
             contextMenuStrip1.Size = new Size(303, 326);
             // 
             // AddShioriToolStripMenuItem
@@ -588,7 +591,7 @@
             // FileMenu
             // 
             FileMenu.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            FileMenu.DropDownItems.AddRange(new ToolStripItem[] { OpenMenu, ConvPdf, AcrobatOpenMenu, toolStripMenuItem10, SaveMenu, SaveAsMenu, toolStripMenuItem9, PdfPropertyMenu, SecurityMenu, toolStripMenuItem11, CloseMenu, EndMenu });
+            FileMenu.DropDownItems.AddRange(new ToolStripItem[] { OpenMenu, AcrobatOpenMenu, toolStripMenuItem10, ConvPdf, toolStripMenuItem15, SaveMenu, SaveAsMenu, toolStripMenuItem9, PdfPropertyMenu, SecurityMenu, toolStripMenuItem11, CloseMenu, EndMenu });
             FileMenu.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             FileMenu.ImageTransparentColor = Color.Magenta;
             FileMenu.Name = "FileMenu";
@@ -608,13 +611,6 @@
             OpenMenu.MouseEnter += menuStrip1_MouseEnter;
             OpenMenu.MouseLeave += menuStrip1_MouseLeave;
             // 
-            // ConvPdf
-            // 
-            ConvPdf.Name = "ConvPdf";
-            ConvPdf.Size = new Size(256, 26);
-            ConvPdf.Text = "画像をPDFに変換(&J)...";
-            ConvPdf.Click += ConvPdf_Click;
-            // 
             // AcrobatOpenMenu
             // 
             AcrobatOpenMenu.Enabled = false;
@@ -630,6 +626,13 @@
             // 
             toolStripMenuItem10.Name = "toolStripMenuItem10";
             toolStripMenuItem10.Size = new Size(253, 6);
+            // 
+            // ConvPdf
+            // 
+            ConvPdf.Name = "ConvPdf";
+            ConvPdf.Size = new Size(256, 26);
+            ConvPdf.Text = "画像をPDFに変換(&J)...";
+            ConvPdf.Click += ConvPdf_Click;
             // 
             // SaveMenu
             // 
@@ -812,6 +815,11 @@
             panel2.Size = new Size(756, 353);
             panel2.TabIndex = 9;
             // 
+            // toolStripMenuItem15
+            // 
+            toolStripMenuItem15.Name = "toolStripMenuItem15";
+            toolStripMenuItem15.Size = new Size(253, 6);
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(96F, 96F);
@@ -921,5 +929,6 @@
         private ToolStripSeparator toolStripMenuItem14;
         private Panel panel2;
         private ToolStripMenuItem ConvPdf;
+        private ToolStripSeparator toolStripMenuItem15;
     }
 }
