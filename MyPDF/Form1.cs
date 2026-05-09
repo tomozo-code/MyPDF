@@ -6,6 +6,9 @@ using iText.Kernel.XMP;
 using iText.Kernel.XMP.Impl.XPath;
 using iText.Kernel.XMP.Options;
 using iText.StyledXmlParser.Jsoup.Nodes;
+using iText.Layout;
+using iText.Layout.Element;
+using iText.IO.Image;
 using Org.BouncyCastle.Asn1.Cms;
 using PdfiumViewer;
 using System.Buffers;
@@ -17,6 +20,8 @@ using IOPath = System.IO.Path;
 using ITextDoc = iText.Kernel.Pdf.PdfDocument;
 using PdfiTextReader = iText.Kernel.Pdf.PdfReader;
 using PdfiumDoc = PdfiumViewer.PdfDocument;
+using ITextImage = iText.Layout.Element.Image;
+
 
 
 // ==============================
@@ -153,6 +158,8 @@ namespace MyPDF
             // ショートカットキーの設定
             // Ctrl+O(開く)
             OpenMenu.ShortcutKeys = Keys.Control | Keys.O;
+            // 画像をPDFに変換
+            ConvPdf.ShortcutKeys = Keys.Control | Keys.J;
             // Ctrl + G(既定のPDFアプリで開く)
             AcrobatOpenMenu.ShortcutKeys = Keys.Control | Keys.G;
             // Ctrl+S(上書き保存)
@@ -371,7 +378,7 @@ namespace MyPDF
                         // → 強制的にパス入力させる
                         iTextDoc.Close();
                         reader.Close();
-                        
+
                         password = ShowPasswordDialog();
 
                         if (password == null)
@@ -4670,6 +4677,115 @@ namespace MyPDF
             foreach (TreeNode child in node.Nodes)
             {
                 ShiftNode(child, start, end, diff);
+            }
+        }
+
+        // ==============================
+        // 画像をPDFに変換
+        // ==============================
+        private void ConvPdf_Click(object sender, EventArgs e)
+        {
+
+            // 変更がある場合(未保存確認ダイアログ)
+            if (!ConfirmDiscard())
+                // キャンセルの場合は開かない
+                return;
+
+            try
+            {
+                // ファイル選択ダイアログを作成
+                using (OpenFileDialog ofd = new OpenFileDialog())
+                {
+                    ofd.Title = "PDFに変換する画像を選択";
+                    //画像ファイル
+                    ofd.Filter = "画像ファイル (*.jpg;*.jpeg;*.png;*.bmp;*.tif;*.tiff)|*.jpg;*.jpeg;*.png;*.bmp;*.tif;*.tiff";
+                    // 複数選択
+                    ofd.Multiselect = true;
+                    // ダイアログ表示(キャンセルなら戻る)
+                    if (ofd.ShowDialog() != DialogResult.OK)
+                        return;
+
+                    // 保存先選択
+                    using (SaveFileDialog sfd = new SaveFileDialog())
+                    {
+                        sfd.Title = "保存先を選択";
+                        sfd.Filter = "PDFファイル (*.pdf)|*.pdf";
+                        sfd.FileName = "NewPDF.pdf";
+
+                        // 保存ダイアログ(キャンセルなら戻る)
+                        if (sfd.ShowDialog() != DialogResult.OK)
+                            return;
+
+                        // PDF作成
+                        using (PdfWriter writer = new PdfWriter(sfd.FileName))
+                        using (ITextDoc pdf = new ITextDoc(writer))
+                        using (iText.Layout.Document document = new iText.Layout.Document(pdf))
+                        {
+                            foreach (string imagePath in ofd.FileNames)
+                            {
+                                // 画像読み込み
+                                ImageData imageData = ImageDataFactory.Create(imagePath);
+
+                                // Image作成
+                                ITextImage image = new ITextImage(imageData);
+
+                                // ページサイズ取得
+                                float imgWidth = image.GetImageWidth();
+                                float imgHeight = image.GetImageHeight();
+
+                                // ページサイズを画像サイズに合わせる
+                                PageSize pageSize = new PageSize(imgWidth, imgHeight);
+
+                                // 新規ページ追加
+                                pdf.AddNewPage(pageSize);
+
+                                // 余白ゼロ
+                                document.SetMargins(0, 0, 0, 0);
+
+                                // 画像サイズ調整
+                                image.ScaleToFit(imgWidth, imgHeight);
+
+                                // 固定位置配置
+                                image.SetFixedPosition(
+                                    pdf.GetNumberOfPages(),
+                                    0,
+                                    0
+                                );
+                                // 追加
+                                document.Add(image);
+                            }
+
+                        }
+
+                        MessageBox.Show("PDF変換完了", "確認", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    }
+
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+#if DEBUG
+                Extxt.Text = ex.ToString();
+
+                MessageBox.Show(
+                    "変換エラー:\n" + ex.ToString(),
+                    "変換失敗",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+#else
+                MessageBox.Show(
+                    "画像からPDFへの変換に失敗しました。",
+                    "変換失敗",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+#endif
             }
         }
     }

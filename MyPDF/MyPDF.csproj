@@ -9,9 +9,9 @@
     <Platforms>AnyCPU;x64</Platforms>
     <Copyright>Copyright(c) ともさん</Copyright>
     <ApplicationIcon>app_icon.ico</ApplicationIcon>
-	<Version>1.0.0</Version> <!-- 表示用(NuGetとか) -->
-	<FileVersion>1.0.0.0</FileVersion> <!--ファイルプロパティ -->
-	<AssemblyVersion>1.0.0.0</AssemblyVersion> <!-- 内部識別 -->
+	<Version>1.0.1</Version> <!-- 表示用(NuGetとか) -->
+	<FileVersion>1.0.1.0</FileVersion> <!--ファイルプロパティ -->
+	<AssemblyVersion>1.0.1.0</AssemblyVersion> <!-- 内部識別 -->
 	<InformationalVersion>1.0.0</InformationalVersion> <!-- 表示(製品バージョン -->
 	<ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>

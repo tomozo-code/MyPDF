@@ -82,6 +82,7 @@
             Extxt = new TextBox();
             FileMenu = new ToolStripDropDownButton();
             OpenMenu = new ToolStripMenuItem();
+            ConvPdf = new ToolStripMenuItem();
             AcrobatOpenMenu = new ToolStripMenuItem();
             toolStripMenuItem10 = new ToolStripSeparator();
             SaveMenu = new ToolStripMenuItem();
@@ -311,8 +312,8 @@
             PageEditMenu.Image = (Image)resources.GetObject("PageEditMenu.Image");
             PageEditMenu.ImageTransparentColor = Color.Magenta;
             PageEditMenu.Name = "PageEditMenu";
-            PageEditMenu.Size = new Size(91, 32);
-            PageEditMenu.Text = "ページ編集";
+            PageEditMenu.Size = new Size(109, 32);
+            PageEditMenu.Text = "ページ編集(&E)";
             PageEditMenu.ToolTipText = "ページ編集メニュー";
             PageEditMenu.MouseEnter += menuStrip1_MouseEnter;
             PageEditMenu.MouseLeave += menuStrip1_MouseLeave;
@@ -509,8 +510,8 @@
             ShioriMenu.Image = (Image)resources.GetObject("ShioriMenu.Image");
             ShioriMenu.ImageTransparentColor = Color.Magenta;
             ShioriMenu.Name = "ShioriMenu";
-            ShioriMenu.Size = new Size(90, 32);
-            ShioriMenu.Text = "しおり編集";
+            ShioriMenu.Size = new Size(109, 32);
+            ShioriMenu.Text = "しおり編集(&B)";
             ShioriMenu.ToolTipText = "しおり編集メニュー";
             // 
             // thumbnailImageList
@@ -587,7 +588,7 @@
             // FileMenu
             // 
             FileMenu.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            FileMenu.DropDownItems.AddRange(new ToolStripItem[] { OpenMenu, AcrobatOpenMenu, toolStripMenuItem10, SaveMenu, SaveAsMenu, toolStripMenuItem9, PdfPropertyMenu, SecurityMenu, toolStripMenuItem11, CloseMenu, EndMenu });
+            FileMenu.DropDownItems.AddRange(new ToolStripItem[] { OpenMenu, ConvPdf, AcrobatOpenMenu, toolStripMenuItem10, SaveMenu, SaveAsMenu, toolStripMenuItem9, PdfPropertyMenu, SecurityMenu, toolStripMenuItem11, CloseMenu, EndMenu });
             FileMenu.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             FileMenu.ImageTransparentColor = Color.Magenta;
             FileMenu.Name = "FileMenu";
@@ -606,6 +607,13 @@
             OpenMenu.Click += OpenMenu_Click;
             OpenMenu.MouseEnter += menuStrip1_MouseEnter;
             OpenMenu.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // ConvPdf
+            // 
+            ConvPdf.Name = "ConvPdf";
+            ConvPdf.Size = new Size(256, 26);
+            ConvPdf.Text = "画像をPDFに変換(&J)...";
+            ConvPdf.Click += ConvPdf_Click;
             // 
             // AcrobatOpenMenu
             // 
@@ -912,5 +920,6 @@
         private ToolStripMenuItem ReplacementMenu;
         private ToolStripSeparator toolStripMenuItem14;
         private Panel panel2;
+        private ToolStripMenuItem ConvPdf;
     }
 }
