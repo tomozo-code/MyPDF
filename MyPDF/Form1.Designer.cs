@@ -85,6 +85,7 @@
             AcrobatOpenMenu = new ToolStripMenuItem();
             toolStripMenuItem10 = new ToolStripSeparator();
             ConvPdf = new ToolStripMenuItem();
+            toolStripMenuItem15 = new ToolStripSeparator();
             SaveMenu = new ToolStripMenuItem();
             SaveAsMenu = new ToolStripMenuItem();
             toolStripMenuItem9 = new ToolStripSeparator();
@@ -104,7 +105,6 @@
             toolStripSeparator3 = new ToolStripSeparator();
             toolStrip1 = new ToolStrip();
             panel2 = new Panel();
-            toolStripMenuItem15 = new ToolStripSeparator();
             statusStrip1.SuspendLayout();
             contextMenuStrip2.SuspendLayout();
             contextMenuStrip1.SuspendLayout();
@@ -157,7 +157,6 @@
             contextMenuStrip2.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             contextMenuStrip2.Items.AddRange(new ToolStripItem[] { PageMove, toolStripMenuItem13, PageInsert, toolStripMenuItem2, ReplacementMenu, toolStripMenuItem14, PageExtract, PageExtractSetting, toolStripMenuItem3, LeftRotate90, RightRotate90, Rotate180, RotatePagesSetting, toolStripMenuItem12, PageDelete, PageDeleteSetting });
             contextMenuStrip2.Name = "contextMenuStrip2";
-            contextMenuStrip2.OwnerItem = PageEditMenu;
             contextMenuStrip2.Size = new Size(246, 320);
             // 
             // PageMove
@@ -351,7 +350,6 @@
             contextMenuStrip1.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             contextMenuStrip1.Items.AddRange(new ToolStripItem[] { AddShioriToolStripMenuItem, DelShioriToolStripMenuItem, toolStripMenuItem1, AllDelToolStripMenuItem, toolStripMenuItem8, SetShioriToolStripMenuItem, toolStripMenuItem4, AllShioriTenkaiToolStripMenuItem, AllShioriSyukusyouToolStripMenuItem, toolStripMenuItem5, ShioriTenkaiToolStripMenuItem, ShioriSyukusyouToolStripMenuItem, toolStripMenuItem6, ImportShioriToolStripMenuItem, ExportShioriToolStripMenuItem, toolStripMenuItem7, ShioriProToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.OwnerItem = ShioriMenu;
             contextMenuStrip1.Size = new Size(303, 326);
             // 
             // AddShioriToolStripMenuItem
@@ -634,6 +632,11 @@
             ConvPdf.Text = "画像をPDFに変換(&J)...";
             ConvPdf.Click += ConvPdf_Click;
             // 
+            // toolStripMenuItem15
+            // 
+            toolStripMenuItem15.Name = "toolStripMenuItem15";
+            toolStripMenuItem15.Size = new Size(253, 6);
+            // 
             // SaveMenu
             // 
             SaveMenu.Enabled = false;
@@ -814,11 +817,6 @@
             panel2.Name = "panel2";
             panel2.Size = new Size(756, 353);
             panel2.TabIndex = 9;
-            // 
-            // toolStripMenuItem15
-            // 
-            toolStripMenuItem15.Name = "toolStripMenuItem15";
-            toolStripMenuItem15.Size = new Size(253, 6);
             // 
             // Form1
             // 

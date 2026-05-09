@@ -4710,7 +4710,10 @@ namespace MyPDF
                     {
                         sfd.Title = "保存先を選択";
                         sfd.Filter = "PDFファイル (*.pdf)|*.pdf";
-                        sfd.FileName = "NewPDF.pdf";
+                        //sfd.FileName = "NewPDF.pdf";
+                        // 最初の画像をベースにファイル名を設定
+                        string firstName = IOPath.GetFileNameWithoutExtension(ofd.FileNames[0]);
+                        sfd.FileName = firstName + ".pdf";
 
                         // 保存ダイアログ(キャンセルなら戻る)
                         if (sfd.ShowDialog() != DialogResult.OK)
@@ -4721,7 +4724,9 @@ namespace MyPDF
                         using (ITextDoc pdf = new ITextDoc(writer))
                         using (iText.Layout.Document document = new iText.Layout.Document(pdf))
                         {
-                            foreach (string imagePath in ofd.FileNames)
+                            //foreach (string imagePath in ofd.FileNames)
+                            // 画像ファイルを名前順に並び替えてPDFに変換
+                            foreach (string imagePath in ofd.FileNames.OrderBy(x => x))
                             {
                                 // 画像読み込み
                                 ImageData imageData = ImageDataFactory.Create(imagePath);
@@ -4757,25 +4762,102 @@ namespace MyPDF
 
                         }
 
-                        MessageBox.Show("PDF変換完了", "確認", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
+                        // 作業用ファイルを破棄
+                        CleanupWorkingFile();
+
+                        ITextDoc? iTextDoc = null;
+                        PdfReader? reader = null;
+
+                        // パスを一回リセット
+                        password = null;
+                        currentPassword = null;
+
+                        try
+                        {
+                            // 保存したファイルパス
+                            originalPath = sfd.FileName;
+
+                            // まずはパス無しで開く
+                            reader = new PdfReader(originalPath);
+
+                            // 作業ファイル作成
+                            // C:\Users\<ユーザー名>\AppData\Local\Temp\ に作業用ファイルを置く
+                            workingPath = IOPath.Combine(IOPath.GetTempPath(), $"MyPDFwork_{Guid.NewGuid()}.pdf");
+                            // 元ファイルを作業用ファイルにコピー true:同じ名前は上書き
+                            File.Copy(originalPath, workingPath, true);
+
+                            // PDFを実際に開く
+                            iTextDoc = new ITextDoc(reader);
+                                                        
+                            // Pdfiumで表示
+                            PdfiumViewer.PdfDocument document;
+                            document = PdfiumDoc.Load(workingPath);
+                            pdfViewer1.Document = document;
+
+                            string? openPassword = "";
+
+                            // iTextでしおり取得
+                            ShowBookmarks(workingPath, openPassword);
+
+                            // ツリービューの右クリックメニュー ON/OFF
+                            UpdateContextMenuState();
+
+                            // 自動調整
+                            ZoomtoolStripComboBox.SelectedIndex = 0;
+
+                            pdfViewer1.ZoomMode = PdfViewerZoomMode.FitBest;
+
+                            // ページ番号「1」を表示
+                            NewPagetoolStripTextBox.Text = "1";
+
+                            // 保存との整合性 作業用ファイルのデータを入れる
+                            currentSettings = LoadPdfSettings(workingPath, openPassword);
+
+                            currentSecurity ??= new SecuritySettings();
+
+                            // 暗号方式
+                            currentSecurity.Encryption = reader.GetCryptoMode();
+
+                            currentSecurity.Check_Owner = false;
+                            currentSecurity.Check_User = false;
+
+                            iTextDoc.Close();
+                            reader.Close();
+
+                            string fileName = IOPath.GetFileName(originalPath);
+
+                            this.Text = myName + " - [ " + fileName + " ]";
+
+                            // 更新をリセット
+                            isDirty = false;
+
+                        }
+                        catch (Exception ex)
+                        {
+#if DEBUG
+                            Extxt.Text = ex.ToString();
+                            MessageBox.Show("変換後オープンエラー:\n" + ex.ToString(), "変換後オープン失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+#else
+                            MessageBox.Show("画像からPDFへの変換に失敗しました。", "変換失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            Debug.WriteLine(ex.ToString());
+#endif
+                        }
+
+                        MessageBox.Show("PDF変換完了" + Environment.NewLine +
+                            "ページの並びは、画像ファイルの名前順となっています。" + Environment.NewLine + 
+                            "必要に応じて並び替え(移動)を行って下さい。", "PDF変換確認", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
-
                 }
-
-
             }
             catch (Exception ex)
             {
 #if DEBUG
                 Extxt.Text = ex.ToString();
-
-                MessageBox.Show(
-                    "変換エラー:\n" + ex.ToString(), "変換失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("変換エラー:\n" + ex.ToString(), "変換失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 #else
                 MessageBox.Show("画像からPDFへの変換に失敗しました。", "変換失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-                System.Diagnostics.Debug.WriteLine(ex.ToString());
+                Debug.WriteLine(ex.ToString());
 #endif
             }
         }

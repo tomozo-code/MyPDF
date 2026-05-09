@@ -19,10 +19,6 @@ namespace MyPDF
         // ツールチップに表示するヒント文字列
         private string? toolHintTxt = null;
 
-        //private string PassMessage;
-        
-
-
         public string? Password { get; private set; }
 
         public Form5(string PassMessage)
