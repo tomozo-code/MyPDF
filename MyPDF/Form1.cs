@@ -4771,18 +4771,9 @@ namespace MyPDF
                 Extxt.Text = ex.ToString();
 
                 MessageBox.Show(
-                    "変換エラー:\n" + ex.ToString(),
-                    "変換失敗",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning
-                );
+                    "変換エラー:\n" + ex.ToString(), "変換失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 #else
-                MessageBox.Show(
-                    "画像からPDFへの変換に失敗しました。",
-                    "変換失敗",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning
-                );
+                MessageBox.Show("画像からPDFへの変換に失敗しました。", "変換失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
                 System.Diagnostics.Debug.WriteLine(ex.ToString());
 #endif
