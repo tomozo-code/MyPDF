@@ -4785,9 +4785,6 @@ namespace MyPDF
                                         break;
                                 }
 
-                                // ページサイズを画像サイズに合わせる
-                                //PageSize pageSize = new PageSize(imgWidth, imgHeight);
-
                                 // 新規ページ追加
                                 pdf.AddNewPage(pageSize);
 
@@ -4798,12 +4795,11 @@ namespace MyPDF
                                 // 余白ゼロ(上、右、下、左)
                                 //document.SetMargins(0, 0, 0, 0);
 
-                                // 配置と余白セット
                                 // 画像が使える範囲
                                 float availableWidth = pageWidth - PdfMarginLeft - PdfMarginRight;
                                 float availableHeight = pageHeight - PdfMarginTop - PdfMarginBottom;
 
-                                // 元サイズの場合
+                                // 元サイズ以外の場合
                                 if (PdfImageMode != 2)
                                 {
                                     // 画像を余白内に収める
@@ -4817,6 +4813,7 @@ namespace MyPDF
                                 float x = PdfMarginLeft;
                                 float y = PdfMarginBottom;
 
+                                // 配置設定
                                 switch (PdfPlace)
                                 {
                                     // 中央
@@ -4850,13 +4847,7 @@ namespace MyPDF
                                         break;
                                 }
 
-                                image.SetFixedPosition(
-                                    pdf.GetNumberOfPages(),
-                                    x,
-                                    y
-                                );
-
-                                // pdf.GetNumberOfPages()はページ番号、xyは原点左下(0,0)からxは上へyは右へ
+                                // pdf.GetNumberOfPages()はページ番号、xyは左下が原点(0,0)で、xは上へ、yは右へ
                                 image.SetFixedPosition(pdf.GetNumberOfPages(), x, y);
 
                                 Debug.WriteLine("--- 画像PDF変換 --------------");
@@ -4875,14 +4866,6 @@ namespace MyPDF
 
                                 Debug.WriteLine("x: " + x.ToString());
                                 Debug.WriteLine("y: " + y.ToString());
-
-
-                                //float x = (pageWidth - image.GetImageScaledWidth()) / 2;
-                                //float y = (pageHeight - image.GetImageScaledHeight()) / 2;
-                                //image.SetFixedPosition(pdf.GetNumberOfPages(), x, y);
-
-                                // 固定位置配置
-                                //image.SetFixedPosition(pdf.GetNumberOfPages(), 0, 0);
 
                                 // 追加
                                 document.Add(image);
