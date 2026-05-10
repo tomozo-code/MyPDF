@@ -16,6 +16,8 @@ using System.Diagnostics;
 using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using DrawingColor = System.Drawing.Color;
+using SysRectangle = System.Drawing.Rectangle;
+using SysImage = System.Drawing.Image;
 using IOPath = System.IO.Path;
 using ITextDoc = iText.Kernel.Pdf.PdfDocument;
 using PdfiTextReader = iText.Kernel.Pdf.PdfReader;
@@ -71,6 +73,8 @@ namespace MyPDF
         private bool insertAsChild = false;
         // 右クリック時に「ページジャンプしないようにするフラグ」
         private bool isRightClickSelecting = false;
+        // しおりホバー中ノード
+        private TreeNode? hoverNode = null;
 
         // ページ監視用（Pdfiumにイベントないので自前監視）
         private int lastPage = -1;
@@ -2065,68 +2069,91 @@ namespace MyPDF
         // ==============================
         private void AddShioriToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TreeNode newNode = new TreeNode("新しいしおり")
-            {
-                ImageIndex = 0,
-                SelectedImageIndex = 1
-            };
+            TreeNode? newNode = null;
 
-            // 現在の表示ページを取得
-            int currentPage = 1;
+            treeView1.BeginUpdate();
 
-            if (pdfViewer1.Document != null)
+            try
             {
-                currentPage = pdfViewer1.Renderer.Page + 1;
+                newNode = new TreeNode("新しいしおり")
+                {
+                    ImageIndex = 0,
+                    SelectedImageIndex = 1
+                };
+
+                // 現在の表示ページを取得
+                int currentPage = 1;
+
+                if (pdfViewer1.Document != null)
+                {
+                    currentPage = pdfViewer1.Renderer.Page + 1;
+                }
+
+                newNode.Tag = new BookmarkInfo
+                {
+                    // しおり名
+                    BmTitle = "新しいしおり",
+                    // 表示されているページ
+                    Page = currentPage,
+                    // 色は黒(デフォルト)
+                    SelectedColor = DrawingColor.Black,
+                    // スタイルは標準(デフォルト)
+                    SelectedStyle = FontStyle.Regular,
+                    // 展開
+                    IsOpen = true
+                };
+
+                // 選択ノードがあるか？
+                if (treeView1.SelectedNode != null)
+                {
+                    // 兄弟(同レベル)として追加
+                    TreeNode selected = treeView1.SelectedNode;
+
+                    TreeNode? parent = selected.Parent;
+
+                    TreeNodeCollection nodes =
+                        parent == null ? treeView1.Nodes : parent.Nodes;
+
+                    // 下に追加
+                    int index = selected.Index + 1;
+
+                    nodes.Insert(index, newNode);
+
+                }
+                else
+                {
+                    // ルートに追加
+                    treeView1.Nodes.Add(newNode);
+                }
+
+                // 追加したノードを選択
+                treeView1.SelectedNode = newNode;
+                newNode.EnsureVisible();
+                treeView1.Focus();
+
+                // 更新フラグ
+                isDirty = true;
+
             }
-
-            newNode.Tag = new BookmarkInfo
+            finally
             {
-                // しおり名
-                BmTitle = "新しいしおり",
-                // 表示されているページ
-                Page = currentPage,
-                // 色は黒(デフォルト)
-                SelectedColor = DrawingColor.Black,
-                // スタイルは標準(デフォルト)
-                SelectedStyle = FontStyle.Regular,
-                // 展開
-                IsOpen = true
-            };
+                treeView1.EndUpdate();
 
-            // 選択ノードがあるか？
-            if (treeView1.SelectedNode != null)
-            {
-                // 兄弟(同レベル)として追加
-                TreeNode selected = treeView1.SelectedNode;
+                // 作成すると何故かノードの一番上で編集状態になるので苦肉の策(ちょっと遅らせる)
+                BeginInvoke(new Action(() =>
+                {
+                    BeginInvoke(new Action(() =>
+                    {
+                        treeView1.Refresh();
+                        // そのまま名前編集
+                        newNode?.BeginEdit();
+                    }));
 
-                TreeNode? parent = selected.Parent;
-
-                TreeNodeCollection nodes =
-                    parent == null ? treeView1.Nodes : parent.Nodes;
-
-                // 下に追加
-                int index = selected.Index + 1;
-
-                nodes.Insert(index, newNode);
+                    // ツリービューの右クリックメニュー ON/OFF
+                    UpdateContextMenuState();
+                }));
 
             }
-            else
-            {
-                // ルートに追加
-                treeView1.Nodes.Add(newNode);
-            }
-
-            // 追加したノードを選択
-            treeView1.SelectedNode = newNode;
-
-            // そのまま名前編集（これ気持ちいい）
-            newNode.BeginEdit();
-
-            // ツリービューの右クリックメニュー ON/OFF
-            UpdateContextMenuState();
-
-            // 更新フラグ
-            isDirty = true;
 
         }
 
@@ -2396,39 +2423,172 @@ namespace MyPDF
         // ==============================
         private void treeView1_DrawNode(object sender, DrawTreeNodeEventArgs e)
         {
-            e.DrawDefault = true;
+            //e.DrawDefault = true;
 
+            // --- 自前で描画 ---------------
+            e.DrawDefault = false;
+            Graphics g = e.Graphics;
+
+            // null対策
+            if (e.Node == null) return;
+
+            // 選択状態
+            bool isSelected = (treeView1.SelectedNode == e.Node);
+
+            // 背景色
+            DrawingColor backColor;
+
+            if (isSelected)
+            {
+                backColor = SystemColors.Highlight;
+            }
+            else if (e.Node == hoverNode)
+            {
+                // ホバー色
+                //backColor = DrawingColor.FromArgb(230, 240, 250);
+                backColor = DrawingColor.FromArgb(200, 200, 200);
+            }
+            else
+            {
+                backColor = treeView1.BackColor;
+            }
+
+            // 背景塗り
+            using (Brush backBrush = new SolidBrush(backColor))
+            {
+                //g.FillRectangle(backBrush, e.Bounds);
+                g.FillRectangle(
+                    backBrush,
+                    0,
+                    e.Bounds.Top,
+                    treeView1.Width,
+                    treeView1.ItemHeight
+                    );
+            }
+
+            // + - ボタン描画
+            if (e.Node.Nodes.Count > 0)
+            {
+                // 四角領域を作成
+                SysRectangle glyphRect = new SysRectangle(
+                    e.Bounds.X - 10,
+                    e.Bounds.Y + (treeView1.ItemHeight - 10) / 2,
+                    10,
+                    10
+                );
+
+                // 枠(枠はグレー、塗り潰しは白)
+                g.FillRectangle(Brushes.White, glyphRect);
+                g.DrawRectangle(Pens.Gray, glyphRect);
+
+                // 横線(-)
+                g.DrawLine(
+                    Pens.Black,
+                    glyphRect.Left + 2,
+                    glyphRect.Top + 5,
+                    glyphRect.Right - 2,
+                    glyphRect.Top + 5
+                );
+
+                // 閉じてる時だけ縦線（＋）
+                if (!e.Node.IsExpanded)
+                {
+                    g.DrawLine(
+                        Pens.Black,
+                        glyphRect.Left + 5,
+                        glyphRect.Top + 2,
+                        glyphRect.Left + 5,
+                        glyphRect.Bottom - 2
+                    );
+                }
+
+            }
+
+            // アイコン描画(通常0 / 選択中1)
+            int iconIndex = isSelected ? 1 : 0;
+
+            if (iconIndex < imageList1.Images.Count)
+            {
+                SysImage img = imageList1.Images[iconIndex];
+
+                int imgX = e.Bounds.X + 2;
+
+                int imgY =
+                    e.Bounds.Y +
+                    (treeView1.ItemHeight - img.Height) / 2;
+
+                g.DrawImage(img, imgX, imgY);
+            }
+
+            // ノードごとの文字設定
+            // ノード文字色
+            DrawingColor foreColor =
+                (e.State & TreeNodeStates.Selected) != 0
+                ? SystemColors.HighlightText
+                : e.Node.ForeColor;
+
+            // ノードフォント
+            Font nodeFont =
+                e.Node.NodeFont ?? treeView1.Font;
+
+            // 上下中央用Rect
+            SysRectangle textRect = new SysRectangle(
+                e.Bounds.X + 20,
+                e.Bounds.Y,
+                e.Bounds.Width,
+                treeView1.ItemHeight
+            );
+
+            // 文字描画
+            TextRenderer.DrawText(
+                g,
+                e.Node?.Text,
+                nodeFont,
+                textRect,
+                foreColor,
+                TextFormatFlags.VerticalCenter |
+                TextFormatFlags.Left
+            );
+
+
+            // --- ドラッグ中描画処理 ---------------
             if (dropTargetNode == null) return;
             if (e.Node != dropTargetNode) return;
 
-            var g = e.Graphics;
+            //var g = e.Graphics;
             var bounds = e.Bounds;
 
             // 子にする場合
             if (insertAsChild)
             {
+                // 枠用Rect
+                SysRectangle rect = new SysRectangle(
+                    bounds.X + 20,
+                    bounds.Y,
+                    //bounds.Width,
+                    treeView1.Width,
+                    bounds.Height
+                );
+
                 // 背景ハイライト
-                using (Brush b = new SolidBrush(DrawingColor.FromArgb(80, DrawingColor.LightBlue)))
+                using (Brush b = new SolidBrush(
+                    DrawingColor.FromArgb(80, DrawingColor.LightBlue)))
                 {
-                    g.FillRectangle(b, bounds);
+                    g.FillRectangle(b, rect);
                 }
 
                 // 枠線
                 using (Pen pen = new Pen(DrawingColor.Blue, 2))
                 {
-                    g.DrawRectangle(pen,
-                        bounds.X,
-                        bounds.Y,
-                        bounds.Width,
-                        bounds.Height);
+                    g.DrawRectangle(pen, rect);
                 }
 
                 // ▶マーク（左に表示 青枠 + ▶）
                 g.DrawString("▶",
                     this.Font,
                     Brushes.Blue,
-                    bounds.X - 50,
-                    bounds.Y);
+                    bounds.X - 20,
+                    bounds.Y + 3);
             }
             else
             {
@@ -2450,7 +2610,7 @@ namespace MyPDF
                 g.DrawString(arrow,
                     this.Font,
                     Brushes.Red,
-                    bounds.X - 50,
+                    bounds.X - 20,
                     y - 20);
             }
         }
@@ -2718,7 +2878,7 @@ namespace MyPDF
         // ==============================
         private void treeView1_AfterExpand(object sender, TreeViewEventArgs e)
         {
-
+            treeView1.Invalidate();
             if (e.Node?.Tag is BookmarkInfo info)
             {
                 info.IsOpen = true;
@@ -2731,7 +2891,7 @@ namespace MyPDF
         // ==============================
         private void treeView1_AfterCollapse(object sender, TreeViewEventArgs e)
         {
-
+            treeView1.Invalidate();
             if (e.Node?.Tag is BookmarkInfo info)
             {
                 info.IsOpen = false;
@@ -2896,12 +3056,30 @@ namespace MyPDF
         }
 
         // ==============================
+        // しおりマウスホバー
+        // ==============================
+        private void treeView1_MouseLeave(object sender, EventArgs e)
+        {
+            hoverNode = null;
+            treeView1.Invalidate();
+        }
+
+
+        // ==============================
         // しおりツールチップ
         // ==============================
         private void treeView1_MouseMove(object sender, MouseEventArgs e)
         {
             var node = treeView1.GetNodeAt(e.Location);
 
+            // マウスホバーで薄く塗る
+            if (hoverNode != node)
+            {
+                hoverNode = node;
+                treeView1.Invalidate();
+            }
+
+            // --- ツールチップ処理 --------------------
             if (node == lastNode) return;
             lastNode = node;
 
@@ -5005,7 +5183,6 @@ namespace MyPDF
 #endif
             }
         }
-
 
     }
 }

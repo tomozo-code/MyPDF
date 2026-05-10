@@ -326,13 +326,11 @@
             treeView1.BorderStyle = BorderStyle.FixedSingle;
             treeView1.ContextMenuStrip = contextMenuStrip1;
             treeView1.DrawMode = TreeViewDrawMode.OwnerDrawText;
-            treeView1.ImageIndex = 0;
-            treeView1.ImageList = imageList1;
-            treeView1.ItemHeight = 24;
+            treeView1.Indent = 16;
+            treeView1.ItemHeight = 26;
             treeView1.LabelEdit = true;
             treeView1.Location = new Point(33, 132);
             treeView1.Name = "treeView1";
-            treeView1.SelectedImageIndex = 0;
             treeView1.Size = new Size(121, 97);
             treeView1.TabIndex = 0;
             treeView1.AfterLabelEdit += treeView1_AfterLabelEdit;
@@ -348,6 +346,7 @@
             treeView1.DragLeave += treeView1_DragLeave;
             treeView1.KeyDown += treeView1_KeyDown;
             treeView1.MouseDown += treeView1_MouseDown;
+            treeView1.MouseLeave += treeView1_MouseLeave;
             treeView1.MouseMove += treeView1_MouseMove;
             // 
             // contextMenuStrip1
