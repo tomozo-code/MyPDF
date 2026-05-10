@@ -93,7 +93,7 @@
             LicenseTxtBox.Location = new Point(12, 132);
             LicenseTxtBox.Multiline = true;
             LicenseTxtBox.Name = "LicenseTxtBox";
-            LicenseTxtBox.Size = new Size(442, 182);
+            LicenseTxtBox.Size = new Size(442, 254);
             LicenseTxtBox.TabIndex = 6;
             LicenseTxtBox.Text = resources.GetString("LicenseTxtBox.Text");
             // 
@@ -101,7 +101,7 @@
             // 
             panel1.Controls.Add(OkBtn);
             panel1.Dock = DockStyle.Bottom;
-            panel1.Location = new Point(0, 319);
+            panel1.Location = new Point(0, 391);
             panel1.Name = "panel1";
             panel1.Size = new Size(464, 50);
             panel1.TabIndex = 7;
@@ -110,7 +110,7 @@
             // 
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
-            ClientSize = new Size(464, 369);
+            ClientSize = new Size(464, 441);
             Controls.Add(panel1);
             Controls.Add(LicenseTxtBox);
             Controls.Add(pictureBox1);

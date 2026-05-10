@@ -124,6 +124,7 @@ namespace MyPDF
         private string PassMessage = "パスワード入力(Form5)のメッセージ用";
 
 
+
         public Form1()
         {
             InitializeComponent();
@@ -159,6 +160,16 @@ namespace MyPDF
             // エラー表示用
             //Extxt.Visible = true;
             //Extxt.Dock = DockStyle.Bottom;
+
+            // しおりドラッグ中のちラクチ防止
+            typeof(TreeView).InvokeMember(
+                "DoubleBuffered",
+                System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.Instance |
+                System.Reflection.BindingFlags.SetProperty,
+                null,
+                treeView1,
+                new object[] { true });
 
         }
 
@@ -1041,6 +1052,9 @@ namespace MyPDF
 
                 var node = new TreeNode(title)
                 {
+                    ImageIndex = 0,
+                    SelectedImageIndex = 1,
+
                     Tag = new BookmarkInfo
                     {
                         // しおり名
@@ -2051,7 +2065,11 @@ namespace MyPDF
         // ==============================
         private void AddShioriToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TreeNode newNode = new TreeNode("新しいしおり");
+            TreeNode newNode = new TreeNode("新しいしおり")
+            {
+                ImageIndex = 0,
+                SelectedImageIndex = 1
+            };
 
             // 現在の表示ページを取得
             int currentPage = 1;
@@ -2409,7 +2427,7 @@ namespace MyPDF
                 g.DrawString("▶",
                     this.Font,
                     Brushes.Blue,
-                    bounds.X - 20,
+                    bounds.X - 50,
                     bounds.Y);
             }
             else
@@ -2432,7 +2450,7 @@ namespace MyPDF
                 g.DrawString(arrow,
                     this.Font,
                     Brushes.Red,
-                    bounds.X - 20,
+                    bounds.X - 50,
                     y - 20);
             }
         }

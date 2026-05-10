@@ -72,7 +72,7 @@
             toolStripMenuItem7 = new ToolStripSeparator();
             ShioriProToolStripMenuItem = new ToolStripMenuItem();
             ShioriMenu = new ToolStripDropDownButton();
-            thumbnailImageList = new ImageList(components);
+            imageList1 = new ImageList(components);
             panel1 = new Panel();
             panel3 = new Panel();
             label1 = new Label();
@@ -326,9 +326,13 @@
             treeView1.BorderStyle = BorderStyle.FixedSingle;
             treeView1.ContextMenuStrip = contextMenuStrip1;
             treeView1.DrawMode = TreeViewDrawMode.OwnerDrawText;
+            treeView1.ImageIndex = 0;
+            treeView1.ImageList = imageList1;
+            treeView1.ItemHeight = 24;
             treeView1.LabelEdit = true;
             treeView1.Location = new Point(33, 132);
             treeView1.Name = "treeView1";
+            treeView1.SelectedImageIndex = 0;
             treeView1.Size = new Size(121, 97);
             treeView1.TabIndex = 0;
             treeView1.AfterLabelEdit += treeView1_AfterLabelEdit;
@@ -516,11 +520,13 @@
             ShioriMenu.Text = "しおり編集(&B)";
             ShioriMenu.ToolTipText = "しおり編集メニュー";
             // 
-            // thumbnailImageList
+            // imageList1
             // 
-            thumbnailImageList.ColorDepth = ColorDepth.Depth32Bit;
-            thumbnailImageList.ImageSize = new Size(128, 128);
-            thumbnailImageList.TransparentColor = Color.Transparent;
+            imageList1.ColorDepth = ColorDepth.Depth32Bit;
+            imageList1.ImageStream = (ImageListStreamer)resources.GetObject("imageList1.ImageStream");
+            imageList1.TransparentColor = Color.Transparent;
+            imageList1.Images.SetKeyName(0, "pig_img01.png");
+            imageList1.Images.SetKeyName(1, "pig_img02.png");
             // 
             // panel1
             // 
@@ -868,7 +874,6 @@
         private ToolStripMenuItem DelShioriToolStripMenuItem;
         private ToolStripSeparator toolStripMenuItem1;
         private ToolStripMenuItem SetShioriToolStripMenuItem;
-        private ImageList thumbnailImageList;
         private ToolStripSeparator toolStripMenuItem4;
         private ToolStripMenuItem ShioriTenkaiToolStripMenuItem;
         private ToolStripMenuItem ShioriSyukusyouToolStripMenuItem;
@@ -932,5 +937,6 @@
         private Panel panel2;
         private ToolStripMenuItem ConvPdf;
         private ToolStripSeparator toolStripMenuItem15;
+        private ImageList imageList1;
     }
 }

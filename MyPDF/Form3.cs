@@ -23,8 +23,8 @@ namespace MyPDF
             //this.AutoSize = true;
             //this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             this.Width = 500;
-            this.Height = 400;
-            this.MinimumSize = new Size(400, 300);
+            this.Height = 500;
+            this.MinimumSize = new Size(300, 300);
             //this.AutoScaleDimensions = new SizeF(96F, 96F);
 
             // PDF変換用TextBox

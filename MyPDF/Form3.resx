@@ -9221,7 +9221,9 @@
 ・PDFium (BSD 3-Clause License)
 　Copyright (c) The Chromium Authors
 著作権表示およびライセンス条件に従って使用しています
-詳細は同梱のライセンスファイルをご参照ください</value>
+詳細は同梱のライセンスファイルをご参照ください
+・しおりアイコン
+ICOOON MONO(https://icooon-mono.com/)</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
