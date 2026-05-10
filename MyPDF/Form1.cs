@@ -25,7 +25,7 @@ using ITextImage = iText.Layout.Element.Image;
 
 
 // ==============================
-// ライブラリ：iText、PdfiumViewer.core
+// ライブラリ：iText、PdfiumViewer.Core
 // PDFの閲覧・編集・管理をシンプルに行う
 
 // --- 役割 ---
@@ -54,6 +54,7 @@ using ITextImage = iText.Layout.Element.Image;
 // Form10:ファイル挿入
 // Form11:指定ページの移動
 // Form12:指定ページの置換
+// Form13:画像PDF変換の設定
 // ==============================
 
 namespace MyPDF
