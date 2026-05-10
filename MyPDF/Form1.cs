@@ -70,6 +70,7 @@ namespace MyPDF
         private bool insertAsChild = false;
         // 右クリック時に「ページジャンプしないようにするフラグ」
         private bool isRightClickSelecting = false;
+
         // ページ監視用（Pdfiumにイベントないので自前監視）
         private int lastPage = -1;
         private System.Windows.Forms.Timer pageTimer = new System.Windows.Forms.Timer();
@@ -79,7 +80,6 @@ namespace MyPDF
         private bool isOpening = false;
         // PDFがセキュリティありかチェック用のフラグ(true:なし、false:あり)
         private bool canEdit = true;
-
 
         // PDF設定・セキュリティ
         // 現在読み込んでいるPDFの各種設定（メタデータ・表示設定など）
@@ -1170,7 +1170,6 @@ namespace MyPDF
         // ==============================
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
-
             if (isRightClickSelecting)
             {
                 // 右クリック時はジャンプしない(ページ移動させない)
@@ -1179,8 +1178,6 @@ namespace MyPDF
             }
 
             if (isOpening) return;
-
-            Debug.WriteLine(e.Node?.Tag?.GetType());
 
             // クリックしたしおりのページを取得
             if (e.Node?.Tag is BookmarkInfo info && info.Page > 0)
@@ -1191,6 +1188,27 @@ namespace MyPDF
 
         }
 
+        // ==============================
+        // ツリービューのしおりを押したとき(選択中のしおりを押したとき)
+        // ==============================
+        private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (isRightClickSelecting)
+            {
+                // 右クリック時はジャンプしない(ページ移動させない)
+                isRightClickSelecting = false;
+                return; // ←ジャンプさせない
+            }
+
+            if (isOpening) return;
+
+            // クリックしたしおりのページを取得
+            if (e.Node?.Tag is BookmarkInfo info && info.Page > 0)
+            {
+                // 取得したページへジャンプ
+                JumpToPage(info.Page);
+            }
+        }
 
         // ==============================
         // しおりのページにジャンプ
@@ -2007,8 +2025,6 @@ namespace MyPDF
                 Rotate180.Enabled = true;
                 RotatePagesSetting.Enabled = true;
 
-
-
             }
 
             // 全てのしおりを展開
@@ -2026,7 +2042,6 @@ namespace MyPDF
             ZoomtoolStripComboBox.Enabled = true;
             // 閉じる
             CloseMenu.Enabled = true;
-
 
         }
 
@@ -4899,7 +4914,7 @@ namespace MyPDF
 
                             // PDFを実際に開く
                             iTextDoc = new ITextDoc(reader);
-                                                        
+
                             // Pdfiumで表示
                             PdfiumViewer.PdfDocument document;
                             document = PdfiumDoc.Load(workingPath);
@@ -4955,7 +4970,7 @@ namespace MyPDF
                         }
 
                         MessageBox.Show("PDF変換完了" + Environment.NewLine +
-                            "ページの並びは、画像ファイルの名前順となっています。" + Environment.NewLine + 
+                            "ページの並びは、画像ファイルの名前順となっています。" + Environment.NewLine +
                             "必要に応じて並び替え(移動)を行って下さい。", "PDF変換確認", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
@@ -4971,5 +4986,7 @@ namespace MyPDF
 #endif
             }
         }
+
+
     }
 }

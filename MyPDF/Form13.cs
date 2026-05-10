@@ -6,6 +6,11 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
+// ==============================
+// 画像をPDFに変換設定フォーム
+// ==============================
+
+
 namespace MyPDF
 {
     public partial class Form13 : Form

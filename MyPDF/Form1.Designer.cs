@@ -337,6 +337,7 @@
             treeView1.DrawNode += treeView1_DrawNode;
             treeView1.ItemDrag += treeView1_ItemDrag;
             treeView1.AfterSelect += treeView1_AfterSelect;
+            treeView1.NodeMouseClick += treeView1_NodeMouseClick;
             treeView1.DragDrop += treeView1_DragDrop;
             treeView1.DragEnter += treeView1_DragEnter;
             treeView1.DragOver += treeView1_DragOver;
