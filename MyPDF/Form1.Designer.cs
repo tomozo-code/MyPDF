@@ -151,6 +151,7 @@
             pdfViewer1.Size = new Size(180, 129);
             pdfViewer1.TabIndex = 0;
             pdfViewer1.ZoomMode = PdfiumViewer.PdfViewerZoomMode.FitBest;
+            pdfViewer1.MouseUp += pdfViewer1_MouseUp;
             // 
             // contextMenuStrip2
             // 
@@ -810,6 +811,7 @@
             // toolStrip1
             // 
             toolStrip1.AutoSize = false;
+            toolStrip1.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             toolStrip1.Items.AddRange(new ToolStripItem[] { FileMenu, ShioriMenu, PageEditMenu, HelpMenu, toolStripSeparator1, NewPagetoolStripTextBox, TotalPagetoolStripLabel, toolStripSeparator2, ZoomtoolStripComboBox, toolStripSeparator3 });
             toolStrip1.Location = new Point(0, 0);
             toolStrip1.Name = "toolStrip1";

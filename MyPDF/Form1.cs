@@ -5140,81 +5140,6 @@ namespace MyPDF
                             // 更新をリセット
                             isDirty = false;
 
-
-                            /*
-
-                            // 作業用ファイルを破棄(念のため)
-                            CleanupWorkingFile();
-
-                            ITextDoc? iTextDoc = null;
-                            PdfReader? reader = null;
-
-                            // パスを一回リセット
-                            password = null;
-                            currentPassword = null;
-
-                            try
-                            {
-                                // 保存したファイルパス
-                                originalPath = sfd.FileName;
-
-                                // まずはパス無しで開く
-                                reader = new PdfReader(originalPath);
-
-                                // 作業ファイル作成
-                                // C:\Users\<ユーザー名>\AppData\Local\Temp\ に作業用ファイルを置く
-                                workingPath = IOPath.Combine(IOPath.GetTempPath(), $"MyPDFwork_{Guid.NewGuid()}.pdf");
-                                // 元ファイルを作業用ファイルにコピー true:同じ名前は上書き
-                                File.Copy(originalPath, workingPath, true);
-
-                                // PDFを実際に開く
-                                iTextDoc = new ITextDoc(reader);
-
-                                // Pdfiumで表示
-                                PdfiumViewer.PdfDocument document;
-                                document = PdfiumDoc.Load(workingPath);
-                                pdfViewer1.Document = document;
-
-                                string? openPassword = "";
-
-                                // iTextでしおり取得
-                                ShowBookmarks(workingPath, openPassword);
-
-                                // ツリービューの右クリックメニュー ON/OFF
-                                UpdateContextMenuState();
-
-                                // 自動調整
-                                ZoomtoolStripComboBox.SelectedIndex = 0;
-
-                                pdfViewer1.ZoomMode = PdfViewerZoomMode.FitBest;
-
-                                // ページ番号「1」を表示
-                                NewPagetoolStripTextBox.Text = "1";
-
-                                // 保存との整合性 作業用ファイルのデータを入れる
-                                currentSettings = LoadPdfSettings(workingPath, openPassword);
-
-                                currentSecurity ??= new SecuritySettings();
-
-                                // 暗号方式
-                                currentSecurity.Encryption = reader.GetCryptoMode();
-
-                                currentSecurity.Check_Owner = false;
-                                currentSecurity.Check_User = false;
-
-                                iTextDoc.Close();
-                                reader.Close();
-
-                                string fileName = IOPath.GetFileName(originalPath);
-
-                                this.Text = myName + " - [ " + fileName + " ]";
-
-                                // 更新をリセット
-                                isDirty = false;
-
-                                */
-                        
-                            
                         }
                         catch (Exception ex)
                         {
@@ -5226,9 +5151,6 @@ namespace MyPDF
                             Debug.WriteLine(ex.ToString());
 #endif
                         }
-
-
-                        
 
                         MessageBox.Show("PDF変換完了" + Environment.NewLine +
                             "ページの並びは、画像ファイルの名前順となっています。" + Environment.NewLine +
@@ -5248,5 +5170,19 @@ namespace MyPDF
             }
         }
 
+        // ==============================
+        // PdfViewer1右クリックしたとき
+        // ==============================
+        private void pdfViewer1_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                // 自前でコンテキストメニュー表示
+                contextMenuStrip2.Show(
+                    pdfViewer1,
+                    e.Location
+                );
+            }
+        }
     }
 }
