@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form3));
             OkBtn = new Button();
             labelTitle = new Label();
@@ -36,6 +37,9 @@
             pictureBox1 = new PictureBox();
             LicenseTxtBox = new TextBox();
             panel1 = new Panel();
+            label2 = new Label();
+            linkLabel1 = new LinkLabel();
+            toolTip1 = new ToolTip(components);
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panel1.SuspendLayout();
             SuspendLayout();
@@ -90,10 +94,10 @@
             // LicenseTxtBox
             // 
             LicenseTxtBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            LicenseTxtBox.Location = new Point(12, 132);
+            LicenseTxtBox.Location = new Point(12, 146);
             LicenseTxtBox.Multiline = true;
             LicenseTxtBox.Name = "LicenseTxtBox";
-            LicenseTxtBox.Size = new Size(442, 254);
+            LicenseTxtBox.Size = new Size(517, 258);
             LicenseTxtBox.TabIndex = 6;
             LicenseTxtBox.Text = resources.GetString("LicenseTxtBox.Text");
             // 
@@ -101,16 +105,38 @@
             // 
             panel1.Controls.Add(OkBtn);
             panel1.Dock = DockStyle.Bottom;
-            panel1.Location = new Point(0, 391);
+            panel1.Location = new Point(0, 411);
             panel1.Name = "panel1";
-            panel1.Size = new Size(464, 50);
+            panel1.Size = new Size(539, 50);
             panel1.TabIndex = 7;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(139, 112);
+            label2.Name = "label2";
+            label2.Size = new Size(62, 21);
+            label2.TabIndex = 9;
+            label2.Text = "GitHub:";
+            // 
+            // linkLabel1
+            // 
+            linkLabel1.AutoSize = true;
+            linkLabel1.Location = new Point(200, 112);
+            linkLabel1.Name = "linkLabel1";
+            linkLabel1.Size = new Size(292, 21);
+            linkLabel1.TabIndex = 10;
+            linkLabel1.TabStop = true;
+            linkLabel1.Text = "https://github.com/tomozo-code/MyPDF";
+            linkLabel1.LinkClicked += linkLabel1_LinkClicked;
             // 
             // Form3
             // 
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
-            ClientSize = new Size(464, 441);
+            ClientSize = new Size(539, 461);
+            Controls.Add(linkLabel1);
+            Controls.Add(label2);
             Controls.Add(panel1);
             Controls.Add(LicenseTxtBox);
             Controls.Add(pictureBox1);
@@ -141,5 +167,8 @@
         private PictureBox pictureBox1;
         private TextBox LicenseTxtBox;
         private Panel panel1;
+        private Label label2;
+        private LinkLabel linkLabel1;
+        private ToolTip toolTip1;
     }
 }
