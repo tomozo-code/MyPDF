@@ -348,6 +348,7 @@
             treeView1.MouseDown += treeView1_MouseDown;
             treeView1.MouseLeave += treeView1_MouseLeave;
             treeView1.MouseMove += treeView1_MouseMove;
+            treeView1.MouseUp += treeView1_MouseUp;
             // 
             // contextMenuStrip1
             // 
