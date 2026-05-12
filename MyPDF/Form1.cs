@@ -5171,18 +5171,16 @@ namespace MyPDF
         }
 
         // ==============================
-        // PdfViewer1右クリックしたとき
+        // PdfViewer1右クリックしたとき(挙動が変なので念のため)
         // ==============================
         private void pdfViewer1_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
                 // 自前でコンテキストメニュー表示
-                contextMenuStrip2.Show(
-                    pdfViewer1,
-                    e.Location
-                );
+                contextMenuStrip2.Show(pdfViewer1, e.Location);
             }
         }
+
     }
 }

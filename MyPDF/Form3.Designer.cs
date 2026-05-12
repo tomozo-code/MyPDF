@@ -31,7 +31,6 @@
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form3));
             OkBtn = new Button();
-            labelTitle = new Label();
             labelVersion = new Label();
             labelCopyright = new Label();
             pictureBox1 = new PictureBox();
@@ -40,6 +39,7 @@
             label2 = new Label();
             linkLabel1 = new LinkLabel();
             toolTip1 = new ToolTip(components);
+            TitleTxt = new TextBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panel1.SuspendLayout();
             SuspendLayout();
@@ -54,19 +54,10 @@
             OkBtn.UseVisualStyleBackColor = true;
             OkBtn.Click += OkBtn_Click;
             // 
-            // labelTitle
-            // 
-            labelTitle.AutoSize = true;
-            labelTitle.Location = new Point(139, 32);
-            labelTitle.Name = "labelTitle";
-            labelTitle.Size = new Size(146, 21);
-            labelTitle.TabIndex = 1;
-            labelTitle.Text = "ともさんのPDF編集帖";
-            // 
             // labelVersion
             // 
             labelVersion.AutoSize = true;
-            labelVersion.Location = new Point(139, 59);
+            labelVersion.Location = new Point(139, 46);
             labelVersion.Name = "labelVersion";
             labelVersion.Size = new Size(68, 21);
             labelVersion.TabIndex = 2;
@@ -75,7 +66,7 @@
             // labelCopyright
             // 
             labelCopyright.AutoSize = true;
-            labelCopyright.Location = new Point(139, 86);
+            labelCopyright.Location = new Point(139, 73);
             labelCopyright.Name = "labelCopyright";
             labelCopyright.Size = new Size(75, 21);
             labelCopyright.TabIndex = 3;
@@ -94,10 +85,10 @@
             // LicenseTxtBox
             // 
             LicenseTxtBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            LicenseTxtBox.Location = new Point(12, 146);
+            LicenseTxtBox.Location = new Point(12, 136);
             LicenseTxtBox.Multiline = true;
             LicenseTxtBox.Name = "LicenseTxtBox";
-            LicenseTxtBox.Size = new Size(517, 258);
+            LicenseTxtBox.Size = new Size(517, 229);
             LicenseTxtBox.TabIndex = 6;
             LicenseTxtBox.Text = resources.GetString("LicenseTxtBox.Text");
             // 
@@ -105,7 +96,7 @@
             // 
             panel1.Controls.Add(OkBtn);
             panel1.Dock = DockStyle.Bottom;
-            panel1.Location = new Point(0, 411);
+            panel1.Location = new Point(0, 371);
             panel1.Name = "panel1";
             panel1.Size = new Size(539, 50);
             panel1.TabIndex = 7;
@@ -113,7 +104,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(139, 112);
+            label2.Location = new Point(139, 99);
             label2.Name = "label2";
             label2.Size = new Size(62, 21);
             label2.TabIndex = 9;
@@ -122,7 +113,7 @@
             // linkLabel1
             // 
             linkLabel1.AutoSize = true;
-            linkLabel1.Location = new Point(200, 112);
+            linkLabel1.Location = new Point(200, 99);
             linkLabel1.Name = "linkLabel1";
             linkLabel1.Size = new Size(292, 21);
             linkLabel1.TabIndex = 10;
@@ -130,11 +121,21 @@
             linkLabel1.Text = "https://github.com/tomozo-code/MyPDF";
             linkLabel1.LinkClicked += linkLabel1_LinkClicked;
             // 
+            // TitleTxt
+            // 
+            TitleTxt.Location = new Point(139, 17);
+            TitleTxt.Name = "TitleTxt";
+            TitleTxt.Size = new Size(219, 29);
+            TitleTxt.TabIndex = 11;
+            TitleTxt.Tag = "ともさんのPDF編集帖";
+            TitleTxt.Text = "ともさんのPDF編集帖";
+            // 
             // Form3
             // 
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
-            ClientSize = new Size(539, 461);
+            ClientSize = new Size(539, 421);
+            Controls.Add(TitleTxt);
             Controls.Add(linkLabel1);
             Controls.Add(label2);
             Controls.Add(panel1);
@@ -142,7 +143,6 @@
             Controls.Add(pictureBox1);
             Controls.Add(labelCopyright);
             Controls.Add(labelVersion);
-            Controls.Add(labelTitle);
             Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
@@ -161,7 +161,6 @@
         #endregion
 
         private Button OkBtn;
-        private Label labelTitle;
         private Label labelVersion;
         private Label labelCopyright;
         private PictureBox pictureBox1;
@@ -170,5 +169,6 @@
         private Label label2;
         private LinkLabel linkLabel1;
         private ToolTip toolTip1;
+        private TextBox TitleTxt;
     }
 }

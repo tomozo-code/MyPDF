@@ -1,10 +1,13 @@
-﻿using System;
+﻿using iText.Kernel.Colors;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using DrawingColor = System.Drawing.Color;
+
 
 
 // ==============================
@@ -32,7 +35,7 @@ namespace MyPDF
         // 色設定
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public Color SelectedColor { get; set; }
+        public DrawingColor SelectedColor { get; set; }
 
         // 文字スタイル
         [Browsable(false)]
@@ -47,14 +50,14 @@ namespace MyPDF
 
 
 
-        public Form6(String currentBmTitle, int currentPage, Color currentColor, FontStyle currentStyle, int maxPage)
+        public Form6(String currentBmTitle, int currentPage, DrawingColor currentColor, FontStyle currentStyle, int maxPage)
         {
             InitializeComponent();
 
             // フォームサイズ
             this.Width = 400;
             this.Height = 350;
-            this.MinimumSize = new Size(300, 200);
+            this.MinimumSize = new Size(300, 300);
             //this.AutoScaleDimensions = new SizeF(96F, 96F);
 
             colorDialog = new ColorDialog();
@@ -84,6 +87,25 @@ namespace MyPDF
             this.maxPage = maxPage;
 
             TotalPageLabel.Text = "/ " + maxPage.ToString();
+
+            // 色16進用TextBox
+            ColorTxtBox1.ReadOnly = true;
+            ColorTxtBox1.BorderStyle = BorderStyle.None;
+            ColorTxtBox1.BackColor = this.BackColor;
+            ColorTxtBox1.TabStop = false;
+
+            // 色を16進に変換
+            ColorTxtBox1.Text = $"#{SelectedColor.R:X2}{SelectedColor.G:X2}{SelectedColor.B:X2}";
+
+            // 色RGB用TextBox
+            ColorTxtBox2.ReadOnly = true;
+            ColorTxtBox2.BorderStyle = BorderStyle.None;
+            ColorTxtBox2.BackColor = this.BackColor;
+            ColorTxtBox2.TabStop = false;
+
+            // 色RGB
+            ColorTxtBox2.Text = $"{SelectedColor.R},{SelectedColor.G},{SelectedColor.B}";
+
 
             toolHintTxt = "しおりのプロパティを設定します";
 
@@ -122,6 +144,12 @@ namespace MyPDF
 
                 // ボタンの色でプレビュー
                 btnColor.BackColor = SelectedColor;
+                // 色を16進に変換
+                ColorTxtBox1.Text = $"#{SelectedColor.R:X2}{SelectedColor.G:X2}{SelectedColor.B:X2}";
+                // 色RGB
+                ColorTxtBox2.Text = $"{SelectedColor.R},{SelectedColor.G},{SelectedColor.B}";
+
+
             }
         }
 
@@ -251,6 +279,5 @@ namespace MyPDF
                 }
             }
         }
-
     }
 }

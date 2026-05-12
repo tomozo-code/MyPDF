@@ -35,6 +35,12 @@ namespace MyPDF
             LicenseTxtBox.BackColor = this.BackColor;
             LicenseTxtBox.TabStop = false;
 
+            // タイトルTextBox
+            TitleTxt.ReadOnly = true;
+            TitleTxt.BorderStyle = BorderStyle.None;
+            TitleTxt.BackColor = this.BackColor;
+            TitleTxt.TabStop = false;
+
             // EnterキーをOKボタンに割り当て
             this.AcceptButton = OkBtn;
             //  EscキーをOKボタンに割り当て
@@ -56,7 +62,7 @@ namespace MyPDF
             var assembly = Assembly.GetExecutingAssembly();
             var version = assembly.GetName().Version?.ToString() ?? "不明";
 
-            labelTitle.Text = "ともさんのPDF編集帖";
+            TitleTxt.Text = "ともさんのPDF編集帖";
             labelVersion.Text = $"Version: {version}";
             labelCopyright.Text = "Copyright(c) 2026 ともさん";
 

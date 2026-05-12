@@ -47,6 +47,10 @@
             TotalPageLabel = new Label();
             panel1 = new Panel();
             panel2 = new Panel();
+            label6 = new Label();
+            ColorTxtBox2 = new TextBox();
+            label5 = new Label();
+            ColorTxtBox1 = new TextBox();
             statusStrip1.SuspendLayout();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
@@ -188,6 +192,10 @@
             // panel2
             // 
             panel2.AutoScroll = true;
+            panel2.Controls.Add(label6);
+            panel2.Controls.Add(ColorTxtBox2);
+            panel2.Controls.Add(label5);
+            panel2.Controls.Add(ColorTxtBox1);
             panel2.Controls.Add(label3);
             panel2.Controls.Add(label1);
             panel2.Controls.Add(label2);
@@ -202,6 +210,44 @@
             panel2.Name = "panel2";
             panel2.Size = new Size(404, 277);
             panel2.TabIndex = 12;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(245, 168);
+            label6.Name = "label6";
+            label6.Size = new Size(50, 21);
+            label6.TabIndex = 14;
+            label6.Text = "(RGB)";
+            // 
+            // ColorTxtBox2
+            // 
+            ColorTxtBox2.Location = new Point(151, 168);
+            ColorTxtBox2.Name = "ColorTxtBox2";
+            ColorTxtBox2.Size = new Size(90, 29);
+            ColorTxtBox2.TabIndex = 13;
+            ColorTxtBox2.Tag = "R(赤),G(緑),B(青)表記";
+            ColorTxtBox2.Text = "RGB";
+            ColorTxtBox2.TextAlign = HorizontalAlignment.Right;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(245, 137);
+            label5.Name = "label5";
+            label5.Size = new Size(54, 21);
+            label5.TabIndex = 12;
+            label5.Text = "(16進)";
+            // 
+            // ColorTxtBox1
+            // 
+            ColorTxtBox1.Location = new Point(151, 138);
+            ColorTxtBox1.Name = "ColorTxtBox1";
+            ColorTxtBox1.Size = new Size(90, 29);
+            ColorTxtBox1.TabIndex = 11;
+            ColorTxtBox1.Tag = "16進数表記(カラーコード)";
+            ColorTxtBox1.Text = "#123456";
+            ColorTxtBox1.TextAlign = HorizontalAlignment.Right;
             // 
             // Form6
             // 
@@ -247,5 +293,9 @@
         private Label TotalPageLabel;
         private Panel panel1;
         private Panel panel2;
+        private TextBox ColorTxtBox1;
+        private Label label5;
+        private TextBox ColorTxtBox2;
+        private Label label6;
     }
 }
