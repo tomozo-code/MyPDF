@@ -1441,7 +1441,9 @@ namespace MyPDF
                     info.SetSubject(subject);
 
                     // Info（セミコロン区切り）
-                    //info.SetKeywords(string.Join("; ", keywordList));
+                    //string keywordsJoined = string.Join("; ", keywordList);
+                    //info.SetKeywords(keywordsJoined);
+                    //info.SetMoreInfo("Keywords", keywordsJoined);
 
                     //info.SetProducer(producer);
                     info.SetCreator(appName);
@@ -1467,15 +1469,18 @@ namespace MyPDF
                     //xmp.SetProperty(XMPConst.NS_DC, "subject", keywords);
                     var opt = new PropertyOptions(PropertyOptions.ARRAY_ORDERED);
 
-                    foreach (var k in keywordList.Distinct())
+                    if (keywordList.Count > 0)
                     {
-                        xmp.AppendArrayItem(
-                            XMPConst.NS_DC,
-                            "subject",
-                            opt,
-                            k,
-                            null
-                        );
+                        foreach (var k in keywordList.Distinct())
+                        {
+                            xmp.AppendArrayItem(
+                                XMPConst.NS_DC,
+                                "subject",
+                                opt,
+                                k,
+                                null
+                            );
+                        }
                     }
 
                     // PDF情報
@@ -1746,7 +1751,7 @@ namespace MyPDF
                 SavePdf(originalPath);
 
                 // 作業用ファイルを破棄
-                CleanupWorkingFile();
+                //CleanupWorkingFile();
 
             }
             else if (result == DialogResult.No)
@@ -3701,6 +3706,19 @@ namespace MyPDF
             if (!ConfirmDiscard())
                 return;
 
+            // 閉じる処理を呼ぶ
+            CloseCurrentPdf();
+
+        }
+
+        // ==============================
+        // 閉じる処理
+        // ==============================
+        private void CloseCurrentPdf()
+        {
+            if (!ConfirmDiscard())
+                return;
+
             // Viewer完全リセット
             ResetPdfViewer();
 
@@ -3726,7 +3744,6 @@ namespace MyPDF
             toolHintTxt = "ファイル: PDF未選択";
 
             isDirty = false;
-
         }
 
         // ==============================
@@ -4990,13 +5007,17 @@ namespace MyPDF
                         if (sfd.ShowDialog() != DialogResult.OK)
                             return;
 
+                        // 閉じる処理を呼ぶ
+                        CloseCurrentPdf();
 
+                        int pageNum = 1;
 
                         // PDF作成
                         using (PdfWriter writer = new PdfWriter(sfd.FileName))
                         using (ITextDoc pdf = new ITextDoc(writer))
                         using (iText.Layout.Document document = new iText.Layout.Document(pdf))
                         {
+                           
                             //foreach (string imagePath in ofd.FileNames)
                             // 画像ファイルを名前順に並び替えてPDFに変換
                             foreach (string imagePath in ofd.FileNames.OrderBy(x => x))
@@ -5114,12 +5135,46 @@ namespace MyPDF
 
                                 // 追加
                                 document.Add(image);
+
+                                // ファイル名をしおりに
+                                TreeNode? newNode = null;
+
+                                treeView1.BeginUpdate();
+                                newNode = new TreeNode(IOPath.GetFileNameWithoutExtension(imagePath))
+                                {
+                                    ImageIndex = 0,
+                                    SelectedImageIndex = 1
+                                };
+
+                                newNode.Tag = new BookmarkInfo
+                                {
+                                    // しおり名
+                                    BmTitle = IOPath.GetFileNameWithoutExtension(imagePath),
+                                    // 表示されているページ
+                                    Page = pageNum,
+                                    // 色は黒(デフォルト)
+                                    SelectedColor = DrawingColor.Black,
+                                    // スタイルは標準(デフォルト)
+                                    SelectedStyle = FontStyle.Regular,
+                                    // 展開
+                                    IsOpen = true
+                                };
+                                // ルートに追加
+                                treeView1.Nodes.Add(newNode);
+
+
+                                treeView1.EndUpdate();
+
+                                pageNum++;
+
+
                             }
 
                         }
 
                         // 保存したファイルパス
                         originalPath = sfd.FileName;
+
 
                         try
                         {
@@ -5131,6 +5186,18 @@ namespace MyPDF
                             workingPath = IOPath.Combine(IOPath.GetTempPath(), $"MyPDFwork_{Guid.NewGuid()}.pdf");
                             // 元ファイルを作業用ファイルにコピー true:同じ名前は上書き
                             File.Copy(originalPath, workingPath, true);
+
+                            // Pdfiumで表示
+                            PdfiumViewer.PdfDocument document;
+
+                            // パスワードなし
+                            document = PdfiumDoc.Load(workingPath);
+
+                            pdfViewer1.Document = document;
+
+
+                            // 保存との整合性 作業用ファイルのデータを入れる
+                            currentSettings = LoadPdfSettings(workingPath, null);
 
                             SavePdf(sfd.FileName);
 
