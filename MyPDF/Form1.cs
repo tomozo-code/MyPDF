@@ -5010,6 +5010,9 @@ namespace MyPDF
                         // 閉じる処理を呼ぶ
                         CloseCurrentPdf();
 
+                        // 念のためしおり消す
+                        treeView1.Nodes.Clear();
+
                         int pageNum = 1;
 
                         // PDF作成
@@ -5017,164 +5020,167 @@ namespace MyPDF
                         using (ITextDoc pdf = new ITextDoc(writer))
                         using (iText.Layout.Document document = new iText.Layout.Document(pdf))
                         {
-                           
-                            //foreach (string imagePath in ofd.FileNames)
-                            // 画像ファイルを名前順に並び替えてPDFに変換
-                            foreach (string imagePath in ofd.FileNames.OrderBy(x => x))
+
+                            treeView1.BeginUpdate();
+
+                            try
                             {
-                                // 画像読み込み
-                                ImageData imageData = ImageDataFactory.Create(imagePath);
-
-                                // Image作成
-                                ITextImage image = new ITextImage(imageData);
-
-                                // ページサイズ取得
-                                float imgWidth = image.GetImageWidth();
-                                float imgHeight = image.GetImageHeight();
-
-                                // ページサイズを設定
-                                PageSize pageSize;
-                                switch (PdfImageMode)
+                                //foreach (string imagePath in ofd.FileNames)
+                                // 画像ファイルを名前順に並び替えてPDFに変換
+                                //foreach (string imagePath in ofd.FileNames.OrderBy(x => x))
+                                foreach (string imagePath in ofd.FileNames.OrderBy(x => x, new NaturalStringComparer()))
                                 {
-                                    // A4縦
-                                    case 0:
-                                        pageSize = PageSize.A4;
-                                        break;
-                                    // A4横
-                                    case 1:
-                                        pageSize = PageSize.A4.Rotate();
-                                        break;
-                                    //元サイズ
-                                    default:
-                                        //pageSize = new PageSize(imgWidth, imgHeight);
-                                        pageSize = new PageSize(imgWidth + PdfMarginLeft + PdfMarginRight, imgHeight + PdfMarginTop + PdfMarginBottom);
-                                        break;
+                                    // 画像読み込み
+                                    ImageData imageData = ImageDataFactory.Create(imagePath);
+
+                                    // Image作成
+                                    ITextImage image = new ITextImage(imageData);
+
+                                    // ページサイズ取得
+                                    float imgWidth = image.GetImageWidth();
+                                    float imgHeight = image.GetImageHeight();
+
+                                    // ページサイズを設定
+                                    PageSize pageSize;
+                                    switch (PdfImageMode)
+                                    {
+                                        // A4縦
+                                        case 0:
+                                            pageSize = PageSize.A4;
+                                            break;
+                                        // A4横
+                                        case 1:
+                                            pageSize = PageSize.A4.Rotate();
+                                            break;
+                                        //元サイズ
+                                        default:
+                                            //pageSize = new PageSize(imgWidth, imgHeight);
+                                            pageSize = new PageSize(imgWidth + PdfMarginLeft + PdfMarginRight, imgHeight + PdfMarginTop + PdfMarginBottom);
+                                            break;
+                                    }
+
+                                    // 新規ページ追加
+                                    pdf.AddNewPage(pageSize);
+
+                                    // 設定したサイズに収める
+                                    float pageWidth = pageSize.GetWidth();
+                                    float pageHeight = pageSize.GetHeight();
+
+                                    // 余白ゼロ(上、右、下、左)
+                                    //document.SetMargins(0, 0, 0, 0);
+
+                                    // 画像が使える範囲
+                                    float availableWidth = pageWidth - PdfMarginLeft - PdfMarginRight;
+                                    float availableHeight = pageHeight - PdfMarginTop - PdfMarginBottom;
+
+                                    // 元サイズ以外の場合
+                                    if (PdfImageMode != 2)
+                                    {
+                                        // 画像を余白内に収める
+                                        image.ScaleToFit(availableWidth, availableHeight);
+                                    }
+
+                                    // 画像縮小後のサイズ取得
+                                    float scaledWidth = image.GetImageScaledWidth();
+                                    float scaledHeight = image.GetImageScaledHeight();
+
+                                    float x = PdfMarginLeft;
+                                    float y = PdfMarginBottom;
+
+                                    // 配置設定
+                                    switch (PdfPlace)
+                                    {
+                                        // 中央
+                                        case 0:
+                                            x = PdfMarginLeft + (availableWidth - scaledWidth) / 2;
+                                            y = PdfMarginBottom + (availableHeight - scaledHeight) / 2;
+                                            break;
+
+                                        // 上詰め
+                                        case 1:
+                                            x = PdfMarginLeft + (availableWidth - scaledWidth) / 2;
+                                            y = pageHeight - PdfMarginTop - scaledHeight;
+                                            break;
+
+                                        // 下詰め
+                                        case 2:
+                                            x = PdfMarginLeft + (availableWidth - scaledWidth) / 2;
+                                            y = PdfMarginBottom;
+                                            break;
+
+                                        // 左詰め
+                                        case 3:
+                                            x = PdfMarginLeft;
+                                            y = PdfMarginBottom + (availableHeight - scaledHeight) / 2;
+                                            break;
+
+                                        // 右詰め
+                                        case 4:
+                                            x = pageWidth - PdfMarginRight - scaledWidth;
+                                            y = PdfMarginBottom + (availableHeight - scaledHeight) / 2;
+                                            break;
+                                    }
+
+                                    // pdf.GetNumberOfPages()はページ番号、xyは左下が原点(0,0)で、xは右へ、yは上へ
+                                    image.SetFixedPosition(pdf.GetNumberOfPages(), x, y);
+
+                                    Debug.WriteLine("--- 画像PDF変換 --------------");
+                                    Debug.WriteLine("pageWidth: " + pageWidth.ToString());
+                                    Debug.WriteLine("PdfMarginLeft: " + PdfMarginLeft.ToString());
+                                    Debug.WriteLine("PdfMarginRight: " + PdfMarginRight.ToString());
+                                    Debug.WriteLine("availableWidth: " + availableWidth.ToString());
+
+                                    Debug.WriteLine("pageHeight: " + pageHeight.ToString());
+                                    Debug.WriteLine("PdfMarginTop: " + PdfMarginTop.ToString());
+                                    Debug.WriteLine("PdfMarginBottom: " + PdfMarginBottom.ToString());
+                                    Debug.WriteLine("availableHeight: " + availableHeight.ToString());
+
+                                    Debug.WriteLine("image.GetImageScaledWidth(): " + image.GetImageScaledWidth().ToString());
+                                    Debug.WriteLine("image.GetImageScaledHeight(): " + image.GetImageScaledHeight().ToString());
+
+                                    Debug.WriteLine("x: " + x.ToString());
+                                    Debug.WriteLine("y: " + y.ToString());
+
+                                    // 追加
+                                    document.Add(image);
+
+                                    // ファイル名をしおりに
+                                    string bookmarkName = IOPath.GetFileNameWithoutExtension(imagePath);
+
+                                    TreeNode newNode = new TreeNode(bookmarkName)
+                                    {
+                                        ImageIndex = 0,
+                                        SelectedImageIndex = 1
+                                    };
+
+                                    newNode.Tag = new BookmarkInfo
+                                    {
+                                        // しおり名
+                                        BmTitle = bookmarkName,
+                                        // 表示されているページ
+                                        Page = pageNum,
+                                        // 色は黒(デフォルト)
+                                        SelectedColor = DrawingColor.Black,
+                                        // スタイルは標準(デフォルト)
+                                        SelectedStyle = FontStyle.Regular,
+                                        // 展開
+                                        IsOpen = true
+                                    };
+                                    // ルートに追加
+                                    treeView1.Nodes.Add(newNode);
+                                    pageNum++;
                                 }
-
-                                // 新規ページ追加
-                                pdf.AddNewPage(pageSize);
-
-                                // 設定したサイズに収める
-                                float pageWidth = pageSize.GetWidth();
-                                float pageHeight = pageSize.GetHeight();
-
-                                // 余白ゼロ(上、右、下、左)
-                                //document.SetMargins(0, 0, 0, 0);
-
-                                // 画像が使える範囲
-                                float availableWidth = pageWidth - PdfMarginLeft - PdfMarginRight;
-                                float availableHeight = pageHeight - PdfMarginTop - PdfMarginBottom;
-
-                                // 元サイズ以外の場合
-                                if (PdfImageMode != 2)
-                                {
-                                    // 画像を余白内に収める
-                                    image.ScaleToFit(availableWidth, availableHeight);
-                                }
-
-                                // 画像縮小後のサイズ取得
-                                float scaledWidth = image.GetImageScaledWidth();
-                                float scaledHeight = image.GetImageScaledHeight();
-
-                                float x = PdfMarginLeft;
-                                float y = PdfMarginBottom;
-
-                                // 配置設定
-                                switch (PdfPlace)
-                                {
-                                    // 中央
-                                    case 0:
-                                        x = PdfMarginLeft + (availableWidth - scaledWidth) / 2;
-                                        y = PdfMarginBottom + (availableHeight - scaledHeight) / 2;
-                                        break;
-
-                                    // 上詰め
-                                    case 1:
-                                        x = PdfMarginLeft + (availableWidth - scaledWidth) / 2;
-                                        y = pageHeight - PdfMarginTop - scaledHeight;
-                                        break;
-
-                                    // 下詰め
-                                    case 2:
-                                        x = PdfMarginLeft + (availableWidth - scaledWidth) / 2;
-                                        y = PdfMarginBottom;
-                                        break;
-
-                                    // 左詰め
-                                    case 3:
-                                        x = PdfMarginLeft;
-                                        y = PdfMarginBottom + (availableHeight - scaledHeight) / 2;
-                                        break;
-
-                                    // 右詰め
-                                    case 4:
-                                        x = pageWidth - PdfMarginRight - scaledWidth;
-                                        y = PdfMarginBottom + (availableHeight - scaledHeight) / 2;
-                                        break;
-                                }
-
-                                // pdf.GetNumberOfPages()はページ番号、xyは左下が原点(0,0)で、xは上へ、yは右へ
-                                image.SetFixedPosition(pdf.GetNumberOfPages(), x, y);
-
-                                Debug.WriteLine("--- 画像PDF変換 --------------");
-                                Debug.WriteLine("pageWidth: " + pageWidth.ToString());
-                                Debug.WriteLine("PdfMarginLeft: " + PdfMarginLeft.ToString());
-                                Debug.WriteLine("PdfMarginRight: " + PdfMarginRight.ToString());
-                                Debug.WriteLine("availableWidth: " + availableWidth.ToString());
-
-                                Debug.WriteLine("pageHeight: " + pageHeight.ToString());
-                                Debug.WriteLine("PdfMarginTop: " + PdfMarginTop.ToString());
-                                Debug.WriteLine("PdfMarginBottom: " + PdfMarginBottom.ToString());
-                                Debug.WriteLine("availableHeight: " + availableHeight.ToString());
-
-                                Debug.WriteLine("image.GetImageScaledWidth(): " + image.GetImageScaledWidth().ToString());
-                                Debug.WriteLine("image.GetImageScaledHeight(): " + image.GetImageScaledHeight().ToString());
-
-                                Debug.WriteLine("x: " + x.ToString());
-                                Debug.WriteLine("y: " + y.ToString());
-
-                                // 追加
-                                document.Add(image);
-
-                                // ファイル名をしおりに
-                                TreeNode? newNode = null;
-
-                                treeView1.BeginUpdate();
-                                newNode = new TreeNode(IOPath.GetFileNameWithoutExtension(imagePath))
-                                {
-                                    ImageIndex = 0,
-                                    SelectedImageIndex = 1
-                                };
-
-                                newNode.Tag = new BookmarkInfo
-                                {
-                                    // しおり名
-                                    BmTitle = IOPath.GetFileNameWithoutExtension(imagePath),
-                                    // 表示されているページ
-                                    Page = pageNum,
-                                    // 色は黒(デフォルト)
-                                    SelectedColor = DrawingColor.Black,
-                                    // スタイルは標準(デフォルト)
-                                    SelectedStyle = FontStyle.Regular,
-                                    // 展開
-                                    IsOpen = true
-                                };
-                                // ルートに追加
-                                treeView1.Nodes.Add(newNode);
-
-
+                            }
+                            finally
+                            {
+                                // しおり追加終了
                                 treeView1.EndUpdate();
-
-                                pageNum++;
-
-
                             }
 
                         }
 
                         // 保存したファイルパス
                         originalPath = sfd.FileName;
-
 
                         try
                         {
@@ -5198,6 +5204,10 @@ namespace MyPDF
 
                             // 保存との整合性 作業用ファイルのデータを入れる
                             currentSettings = LoadPdfSettings(workingPath, null);
+
+                            // 念のため
+                            pdfViewer1.Document?.Dispose();
+                            pdfViewer1.Document = null;
 
                             SavePdf(sfd.FileName);
 
