@@ -1503,12 +1503,21 @@ namespace MyPDF
                     xmp.AppendArrayItem(XMPConst.NS_DC, "creator",
                         new PropertyOptions(PropertyOptions.ARRAY_ORDERED),
                         author, null);
-                    // キーワード（一旦消して配列で正しく入れる）
-                    //xmp.SetProperty(XMPConst.NS_DC, "subject", keywords);
-                    var opt = new PropertyOptions(PropertyOptions.ARRAY_ORDERED);
 
+                    // Keywords完全クリア
+                    info.SetKeywords("");
+
+                    // subject完全削除
+                    while (xmp.DoesPropertyExist(XMPConst.NS_DC, "subject"))
+                    {
+                        xmp.DeleteProperty(XMPConst.NS_DC, "subject");
+                    }
+
+                    // キーワード追加
                     if (keywordList.Count > 0)
                     {
+                        var opt = new PropertyOptions(PropertyOptions.ARRAY);
+
                         foreach (var k in keywordList.Distinct())
                         {
                             xmp.AppendArrayItem(
