@@ -25,7 +25,7 @@ namespace MyPDF
         {
             InitializeComponent();
 
-            this.Width = 600;
+            this.Width = 650;
             this.Height = 400;
             this.MinimumSize = new Size(400, 200);
             //this.AutoScaleDimensions = new SizeF(96F, 96F);

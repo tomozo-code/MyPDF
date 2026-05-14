@@ -368,9 +368,11 @@ namespace MyPDF
 
             PassMessage = "閲覧パスワードで開いた場合、編集不可(閲覧モード)になります。" + Environment.NewLine +
                 "権限パスワードで開いた場合、編集可能(編集モード)になります。" + Environment.NewLine +
-                "権限パスワードで開いたファイルは、保護なしで保存されます。" + Environment.NewLine +
+                "権限パスワードで開いたPDFファイルは、保存時に制限やパスワードが破棄されますので、" + Environment.NewLine +
                 "保護を設定したい場合は" + Environment.NewLine +
-                "「ファイル(F) - セキュリティ設定(T)...」から再設定してください。";
+                "「ファイル(F) - セキュリティ設定(T)...」から再設定してください。" + Environment.NewLine +
+                "権限パスワードのみ設定されているPDFファイルは、パスワードなしで開くことができます。" + Environment.NewLine +
+                "その場合は、編集不可(閲覧モード)になります。";
 
             while (true)
             {
@@ -1301,7 +1303,43 @@ namespace MyPDF
         // ==============================
         private void SavePdf(string savePath)
         {
+
             if (string.IsNullOrEmpty(originalPath)) return;
+
+            // 名前を付けて保存だったら保存できるかチェックしない
+            if (savePath == originalPath)
+            {
+                // 保存できるかチェック(他のアプリで開いてる？)
+                try
+                {
+                    using (var test = new FileStream(
+                        savePath,
+                        FileMode.Open,
+                        FileAccess.ReadWrite,
+                        FileShare.None))
+                    {
+                    }
+                }
+                catch (IOException)
+                {
+                    MessageBox.Show(
+                        "PDFファイルが他のアプリで開かれています。" + Environment.NewLine +
+                        "閉じてから保存してください。",
+                        "保存失敗",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
+
+                    return;
+                }
+            }
+
+            // 現在ページ退避し保存後に表示しているページに戻す
+            int currentPage = 0;
+            if (pdfViewer1.Document != null)
+            {
+                currentPage = pdfViewer1.Renderer.Page;
+            }
 
             // パスが設定されたフラグ(true:パスあり、false:パスなし)
             bool MsgFlag = false;
@@ -1570,12 +1608,29 @@ namespace MyPDF
 
                 }
 
-                // 作業用ファイルを消して一時作業用ファイルを作業用ファイルに上書き
-                File.Delete(workingPath);
-                File.Move(tempPath, workingPath, true);
+                // 一時作業用ファイルを作業用ファイルにコピーして一時ファイルを消す
+                File.Copy(tempPath, workingPath, true);
+                File.Delete(tempPath);
 
-                // 作業用ファイルを元ファイルにコピー true:同じ名前は上書き
-                File.Copy(workingPath, savePath, true);
+                // 保存できなかっったとき(念のため)
+                try
+                {
+
+                    // 作業用ファイルを元ファイルにコピー true:同じ名前は上書き
+                    File.Copy(workingPath, savePath, true);
+                }
+                catch (IOException)
+                {
+                    MessageBox.Show(
+                        "PDFファイルが他のアプリで開かれています。" + Environment.NewLine +
+                        "閉じてから保存してください。",
+                        "保存失敗",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
+
+                    return;
+                }
 
                 originalPath = savePath;
 
@@ -1602,6 +1657,14 @@ namespace MyPDF
 
                 // ステータスバーにファイル名(元ファイル)と総ページ数
                 UpdateStatus(originalPath, pdfViewer1.Document.PageCount);
+
+                // 元のページに戻す
+                // 元ページへ戻す
+                if (currentPage >= 0 &&
+                    currentPage < pdfViewer1.Document.PageCount)
+                {
+                    pdfViewer1.Renderer.Page = currentPage;
+                }
 
                 string fileName = IOPath.GetFileName(originalPath);
 
@@ -1757,8 +1820,12 @@ namespace MyPDF
             else if (result == DialogResult.No)
             {
                 // いいえ
+
+                // 保存しない
+                isDirty = false;
+
                 // 作業用ファイルを破棄
-                //CleanupWorkingFile();
+                CleanupWorkingFile();
             }
 
             return true;
@@ -5054,7 +5121,6 @@ namespace MyPDF
                                             break;
                                         //元サイズ
                                         default:
-                                            //pageSize = new PageSize(imgWidth, imgHeight);
                                             pageSize = new PageSize(imgWidth + PdfMarginLeft + PdfMarginRight, imgHeight + PdfMarginTop + PdfMarginBottom);
                                             break;
                                     }
@@ -5210,6 +5276,16 @@ namespace MyPDF
                             pdfViewer1.Document = null;
 
                             SavePdf(sfd.FileName);
+
+                            // 自動調整
+                            ZoomtoolStripComboBox.SelectedIndex = 0;
+
+                            pdfViewer1.ZoomMode = PdfViewerZoomMode.FitBest;
+
+                            // セキュリティなし
+                            canEdit = true;
+
+                            treeView1.LabelEdit = true;
 
                             // ツリービューの右クリックメニュー ON/OFF
                             UpdateContextMenuState();
