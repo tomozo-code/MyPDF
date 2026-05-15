@@ -1831,10 +1831,10 @@ namespace MyPDF
                 // いいえ
 
                 // 保存しない
-                isDirty = false;
+                //isDirty = false;
 
                 // 作業用ファイルを破棄
-                CleanupWorkingFile();
+                //CleanupWorkingFile();
             }
 
             return true;
@@ -3779,8 +3779,8 @@ namespace MyPDF
         // ==============================
         private void CloseMenu_Click(object sender, EventArgs e)
         {
-            if (!ConfirmDiscard())
-                return;
+            //if (!ConfirmDiscard())
+            //    return;
 
             // 閉じる処理を呼ぶ
             CloseCurrentPdf();
@@ -5082,6 +5082,9 @@ namespace MyPDF
                         // 保存ダイアログ(キャンセルなら戻る)
                         if (sfd.ShowDialog() != DialogResult.OK)
                             return;
+
+                        // 保存しない
+                        isDirty = false;
 
                         // 閉じる処理を呼ぶ
                         CloseCurrentPdf();
