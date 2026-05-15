@@ -465,8 +465,8 @@ namespace MyPDF
 
             treeView1.LabelEdit = canEdit;
 
-            iTextDoc.Close();
-            reader.Close();
+            //iTextDoc.Close();
+            //reader.Close();
 
             // 作業用ファイルを破棄
             CleanupWorkingFile();
@@ -526,7 +526,13 @@ namespace MyPDF
                 int perm = reader.GetPermissions();
 
                 // 暗号方式
-                currentSecurity.Encryption = reader.GetCryptoMode();
+                int cryptoMode = reader.GetCryptoMode();
+
+                iTextDoc.Close();
+                reader.Close();
+
+                // 暗号方式
+                currentSecurity.Encryption = cryptoMode;
 
                 currentSecurity.Check_Owner = false;
                 currentSecurity.Check_User = false;
@@ -5029,9 +5035,18 @@ namespace MyPDF
         }
 
         // ==============================
-        // 画像をPDFに変換
+        // 画像をPDFに変換を押したとき
         // ==============================
         private void ConvPdf_Click(object sender, EventArgs e)
+        {
+
+            ImageConvPdf();
+        }
+
+        // ==============================
+        // 画像をPDFに変換処理
+        // ==============================
+        private void ImageConvPdf()
         {
 
             // 変更がある場合(未保存確認ダイアログ)
@@ -5334,6 +5349,7 @@ namespace MyPDF
 #endif
             }
         }
+        
 
         // ==============================
         // PdfViewer1右クリックしたとき(挙動が変なので念のため)
