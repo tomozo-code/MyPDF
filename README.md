@@ -204,6 +204,7 @@ https://pdfium.googlesource.com/pdfium/
 
 ### しおりアイコン
 しおりアイコンは、 ICOOON MONO にて配布されているアイコンを使用しています。
+
 ICOOON MONOホームページ：
 https://icooon-mono.com/
 
