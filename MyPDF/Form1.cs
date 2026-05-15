@@ -1511,7 +1511,13 @@ namespace MyPDF
                         author, null);
 
                     // Keywords完全クリア
-                    info.SetKeywords("");
+                    //info.SetKeywords("");
+                    pdf.GetTrailer().GetAsDictionary(PdfName.Info)?.Remove(PdfName.Keywords);
+
+                    string keywordsJoined = string.Join("; ", keywordList);
+
+                    // Info
+                    //info.SetKeywords(keywordsJoined);
 
                     // subject完全削除
                     while (xmp.DoesPropertyExist(XMPConst.NS_DC, "subject"))
@@ -1520,6 +1526,7 @@ namespace MyPDF
                     }
 
                     // キーワード追加
+
                     if (keywordList.Count > 0)
                     {
                         var opt = new PropertyOptions(PropertyOptions.ARRAY);
@@ -1535,6 +1542,7 @@ namespace MyPDF
                             );
                         }
                     }
+
 
                     // PDF情報
                     xmp.SetProperty(XMPConst.NS_PDF, "Producer", producer);
