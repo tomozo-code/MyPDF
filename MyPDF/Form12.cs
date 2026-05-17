@@ -31,6 +31,8 @@ namespace MyPDF
         // 置換するファイルの総ページ数
         private int InsPage;
 
+        public string ReplaceText => txtPage.Text;
+
 
         public Form12(string ReplacementFile, int nowPage, int maxPage, int InsTotalPage)
         {
@@ -57,18 +59,14 @@ namespace MyPDF
             ExtractTxt.Text = "1-" + InsPage.ToString();
             InsTotalPageLabel.Text = "/ " + InsPage.ToString();
 
-            // 今表示しているページをセット
-            StartKaeTxt.Text = nowPage.ToString();
-            EndKaeTxt.Text = nowPage.ToString();
+            // 今開いているPDFのページ
+            txtPage.Text = nowPage.ToString();
 
             // 総ページ
             TotalPage.Text = "/ " + maxPage.ToString();
 
-
             // 総ページ数をセット
             this.maxPage = maxPage;
-
-
 
             toolHintTxt = "ファイルからページを挿入します";
 
@@ -98,49 +96,32 @@ namespace MyPDF
         // ==============================
         private void OkBtn_Click(object sender, EventArgs e)
         {
-            int start, end;
-
-            if (!int.TryParse(StartKaeTxt.Text, out start) || !int.TryParse(EndKaeTxt.Text, out end))
-            {
-                MessageBox.Show("数値を入力してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            if (start < 1 || end < 1)
-            {
-                MessageBox.Show("1以上の値を入力してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            if (start > end)
-            {
-                MessageBox.Show("開始ページは終了ページ以下にしてください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            if (start > maxPage || end > maxPage)
-            {
-                MessageBox.Show("総ページ数以下の値を入力してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-
-            }
 
             string text = ExtractTxt.Text.Trim();
 
             if (string.IsNullOrEmpty(text))
             {
-                MessageBox.Show("挿入するページを入力してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("置換するページを入力してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+            // 構文チェック(PageRangeHelper.csを呼ぶ)
+            PageRangeHelper.ParsePageRanges(text, InsPage);
+
+
+            string text2 = txtPage.Text.Trim();
+
+            if (string.IsNullOrEmpty(text2))
+            {
+                MessageBox.Show("置換先のページを入力してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             try
             {
                 // 構文チェック(PageRangeHelper.csを呼ぶ)
-                PageRangeHelper.ParsePageRanges(text, InsPage);
+                PageRangeHelper.ParseReplaceRange(text2, maxPage);
 
                 ExtractText = text;
-
-                StartPage = start;
-                EndPage = end;
 
                 this.DialogResult = DialogResult.OK;
                 this.Close();
