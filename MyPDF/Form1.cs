@@ -356,6 +356,115 @@ namespace MyPDF
         }
 
         // ==============================
+        // PDFを開いて権限確認(開く・挿入・置換用)
+        // ==============================
+        private PdfOpenResult CheckPdfPermission(string pdfPath, string message)
+        {
+            string? password = null;
+
+            PassMessage = message;
+
+            while (true)
+            {
+                PdfReader? reader = null;
+                ITextDoc? pdf = null;
+
+                try
+                {
+                    if (password == null)
+                    {
+                        // まずはパス無しで開く
+                        reader = new PdfReader(pdfPath);
+                    }
+                    else
+                    {
+                        // パス入力済みなら
+                        var props = new ReaderProperties().SetPassword(Encoding.UTF8.GetBytes(password));
+                        // パス付きで開く
+                        reader = new PdfReader(pdfPath, props);
+                    }
+                    // PDFを実際に開く
+                    pdf = new ITextDoc(reader);
+                    // 管理者(制限パス)で開いてる true:制限パス false:以外)
+                    bool isOwner = reader.IsOpenedWithFullPermission();
+                    // 暗号化されてる？
+                    bool isEncrypted = reader.IsEncrypted();
+
+                    // OwnerパスのみPDF対策
+                    if (password == null && isEncrypted && !isOwner)
+                    {
+                        // Ownerパスだけ設定されているPDF
+                        // → 強制的にパス入力させる
+                        pdf.Close();
+                        reader.Close();
+
+                        password = ShowPasswordDialog();
+
+                        if (password == null)
+                        {
+                            return new PdfOpenResult
+                            {
+                                Success = false
+                            };
+
+                        }
+                        // 再トライ
+                        continue;
+                    }
+
+                    pdf.Close();
+                    reader.Close();
+
+                    ReaderProperties props2 = string.IsNullOrEmpty(password)
+                        ? new ReaderProperties()
+                        : new ReaderProperties()
+                            .SetPassword(Encoding.UTF8.GetBytes(password));
+
+                    return new PdfOpenResult
+                    {
+                        Success = true,
+                        IsOwner = isOwner,
+                        IsEncrypted = isEncrypted,
+                        Permissions = reader.GetPermissions(),
+                        CryptoMode = reader.GetCryptoMode(),
+                        Password = password,
+                        ReaderProps = props2
+                    };
+                }
+                catch (iText.Kernel.Exceptions.BadPasswordException)
+                {
+                    password = ShowPasswordDialog();
+
+                    if (password == null)
+                    {
+                        return new PdfOpenResult
+                        {
+                            Success = false
+                        };
+                    }
+                }
+                catch (Exception ex)
+                {
+#if DEBUG
+                    MessageBox.Show(ex.ToString());
+#else
+                    MessageBox.Show("PDFファイルを開けませんでした。", "PDFオープン失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+#endif
+
+                    return new PdfOpenResult
+                    {
+                        Success = false
+                    };
+                }
+                finally
+                {
+                    pdf?.Close();
+                    reader?.Close();
+                }
+            }
+        }
+
+        // ==============================
         // 開く処理
         // ==============================
         private void OpenPdf(string path)
@@ -2040,7 +2149,6 @@ namespace MyPDF
             // 置換
             ReplacementMenu.Enabled = false;
             // 抽出
-            PageExtract.Enabled = false;
             PageExtractSetting.Enabled = false;
             // ページ削除
             PageDelete.Enabled = false;
@@ -2117,7 +2225,6 @@ namespace MyPDF
                 // 置換
                 ReplacementMenu.Enabled = false;
                 // 抽出
-                PageExtract.Enabled = false;
                 PageExtractSetting.Enabled = false;
                 // ページ削除
                 PageDelete.Enabled = false;
@@ -2165,7 +2272,6 @@ namespace MyPDF
                 // 置換
                 ReplacementMenu.Enabled = true;
                 // 抽出
-                PageExtract.Enabled = true;
                 PageExtractSetting.Enabled = true;
                 // ページ削除
                 if (pageCount <= 1)
@@ -3920,7 +4026,8 @@ namespace MyPDF
         // ==============================
         // ページ抽出共通処理(単一、複数対応)
         // ==============================
-        private void ExtractPages(int startPage, int endPage)
+        private void ExtractPages(string pageText)
+        //private void ExtractPages(int startPage, int endPage)
         {
             if (pdfViewer1.Document == null) return;
 
@@ -3951,6 +4058,16 @@ namespace MyPDF
                     {
                         int total = srcPdf.GetNumberOfPages();
 
+                        // 構文チェック(PageRangeHelper.csを呼ぶ)して格納
+                        var pages = PageRangeHelper.ParsePageRanges(pageText, total);
+
+                        // ページコピー
+                        foreach (int p in pages)
+                        {
+                            srcPdf.CopyPagesTo(p, p, destPdf);
+                        }
+
+                        /*
                         // 範囲補正
                         startPage = Math.Max(1, Math.Min(startPage, total));
                         endPage = Math.Max(1, Math.Min(endPage, total));
@@ -3960,16 +4077,29 @@ namespace MyPDF
 
                         // ページコピー
                         srcPdf.CopyPagesTo(startPage, endPage, destPdf);
+                        */
+
+                        // しおり複製用Tree作成
+                        TreeView tempTree = CloneTreeView(treeView1);
 
                         // しおり抽出
-                        AdjustBookmarksForExtract(startPage, endPage);
+                        //AdjustBookmarksForExtract(startPage, endPage);
+                        AdjustBookmarksForExtract(tempTree.Nodes, pages);
 
+                        // PDFへしおり追加
                         var destOutlines = destPdf.GetOutlines(true);
 
-                        foreach (TreeNode node in treeView1.Nodes)
+                        foreach (TreeNode node in tempTree.Nodes)
                         {
                             AddOutlineFromNode(destPdf, destOutlines, node);
                         }
+
+                        //var destOutlines = destPdf.GetOutlines(true);
+
+                        //foreach (TreeNode node in treeView1.Nodes)
+                        //{
+                        //    AddOutlineFromNode(destPdf, destOutlines, node);
+                        //}
 
                     }
 
@@ -4015,6 +4145,24 @@ namespace MyPDF
         // ==============================
         // しおり抽出処理1
         // ==============================
+        private void AdjustBookmarksForExtract(TreeNodeCollection nodes, List<int> extractedPages)
+        {
+            // 元ページ → 新ページ
+            Dictionary<int, int> pageMap = new Dictionary<int, int>();
+
+            for (int i = 0; i < extractedPages.Count; i++)
+            {
+                // 元 → 新
+                pageMap[extractedPages[i]] = i + 1;
+            }
+
+            for (int i = nodes.Count - 1; i >= 0; i--)
+            {
+                AdjustNodeForExtract(nodes[i], pageMap);
+            }
+        }
+
+        /*
         private void AdjustBookmarksForExtract(int start, int end)
         {
             for (int i = treeView1.Nodes.Count - 1; i >= 0; i--)
@@ -4023,9 +4171,35 @@ namespace MyPDF
             }
         }
 
+        */
+
         // ==============================
         // しおり抽出処理2
         // ==============================
+        private void AdjustNodeForExtract(TreeNode node, Dictionary<int, int> pageMap)
+        {
+            if (node.Tag is BookmarkInfo info)
+            {
+                // 抽出対象外
+                if (!pageMap.ContainsKey(info.Page))
+                {
+                    node.Remove();
+                    return;
+                }
+
+                // 新ページへ変換
+                info.Page = pageMap[info.Page];
+            }
+
+            for (int i = node.Nodes.Count - 1; i >= 0; i--)
+            {
+                AdjustNodeForExtract(node.Nodes[i], pageMap);
+            }
+        }
+
+
+        /*
+        
         private void AdjustNodeForExtract(TreeNode node, int start, int end)
         {
             if (node.Tag is BookmarkInfo info)
@@ -4047,6 +4221,22 @@ namespace MyPDF
             }
         }
 
+        */
+
+        // ==============================
+        // しおり抽出処理3(TreeView(しおり)コピー)
+        // ==============================
+        private TreeView CloneTreeView(TreeView original)
+        {
+            TreeView clone = new TreeView();
+
+            foreach (TreeNode node in original.Nodes)
+            {
+                clone.Nodes.Add((TreeNode)node.Clone());
+            }
+
+            return clone;
+        }
 
         // ==============================
         // 抽出を押したとき
@@ -4057,7 +4247,8 @@ namespace MyPDF
             if (pdfViewer1.Document == null) return;
 
             int page = pdfViewer1.Renderer.Page + 1; // 0始まり→1始まり
-            ExtractPages(page, page);
+            //ExtractPages(page, page);
+            ExtractPages(page.ToString());
 
 
         }
@@ -4081,8 +4272,8 @@ namespace MyPDF
                 if (f.ShowDialog() == DialogResult.OK)
                 {
 
-                    ExtractPages(f.StartPage, f.EndPage);
-
+                    //ExtractPages(f.StartPage, f.EndPage);
+                    ExtractPages(f.ExtractText);
                 }
             }
 
@@ -4138,117 +4329,6 @@ namespace MyPDF
 #endif
             }
         }
-
-
-        // ==============================
-        // PDFを開いて権限確認(開く・挿入・置換用)
-        // ==============================
-        private PdfOpenResult CheckPdfPermission(string pdfPath, string message)
-        {
-            string? password = null;
-
-            PassMessage = message;
-
-            while (true)
-            {
-                PdfReader? reader = null;
-                ITextDoc? pdf = null;
-
-                try
-                {
-                    if (password == null)
-                    {
-                        // まずはパス無しで開く
-                        reader = new PdfReader(pdfPath);
-                    }
-                    else
-                    {
-                        // パス入力済みなら
-                        var props = new ReaderProperties().SetPassword(Encoding.UTF8.GetBytes(password));
-                        // パス付きで開く
-                        reader = new PdfReader(pdfPath, props);
-                    }
-                    // PDFを実際に開く
-                    pdf = new ITextDoc(reader);
-                    // 管理者(制限パス)で開いてる true:制限パス false:以外)
-                    bool isOwner = reader.IsOpenedWithFullPermission();
-                    // 暗号化されてる？
-                    bool isEncrypted = reader.IsEncrypted();
-
-                    // OwnerパスのみPDF対策
-                    if (password == null && isEncrypted && !isOwner)
-                    {
-                        // Ownerパスだけ設定されているPDF
-                        // → 強制的にパス入力させる
-                        pdf.Close();
-                        reader.Close();
-
-                        password = ShowPasswordDialog();
-
-                        if (password == null)
-                        {
-                            return new PdfOpenResult
-                            {
-                                Success = false
-                            };
-
-                        }
-                        // 再トライ
-                        continue;
-                    }
-
-                    pdf.Close();
-                    reader.Close();
-
-                    ReaderProperties props2 = string.IsNullOrEmpty(password)
-                        ? new ReaderProperties()
-                        : new ReaderProperties()
-                            .SetPassword(Encoding.UTF8.GetBytes(password));
-
-                    return new PdfOpenResult
-                    {
-                        Success = true,
-                        IsOwner = isOwner,
-                        IsEncrypted = isEncrypted,
-                        Permissions = reader.GetPermissions(),
-                        CryptoMode = reader.GetCryptoMode(),
-                        Password = password,
-                        ReaderProps = props2
-                    };
-                }
-                catch (iText.Kernel.Exceptions.BadPasswordException)
-                {
-                    password = ShowPasswordDialog();
-
-                    if (password == null)
-                    {
-                        return new PdfOpenResult
-                        {
-                            Success = false
-                        };
-                    }
-                }
-                catch (Exception ex)
-                {
-#if DEBUG
-            MessageBox.Show(ex.ToString());
-#else
-                    MessageBox.Show("PDFファイルを開けませんでした。", "PDFオープン失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-#endif
-
-                    return new PdfOpenResult
-                    {
-                        Success = false
-                    };
-                }
-                finally
-                {
-                    pdf?.Close();
-                    reader?.Close();
-                }
-            }
-        }
-
 
         // ==============================
         // PDF挿入処理（パスあり対応）

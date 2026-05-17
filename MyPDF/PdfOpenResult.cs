@@ -16,9 +16,9 @@ namespace MyPDF
         public bool IsOwner { get; set; }
         // 暗号化されてる？( true:暗号化 false:なし)
         public bool IsEncrypted { get; set; }
-
+        // 権限
         public int Permissions { get; set; }
-
+        // 暗号化方式
         public int CryptoMode { get; set; }
         // パスワード
         public string? Password { get; set; }

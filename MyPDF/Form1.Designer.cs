@@ -41,7 +41,6 @@
             toolStripMenuItem2 = new ToolStripSeparator();
             ReplacementMenu = new ToolStripMenuItem();
             toolStripMenuItem14 = new ToolStripSeparator();
-            PageExtract = new ToolStripMenuItem();
             PageExtractSetting = new ToolStripMenuItem();
             toolStripMenuItem3 = new ToolStripSeparator();
             LeftRotate90 = new ToolStripMenuItem();
@@ -156,9 +155,10 @@
             // contextMenuStrip2
             // 
             contextMenuStrip2.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
-            contextMenuStrip2.Items.AddRange(new ToolStripItem[] { PageMove, toolStripMenuItem13, PageInsert, toolStripMenuItem2, ReplacementMenu, toolStripMenuItem14, PageExtract, PageExtractSetting, toolStripMenuItem3, LeftRotate90, RightRotate90, Rotate180, RotatePagesSetting, toolStripMenuItem12, PageDelete, PageDeleteSetting });
+            contextMenuStrip2.Items.AddRange(new ToolStripItem[] { PageMove, toolStripMenuItem13, PageInsert, toolStripMenuItem2, ReplacementMenu, toolStripMenuItem14, PageExtractSetting, toolStripMenuItem3, LeftRotate90, RightRotate90, Rotate180, RotatePagesSetting, toolStripMenuItem12, PageDelete, PageDeleteSetting });
             contextMenuStrip2.Name = "contextMenuStrip2";
-            contextMenuStrip2.Size = new Size(246, 320);
+            contextMenuStrip2.OwnerItem = PageEditMenu;
+            contextMenuStrip2.Size = new Size(246, 316);
             // 
             // PageMove
             // 
@@ -208,23 +208,12 @@
             toolStripMenuItem14.Name = "toolStripMenuItem14";
             toolStripMenuItem14.Size = new Size(242, 6);
             // 
-            // PageExtract
-            // 
-            PageExtract.Enabled = false;
-            PageExtract.Name = "PageExtract";
-            PageExtract.Size = new Size(245, 26);
-            PageExtract.Text = "抽出(&Q)";
-            PageExtract.ToolTipText = "表示しているページを抽出します";
-            PageExtract.Click += PageExtract_Click;
-            PageExtract.MouseEnter += menuStrip1_MouseEnter;
-            PageExtract.MouseLeave += menuStrip1_MouseLeave;
-            // 
             // PageExtractSetting
             // 
             PageExtractSetting.Enabled = false;
             PageExtractSetting.Name = "PageExtractSetting";
             PageExtractSetting.Size = new Size(245, 26);
-            PageExtractSetting.Text = "ページを指定して抽出(&X)...";
+            PageExtractSetting.Text = "抽出(&X)...";
             PageExtractSetting.ToolTipText = "ページを指定して抽出します";
             PageExtractSetting.Click += PageExtractSetting_Click;
             PageExtractSetting.MouseEnter += menuStrip1_MouseEnter;
@@ -356,6 +345,7 @@
             contextMenuStrip1.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             contextMenuStrip1.Items.AddRange(new ToolStripItem[] { AddShioriToolStripMenuItem, DelShioriToolStripMenuItem, toolStripMenuItem1, AllDelToolStripMenuItem, toolStripMenuItem8, SetShioriToolStripMenuItem, toolStripMenuItem4, AllShioriTenkaiToolStripMenuItem, AllShioriSyukusyouToolStripMenuItem, toolStripMenuItem5, ShioriTenkaiToolStripMenuItem, ShioriSyukusyouToolStripMenuItem, toolStripMenuItem6, ImportShioriToolStripMenuItem, ExportShioriToolStripMenuItem, toolStripMenuItem7, ShioriProToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
+            contextMenuStrip1.OwnerItem = ShioriMenu;
             contextMenuStrip1.Size = new Size(303, 326);
             // 
             // AddShioriToolStripMenuItem
@@ -920,7 +910,6 @@
         private ToolStripMenuItem CloseMenu;
         private ContextMenuStrip contextMenuStrip2;
         private ToolStripMenuItem PageInsert;
-        private ToolStripMenuItem PageExtract;
         private ToolStripMenuItem PageExtractSetting;
         private ToolStripMenuItem PageDelete;
         private ToolStripMenuItem PageDeleteSetting;

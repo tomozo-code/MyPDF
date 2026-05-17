@@ -36,12 +36,11 @@
             TotalPage = new Label();
             CancelBtn = new Button();
             OkBtn = new Button();
-            StartExtractTxt = new TextBox();
-            label2 = new Label();
-            label1 = new Label();
-            EndExtractTxt = new TextBox();
             panel1 = new Panel();
             panel2 = new Panel();
+            label4 = new Label();
+            ExtractTxt = new TextBox();
+            label3 = new Label();
             statusStrip1.SuspendLayout();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
@@ -51,9 +50,9 @@
             // 
             statusStrip1.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
-            statusStrip1.Location = new Point(0, 165);
+            statusStrip1.Location = new Point(0, 155);
             statusStrip1.Name = "statusStrip1";
-            statusStrip1.Size = new Size(295, 26);
+            statusStrip1.Size = new Size(384, 26);
             statusStrip1.TabIndex = 0;
             statusStrip1.Text = "statusStrip1";
             // 
@@ -66,7 +65,7 @@
             // TotalPage
             // 
             TotalPage.AutoSize = true;
-            TotalPage.Location = new Point(198, 52);
+            TotalPage.Location = new Point(218, 15);
             TotalPage.Name = "TotalPage";
             TotalPage.Size = new Size(72, 21);
             TotalPage.TabIndex = 20;
@@ -94,69 +93,59 @@
             OkBtn.UseVisualStyleBackColor = true;
             OkBtn.Click += OkBtn_Click;
             // 
-            // StartExtractTxt
-            // 
-            StartExtractTxt.Location = new Point(112, 8);
-            StartExtractTxt.Name = "StartExtractTxt";
-            StartExtractTxt.Size = new Size(80, 29);
-            StartExtractTxt.TabIndex = 1;
-            StartExtractTxt.Tag = "開始ページを指定します";
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(12, 52);
-            label2.Name = "label2";
-            label2.Size = new Size(94, 21);
-            label2.TabIndex = 17;
-            label2.Text = "終了ページ：";
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(12, 11);
-            label1.Name = "label1";
-            label1.Size = new Size(94, 21);
-            label1.TabIndex = 15;
-            label1.Text = "開始ページ：";
-            // 
-            // EndExtractTxt
-            // 
-            EndExtractTxt.Location = new Point(112, 49);
-            EndExtractTxt.Name = "EndExtractTxt";
-            EndExtractTxt.Size = new Size(80, 29);
-            EndExtractTxt.TabIndex = 2;
-            EndExtractTxt.Tag = "終了ページを指定します";
-            // 
             // panel1
             // 
             panel1.Controls.Add(OkBtn);
             panel1.Controls.Add(CancelBtn);
             panel1.Dock = DockStyle.Bottom;
-            panel1.Location = new Point(0, 115);
+            panel1.Location = new Point(0, 105);
             panel1.Name = "panel1";
-            panel1.Size = new Size(295, 50);
+            panel1.Size = new Size(384, 50);
             panel1.TabIndex = 21;
             // 
             // panel2
             // 
             panel2.AutoScroll = true;
-            panel2.Controls.Add(label1);
-            panel2.Controls.Add(label2);
-            panel2.Controls.Add(StartExtractTxt);
+            panel2.Controls.Add(label4);
+            panel2.Controls.Add(ExtractTxt);
+            panel2.Controls.Add(label3);
             panel2.Controls.Add(TotalPage);
-            panel2.Controls.Add(EndExtractTxt);
             panel2.Dock = DockStyle.Fill;
             panel2.Location = new Point(0, 0);
             panel2.Name = "panel2";
-            panel2.Size = new Size(295, 115);
+            panel2.Size = new Size(384, 105);
             panel2.TabIndex = 22;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(62, 44);
+            label4.Name = "label4";
+            label4.Size = new Size(150, 21);
+            label4.TabIndex = 23;
+            label4.Text = "入力方法：1,2,3,5-9";
+            // 
+            // ExtractTxt
+            // 
+            ExtractTxt.Location = new Point(112, 12);
+            ExtractTxt.Name = "ExtractTxt";
+            ExtractTxt.Size = new Size(100, 29);
+            ExtractTxt.TabIndex = 22;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(12, 15);
+            label3.Name = "label3";
+            label3.Size = new Size(94, 21);
+            label3.TabIndex = 21;
+            label3.Text = "ページ指定：";
             // 
             // Form9
             // 
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
-            ClientSize = new Size(295, 191);
+            ClientSize = new Size(384, 181);
             Controls.Add(panel2);
             Controls.Add(panel1);
             Controls.Add(statusStrip1);
@@ -185,11 +174,10 @@
         private Label TotalPage;
         private Button CancelBtn;
         private Button OkBtn;
-        private TextBox StartExtractTxt;
-        private Label label2;
-        private Label label1;
-        private TextBox EndExtractTxt;
         private Panel panel1;
         private Panel panel2;
+        private Label label3;
+        private TextBox ExtractTxt;
+        private Label label4;
     }
 }
