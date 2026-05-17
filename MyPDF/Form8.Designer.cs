@@ -132,6 +132,7 @@
             ExtractTxt.Name = "ExtractTxt";
             ExtractTxt.Size = new Size(100, 29);
             ExtractTxt.TabIndex = 25;
+            ExtractTxt.Tag = "削除するページを指定します(入力方法：1,2,3,5-9)";
             // 
             // label3
             // 

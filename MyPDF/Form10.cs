@@ -18,6 +18,9 @@ namespace MyPDF
 
         private string? toolHintTxt = null;
 
+        // 挿入するファイルのページ指定用（外から取得用）
+        public string ExtractText { get; private set; } = "";
+
         // 挿入設定（外から取得用）
         // 挿入する場所のページ番号
         public int TargetPage { get; private set; }
@@ -25,16 +28,17 @@ namespace MyPDF
         public bool InsertBefore { get; private set; }  
         // 総ページ数
         private int maxPage;
+        // 挿入するファイルの総ページ数
+        private int InsPage;
 
-
-        public Form10(string InsertFile, int InsertPage, int maxPage)
+        public Form10(string InsertFile, int InsertPage, int maxPage, int InsTotalPage)
         {
             InitializeComponent();
 
             // フォームサイズ
             this.Width = 400;
-            this.Height = 350;
-            this.MinimumSize = new Size(300, 300);
+            this.Height = 420;
+            this.MinimumSize = new Size(300, 200);
             //this.AutoScaleDimensions = new SizeF(96F, 96F);
 
             // 挿入するファイル名をセット
@@ -46,6 +50,10 @@ namespace MyPDF
             InsertFileName.BackColor = this.BackColor;
             InsertFileName.TabStop = false;
 
+            // 挿入するファイルのページ指定をセット
+            this.InsPage = InsTotalPage;
+            ExtractTxt.Text = "1-" + InsPage.ToString();
+            InsTotalPageLabel.Text = "/ " + InsPage.ToString();
 
             // 総ページ数をセット
             this.maxPage = maxPage;
@@ -114,15 +122,34 @@ namespace MyPDF
 
             }
 
-            // ターゲットページ番号
-            TargetPage = page;
+            string text = ExtractTxt.Text.Trim();
 
-            // 前 or 後
-            InsertBefore = (InsertPlace.SelectedIndex == 0);
+            if (string.IsNullOrEmpty(text))
+            {
+                MessageBox.Show("挿入するページを入力してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            try
+            {
+                // 構文チェック(PageRangeHelper.csを呼ぶ)
+                PageRangeHelper.ParsePageRanges(text, InsPage);
 
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+                ExtractText = text;
 
+                // ターゲットページ番号
+                TargetPage = page;
+
+                // 前 or 後
+                InsertBefore = (InsertPlace.SelectedIndex == 0);
+
+                this.DialogResult = DialogResult.OK;
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            
         }
 
 

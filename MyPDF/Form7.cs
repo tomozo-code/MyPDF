@@ -23,6 +23,8 @@ namespace MyPDF
         // 回転設定（外から取得用）
         public int StartPage { get; private set; }
         public int EndPage { get; private set; }
+        public string ExtractText { get; private set; } = "";
+
         public int RotationAngle { get; private set; }
 
         // 今のページ
@@ -36,25 +38,20 @@ namespace MyPDF
             InitializeComponent();
 
             // フォームサイズ
-            this.Width = 350;
-            this.Height = 350;
-            this.MinimumSize = new Size(300, 300);
+            this.Width = 400;
+            this.Height = 300;
+            this.MinimumSize = new Size(300, 200);
             //this.AutoScaleDimensions = new SizeF(96F, 96F);
 
             // 今のページをセット
             this.nowPage = nowPage;
             // 総ページ数をセット
             this.maxPage = maxPage;
-
-            // 開始ページ初期値(今のページ)
-            StartRollTxt.Text = nowPage.ToString();
-
-            // 終了ページ初期値(今のページ)
-            EndRollTxt.Text = nowPage.ToString();
+            // 今のページをセット
+            ExtractTxt.Text = nowPage.ToString();
 
             // 総ページ
             TotalPage.Text = "/ " + maxPage.ToString();
-
 
             // コンボボックス初期化
             RollSelect.Items.AddRange(new string[]
@@ -74,7 +71,6 @@ namespace MyPDF
             //  EscキーをCancelボタンに割り当て
             this.CancelButton = CancelBtn;
 
-
         }
 
         // ==============================
@@ -92,6 +88,9 @@ namespace MyPDF
         // ==============================
         private void OkBtn_Click(object sender, EventArgs e)
         {
+
+            /*
+            
             int start, end;
 
             if (!int.TryParse(StartRollTxt.Text, out start) || !int.TryParse(EndRollTxt.Text, out end))
@@ -132,6 +131,43 @@ namespace MyPDF
 
             this.DialogResult = DialogResult.OK;
             this.Close();
+
+
+            */
+
+
+            string text = ExtractTxt.Text.Trim();
+
+            if (string.IsNullOrEmpty(text))
+            {
+                MessageBox.Show("ページを入力してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            try
+            {
+                // 構文チェック(PageRangeHelper.csを呼ぶ)
+                PageRangeHelper.ParsePageRanges(text, maxPage);
+
+                ExtractText = text;
+
+                // 回転角
+                switch (RollSelect.SelectedIndex)
+                {
+                    case 0: RotationAngle = 270; break; // 左90°
+                    case 1: RotationAngle = 90; break;  // 右90°
+                    case 2: RotationAngle = 180; break; // 180°
+                }
+
+
+                this.DialogResult = DialogResult.OK;
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+
         }
 
         // ==============================

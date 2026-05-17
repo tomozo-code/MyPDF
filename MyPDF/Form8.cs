@@ -128,7 +128,7 @@ namespace MyPDF
 
             if (string.IsNullOrEmpty(text))
             {
-                MessageBox.Show("ページを入力してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("削除するページを入力してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             try

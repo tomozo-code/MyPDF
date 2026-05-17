@@ -33,8 +33,6 @@
             toolTip1 = new ToolTip(components);
             statusStrip1 = new StatusStrip();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
-            KaeFileName = new TextBox();
-            label1 = new Label();
             CancelBtn = new Button();
             OkBtn = new Button();
             groupBox1 = new GroupBox();
@@ -45,20 +43,28 @@
             label3 = new Label();
             panel1 = new Panel();
             panel2 = new Panel();
+            groupBox2 = new GroupBox();
+            label1 = new Label();
+            KaeFileName = new TextBox();
+            InsTotalPageLabel = new Label();
+            label5 = new Label();
+            ExtractTxt = new TextBox();
+            label6 = new Label();
             statusStrip1.SuspendLayout();
             groupBox1.SuspendLayout();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
+            groupBox2.SuspendLayout();
             SuspendLayout();
             // 
             // statusStrip1
             // 
             statusStrip1.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
-            statusStrip1.Location = new Point(0, 235);
+            statusStrip1.Location = new Point(0, 390);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Padding = new Padding(1, 0, 16, 0);
-            statusStrip1.Size = new Size(355, 26);
+            statusStrip1.Size = new Size(535, 26);
             statusStrip1.TabIndex = 0;
             statusStrip1.Text = "statusStrip1";
             // 
@@ -67,24 +73,6 @@
             toolStripStatusLabel1.Name = "toolStripStatusLabel1";
             toolStripStatusLabel1.Size = new Size(195, 21);
             toolStripStatusLabel1.Text = "ファイルからページを置換します";
-            // 
-            // KaeFileName
-            // 
-            KaeFileName.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            KaeFileName.Location = new Point(146, 8);
-            KaeFileName.Name = "KaeFileName";
-            KaeFileName.Size = new Size(194, 29);
-            KaeFileName.TabIndex = 72;
-            KaeFileName.Text = "置換するファイル名が表示される";
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(12, 9);
-            label1.Name = "label1";
-            label1.Size = new Size(128, 21);
-            label1.TabIndex = 71;
-            label1.Text = "置換するファイル：";
             // 
             // CancelBtn
             // 
@@ -116,12 +104,12 @@
             groupBox1.Controls.Add(StartKaeTxt);
             groupBox1.Controls.Add(label2);
             groupBox1.Controls.Add(label3);
-            groupBox1.Location = new Point(12, 43);
+            groupBox1.Location = new Point(12, 168);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(328, 110);
+            groupBox1.Size = new Size(508, 110);
             groupBox1.TabIndex = 75;
             groupBox1.TabStop = false;
-            groupBox1.Text = "元のページ";
+            groupBox1.Text = "置換先";
             // 
             // TotalPage
             // 
@@ -171,28 +159,96 @@
             panel1.Controls.Add(OkBtn);
             panel1.Controls.Add(CancelBtn);
             panel1.Dock = DockStyle.Bottom;
-            panel1.Location = new Point(0, 185);
+            panel1.Location = new Point(0, 340);
             panel1.Name = "panel1";
-            panel1.Size = new Size(355, 50);
+            panel1.Size = new Size(535, 50);
             panel1.TabIndex = 76;
             // 
             // panel2
             // 
             panel2.AutoScroll = true;
-            panel2.Controls.Add(label1);
-            panel2.Controls.Add(KaeFileName);
+            panel2.Controls.Add(groupBox2);
             panel2.Controls.Add(groupBox1);
             panel2.Dock = DockStyle.Fill;
             panel2.Location = new Point(0, 0);
             panel2.Name = "panel2";
-            panel2.Size = new Size(355, 185);
+            panel2.Size = new Size(535, 340);
             panel2.TabIndex = 77;
+            // 
+            // groupBox2
+            // 
+            groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox2.Controls.Add(InsTotalPageLabel);
+            groupBox2.Controls.Add(label5);
+            groupBox2.Controls.Add(ExtractTxt);
+            groupBox2.Controls.Add(label6);
+            groupBox2.Controls.Add(label1);
+            groupBox2.Controls.Add(KaeFileName);
+            groupBox2.Location = new Point(13, 12);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new Size(507, 148);
+            groupBox2.TabIndex = 76;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "置換するファイルの設定";
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(-1, 37);
+            label1.Name = "label1";
+            label1.Size = new Size(128, 21);
+            label1.TabIndex = 73;
+            label1.Text = "置換するファイル：";
+            // 
+            // KaeFileName
+            // 
+            KaeFileName.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            KaeFileName.Location = new Point(133, 36);
+            KaeFileName.Name = "KaeFileName";
+            KaeFileName.Size = new Size(359, 29);
+            KaeFileName.TabIndex = 74;
+            KaeFileName.Text = "置換するファイル名が表示される";
+            // 
+            // InsTotalPageLabel
+            // 
+            InsTotalPageLabel.AutoSize = true;
+            InsTotalPageLabel.Location = new Point(239, 82);
+            InsTotalPageLabel.Name = "InsTotalPageLabel";
+            InsTotalPageLabel.Size = new Size(72, 21);
+            InsTotalPageLabel.TabIndex = 86;
+            InsTotalPageLabel.Text = "/ 総ページ";
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(83, 111);
+            label5.Name = "label5";
+            label5.Size = new Size(150, 21);
+            label5.TabIndex = 89;
+            label5.Text = "入力方法：1,2,3,5-9";
+            // 
+            // ExtractTxt
+            // 
+            ExtractTxt.Location = new Point(133, 79);
+            ExtractTxt.Name = "ExtractTxt";
+            ExtractTxt.Size = new Size(100, 29);
+            ExtractTxt.TabIndex = 88;
+            ExtractTxt.Tag = "挿入するファイルのページを指定します(入力方法：1,2,3,5-9)";
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(33, 82);
+            label6.Name = "label6";
+            label6.Size = new Size(94, 21);
+            label6.TabIndex = 87;
+            label6.Text = "ページ指定：";
             // 
             // Form12
             // 
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
-            ClientSize = new Size(355, 261);
+            ClientSize = new Size(535, 416);
             Controls.Add(panel2);
             Controls.Add(panel1);
             Controls.Add(statusStrip1);
@@ -210,7 +266,8 @@
             groupBox1.PerformLayout();
             panel1.ResumeLayout(false);
             panel2.ResumeLayout(false);
-            panel2.PerformLayout();
+            groupBox2.ResumeLayout(false);
+            groupBox2.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -220,8 +277,6 @@
         private ToolTip toolTip1;
         private StatusStrip statusStrip1;
         private ToolStripStatusLabel toolStripStatusLabel1;
-        private TextBox KaeFileName;
-        private Label label1;
         private Button CancelBtn;
         private Button OkBtn;
         private GroupBox groupBox1;
@@ -232,5 +287,12 @@
         private Label label3;
         private Panel panel1;
         private Panel panel2;
+        private GroupBox groupBox2;
+        private Label label1;
+        private TextBox KaeFileName;
+        private Label InsTotalPageLabel;
+        private Label label5;
+        private TextBox ExtractTxt;
+        private Label label6;
     }
 }

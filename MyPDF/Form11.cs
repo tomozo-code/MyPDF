@@ -17,8 +17,8 @@ namespace MyPDF
     {
         private string? toolHintTxt = null;
         // 移動設定（外から取得用）
-        public int StartPage { get; private set; }
-        public int EndPage { get; private set; }
+        public string ExtractText { get; private set; } = "";
+
         public int TargetPage { get; private set; }
         // 前 or 後
         public bool MoveBefore { get; private set; }
@@ -34,15 +34,14 @@ namespace MyPDF
             // フォームサイズ
             this.Width = 400;
             this.Height = 350;
-            this.MinimumSize = new Size(300, 300);
+            this.MinimumSize = new Size(300, 200);
             //this.AutoScaleDimensions = new SizeF(96F, 96F);
 
             // 総ページ数をセット
             this.maxPage = maxPage;
 
-            // 今表示しているページをセット
-            StartMoveTxt.Text = nowPage.ToString();
-            EndMoveTxt.Text = nowPage.ToString();
+            // 今のページをセット
+            ExtractTxt.Text = nowPage.ToString();
 
             // 総ページ
             TotalPage.Text = "/ " + maxPage.ToString();
@@ -83,42 +82,53 @@ namespace MyPDF
         // ==============================
         private void OkBtn_Click(object sender, EventArgs e)
         {
-            int start, end,target;
 
-            if (!int.TryParse(StartMoveTxt.Text, out start) || !int.TryParse(EndMoveTxt.Text, out end) || !int.TryParse(TargetPageTxt.Text, out target))
+            int target;
+
+            if (!int.TryParse(TargetPageTxt.Text, out target))
             {
-                MessageBox.Show("数値を入力してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("移動先ページは数値を入力してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            if (start < 1 || end < 1 || target < 1)
+            if (target < 1)
             {
-                MessageBox.Show("1以上の値を入力してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("移動先ページは1以上の値を入力してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            if (start > end)
+            if (target > maxPage)
             {
-                MessageBox.Show("開始ページは終了ページ以下にしてください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("移動先ページは総ページ数以下の値を入力してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            if (start > maxPage || end > maxPage || target > maxPage)
+            string text = ExtractTxt.Text.Trim();
+
+            if (string.IsNullOrEmpty(text))
             {
-                MessageBox.Show("総ページ数以下の値を入力してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("ページを入力してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
-
             }
+            try
+            {
+                // 構文チェック(PageRangeHelper.csを呼ぶ)
+                PageRangeHelper.ParsePageRanges(text, maxPage);
 
-            StartPage = start;
-            EndPage = end;
-            TargetPage = target;
+                ExtractText = text;
 
-            // 前 or 後
-            MoveBefore = (MovePlace.SelectedIndex == 0);
+                TargetPage = target;
 
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+                // 前 or 後
+                MoveBefore = (MovePlace.SelectedIndex == 0);
+
+                this.DialogResult = DialogResult.OK;
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 
         }
 

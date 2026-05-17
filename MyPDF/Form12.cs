@@ -6,6 +6,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 
 // ==============================
@@ -18,21 +19,27 @@ namespace MyPDF
     {
         private string? toolHintTxt = null;
 
+        // 挿入するファイルのページ指定用（外から取得用）
+        public string ExtractText { get; private set; } = "";
+
         // 置換設定（外から取得用）
         // 置換する場所のページ番号
         public int StartPage { get; private set; }
         public int EndPage { get; private set; }
         // 総ページ数
         private int maxPage;
+        // 置換するファイルの総ページ数
+        private int InsPage;
 
-        public Form12(string ReplacementFile, int nowPage, int maxPage)
+
+        public Form12(string ReplacementFile, int nowPage, int maxPage, int InsTotalPage)
         {
             InitializeComponent();
 
             // フォームサイズ
             this.Width = 400;
-            this.Height = 350;
-            this.MinimumSize = new Size(300, 300);
+            this.Height = 420;
+            this.MinimumSize = new Size(300, 200);
             //this.AutoScaleDimensions = new SizeF(96F, 96F);
 
 
@@ -44,6 +51,11 @@ namespace MyPDF
             KaeFileName.BorderStyle = BorderStyle.None;
             KaeFileName.BackColor = this.BackColor;
             KaeFileName.TabStop = false;
+
+            // 挿入するファイルのページ指定をセット
+            this.InsPage = InsTotalPage;
+            ExtractTxt.Text = "1-" + InsPage.ToString();
+            InsTotalPageLabel.Text = "/ " + InsPage.ToString();
 
             // 今表示しているページをセット
             StartKaeTxt.Text = nowPage.ToString();
@@ -113,12 +125,30 @@ namespace MyPDF
 
             }
 
-            StartPage = start;
-            EndPage = end;
+            string text = ExtractTxt.Text.Trim();
 
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            if (string.IsNullOrEmpty(text))
+            {
+                MessageBox.Show("挿入するページを入力してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            try
+            {
+                // 構文チェック(PageRangeHelper.csを呼ぶ)
+                PageRangeHelper.ParsePageRanges(text, InsPage);
 
+                ExtractText = text;
+
+                StartPage = start;
+                EndPage = end;
+
+                this.DialogResult = DialogResult.OK;
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         // ==============================
