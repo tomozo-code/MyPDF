@@ -360,6 +360,10 @@ namespace MyPDF
         // ==============================
         private void OpenPdf(string path)
         {
+
+
+            /*
+
             ITextDoc? iTextDoc = null;
             PdfReader? reader = null;
             // パスを一回リセット
@@ -463,6 +467,53 @@ namespace MyPDF
                 }
             }
 
+
+            */
+
+            currentPassword = null;
+
+            PassMessage = "閲覧パスワードで開いた場合、編集不可(閲覧モード)になります。" + Environment.NewLine +
+                "権限パスワードで開いた場合、編集可能(編集モード)になります。" + Environment.NewLine +
+                "権限パスワードで開いたPDFファイルは、保存時に制限やパスワードが破棄されますので、" + Environment.NewLine +
+                "保護を設定したい場合は" + Environment.NewLine +
+                "「ファイル(F) - セキュリティ設定(T)...」から再設定してください。" + Environment.NewLine +
+                "権限パスワードのみ設定されているPDFファイルは、パスワードなしで開くことができます。" + Environment.NewLine +
+                "その場合は、編集不可(閲覧モード)になります。";
+
+
+            //var result = CheckPdfPermission(path, "閲覧パスワードで開いた場合、編集不可(閲覧モード)になります。");
+            var result = CheckPdfPermission(path, PassMessage);
+
+            if (!result.Success)
+                return;
+
+            canEdit = result.IsOwner;
+
+            // セキュリティ情報
+            currentSecurity ??= new SecuritySettings();
+
+            currentSecurity.IsOwnerOpened = result.IsOwner;
+            currentSecurity.Encryption = result.CryptoMode;
+
+            currentSecurity.Check_Owner = false;
+            currentSecurity.Check_User = false;
+
+            if (result.IsOwner)
+            {
+                currentSecurity.OwnerPassword = result.Password ?? "";
+                currentSecurity.UserPassword = null;
+
+                currentPassword = result.Password;
+            }
+            else
+            {
+                currentSecurity.UserPassword = result.Password ?? "";
+                currentSecurity.OwnerPassword = null;
+
+                currentPassword = null;
+            }
+
+
             treeView1.LabelEdit = canEdit;
 
             //iTextDoc.Close();
@@ -483,6 +534,8 @@ namespace MyPDF
                 File.Copy(path, workingPath, true);
 
                 // Pdfiumで表示
+
+                /*
                 PdfiumViewer.PdfDocument document;
 
                 if (password == null)
@@ -495,6 +548,16 @@ namespace MyPDF
                     // パスワードあり
                     document = PdfiumDoc.Load(workingPath, password);
                 }
+
+                */
+
+                // パスワードがnull? nullならパスワードなし
+                PdfiumViewer.PdfDocument document =
+                    string.IsNullOrEmpty(result.Password)
+                    // パスワードなし
+                    ? PdfiumDoc.Load(workingPath)
+                    // パスワードあり
+                    : PdfiumDoc.Load(workingPath, result.Password);
 
                 pdfViewer1.Document = document;
 
@@ -520,19 +583,19 @@ namespace MyPDF
                 Debug.WriteLine("入力されたパスワード: " + password);
 
                 // 暗号化されてる？
-                bool isEncrypted = reader.IsEncrypted();
+                //bool isEncrypted = reader.IsEncrypted();
 
                 // 権限取得
-                int perm = reader.GetPermissions();
+                //int perm = reader.GetPermissions();
 
                 // 暗号方式
-                int cryptoMode = reader.GetCryptoMode();
+                //int cryptoMode = reader.GetCryptoMode();
 
-                iTextDoc.Close();
-                reader.Close();
+                //iTextDoc.Close();
+                //reader.Close();
 
                 // 暗号方式
-                currentSecurity.Encryption = cryptoMode;
+                //currentSecurity.Encryption = cryptoMode;
 
                 currentSecurity.Check_Owner = false;
                 currentSecurity.Check_User = false;
@@ -4095,11 +4158,124 @@ namespace MyPDF
             }
         }
 
+
+        // ==============================
+        // PDFを開いて権限確認(開く・挿入・置換用)
+        // ==============================
+        private PdfOpenResult CheckPdfPermission(string pdfPath, string message)
+        {
+            string? password = null;
+
+            PassMessage = message;
+
+            while (true)
+            {
+                PdfReader? reader = null;
+                ITextDoc? pdf = null;
+
+                try
+                {
+                    if (password == null)
+                    {
+                        // まずはパス無しで開く
+                        reader = new PdfReader(pdfPath);
+                    }
+                    else
+                    {
+                        // パス入力済みなら
+                        var props = new ReaderProperties().SetPassword(Encoding.UTF8.GetBytes(password));
+                        // パス付きで開く
+                        reader = new PdfReader(pdfPath, props);
+                    }
+                    // PDFを実際に開く
+                    pdf = new ITextDoc(reader);
+                    // 管理者(制限パス)で開いてる true:制限パス false:以外)
+                    bool isOwner = reader.IsOpenedWithFullPermission();
+                    // 暗号化されてる？
+                    bool isEncrypted = reader.IsEncrypted();
+
+                    // OwnerパスのみPDF対策
+                    if (password == null && isEncrypted && !isOwner)
+                    {
+                        // Ownerパスだけ設定されているPDF
+                        // → 強制的にパス入力させる
+                        pdf.Close();
+                        reader.Close();
+
+                        password = ShowPasswordDialog();
+
+                        if (password == null)
+                        {
+                            return new PdfOpenResult
+                            {
+                                Success = false
+                            };
+
+                        }
+                        // 再トライ
+                        continue;
+                    }
+
+                    pdf.Close();
+                    reader.Close();
+
+                    ReaderProperties props2 = string.IsNullOrEmpty(password)
+                        ? new ReaderProperties()
+                        : new ReaderProperties()
+                            .SetPassword(Encoding.UTF8.GetBytes(password));
+
+                    return new PdfOpenResult
+                    {
+                        Success = true,
+                        IsOwner = isOwner,
+                        IsEncrypted = isEncrypted,
+                        Permissions = reader.GetPermissions(),
+                        CryptoMode = reader.GetCryptoMode(),
+                        Password = password,
+                        ReaderProps = props2
+                    };
+                }
+                catch (iText.Kernel.Exceptions.BadPasswordException)
+                {
+                    password = ShowPasswordDialog();
+
+                    if (password == null)
+                    {
+                        return new PdfOpenResult
+                        {
+                            Success = false
+                        };
+                    }
+                }
+                catch (Exception ex)
+                {
+#if DEBUG
+            MessageBox.Show(ex.ToString());
+#else
+                    MessageBox.Show("PDFファイルを開けませんでした。", "PDFオープン失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+#endif
+
+                    return new PdfOpenResult
+                    {
+                        Success = false
+                    };
+                }
+                finally
+                {
+                    pdf?.Close();
+                    reader?.Close();
+                }
+            }
+        }
+
+
         // ==============================
         // PDF挿入処理（パスあり対応）
         // ==============================
         private void InsertPdf(string insertPath, int targetPage, bool insertBefore)
         {
+
+            /*
 
             string? insertPassword = null;
 
@@ -4196,6 +4372,28 @@ namespace MyPDF
                 );
                 return;
             }
+
+            */
+
+            // PDFを開いて権限確認(挿入・置換用)
+            PassMessage = "挿入するPDFファイルは保護されています。" + Environment.NewLine +
+                "権限パスワードの場合は挿入可能ですが、閲覧パスワードの場合は挿入できません。";
+
+            //var result = CheckPdfPermission(insertPath, "挿入するPDFファイルは保護されています。");
+            var result = CheckPdfPermission(insertPath, PassMessage);
+
+            if (!result.Success)
+                return;
+
+            if (!result.IsOwner)
+            {
+                MessageBox.Show("ページ挿入するには権限パスワードが必要です。", "挿入不可", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // 挿入処理
+            ReaderProperties insertProps = result.ReaderProps;
+            string? insertPassword = result.Password;
 
             string tempPath = workingPath + ".tmp";
 
@@ -4791,6 +4989,9 @@ namespace MyPDF
         private void OkikaePdfPage(string okikaePath, int start, int end)
         {
 
+            /*
+
+
             string? okikaePassword = null;
 
             ReaderProperties okikaeProps;
@@ -4888,6 +5089,28 @@ namespace MyPDF
                 return;
             }
 
+
+            */
+
+            // PDFを開いて権限確認(挿入・置換用)
+            PassMessage = "置換するPDFファイルは保護されています。" + Environment.NewLine +
+                "権限パスワードの場合は置換可能ですが、閲覧パスワードの場合は置換できません。";
+
+            //var result = CheckPdfPermission(okikaePath, "置換するPDFファイルは保護されています。");
+            var result = CheckPdfPermission(okikaePath, "置換するPDFファイルは保護されています。");
+
+            if (!result.Success)
+                return;
+
+            if (!result.IsOwner)
+            {
+                MessageBox.Show("ページ置換するには権限パスワードが必要です。", "置換不可", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // 置換処理
+            ReaderProperties okikaeProps = result.ReaderProps;
+            string? okikaePassword = result.Password;
 
             string tempPath = workingPath + ".tmp";
 
