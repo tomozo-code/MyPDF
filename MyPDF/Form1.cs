@@ -532,23 +532,6 @@ namespace MyPDF
                 File.Copy(path, workingPath, true);
 
                 // Pdfiumで表示
-
-                /*
-                PdfiumViewer.PdfDocument document;
-
-                if (password == null)
-                {
-                    // パスワードなし
-                    document = PdfiumDoc.Load(workingPath);
-                }
-                else
-                {
-                    // パスワードあり
-                    document = PdfiumDoc.Load(workingPath, password);
-                }
-
-                */
-
                 // パスワードがnull? nullならパスワードなし
                 PdfiumViewer.PdfDocument document =
                     string.IsNullOrEmpty(result.Password)
