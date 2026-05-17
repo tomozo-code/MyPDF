@@ -14,6 +14,7 @@ namespace MyPDF
         {
             var result = new List<int>();
 
+            // スペース除去
             text = text.Replace(" ", "");
 
             var parts = text.Split(',');

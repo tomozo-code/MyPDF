@@ -2079,8 +2079,23 @@ namespace MyPDF
         }
 
         // ==============================
-        // しおりページ補正（削除対応）
+        // しおりページ補正1（削除対応）
         // ==============================
+        private void AdjustBookmarksAfterDelete(TreeNodeCollection nodes, List<int> deletedPages)
+        {
+            deletedPages = deletedPages
+                .Distinct()
+                .OrderBy(x => x)
+                .ToList();
+
+            for (int i = nodes.Count - 1; i >= 0; i--)
+            {
+                AdjustNodeAfterDelete(nodes[i], deletedPages);
+            }
+        }
+
+        /*
+        
         private void AdjustBookmarksAfterDelete(TreeNodeCollection nodes, int start, int end)
         {
             for (int i = nodes.Count - 1; i >= 0; i--)
@@ -2108,6 +2123,36 @@ namespace MyPDF
                 {
                     AdjustBookmarksAfterDelete(node.Nodes, start, end);
                 }
+            }
+        }
+
+        */
+
+        // ==============================
+        // しおりページ補正2（削除対応）
+        // ==============================
+        private void AdjustNodeAfterDelete(TreeNode node, List<int> deletedPages)
+        {
+            if (node.Tag is BookmarkInfo info)
+            {
+                // 削除対象ページ
+                if (deletedPages.Contains(info.Page))
+                {
+                    node.Remove();
+                    return;
+                }
+
+                // 自分より前に消えたページ数
+                int shift = deletedPages.Count(p => p < info.Page);
+
+                // ページ補正
+                info.Page -= shift;
+            }
+
+            // 子ノード
+            for (int i = node.Nodes.Count - 1; i >= 0; i--)
+            {
+                AdjustNodeAfterDelete(node.Nodes[i], deletedPages);
             }
         }
 
@@ -2151,7 +2196,6 @@ namespace MyPDF
             // 抽出
             PageExtractSetting.Enabled = false;
             // ページ削除
-            PageDelete.Enabled = false;
             PageDeleteSetting.Enabled = false;
             // 回転
             LeftRotate90.Enabled = false;
@@ -2227,7 +2271,6 @@ namespace MyPDF
                 // 抽出
                 PageExtractSetting.Enabled = false;
                 // ページ削除
-                PageDelete.Enabled = false;
                 PageDeleteSetting.Enabled = false;
                 // 回転
                 LeftRotate90.Enabled = false;
@@ -2276,12 +2319,10 @@ namespace MyPDF
                 // ページ削除
                 if (pageCount <= 1)
                 {
-                    PageDelete.Enabled = false;
                     PageDeleteSetting.Enabled = false;
                 }
                 else
                 {
-                    PageDelete.Enabled = true;
                     PageDeleteSetting.Enabled = true;
 
                 }
@@ -3817,7 +3858,10 @@ namespace MyPDF
         // ==============================
         // ページ削除共通処理(単一、複数対応)
         // ==============================
-        private void DeletePages(int startPage, int endPage)
+        
+        private void DeletePages(string pageText)
+        //private void DeletePages(int startPage, int endPage)
+
         {
             if (pdfViewer1.Document == null) return;
 
@@ -3841,6 +3885,20 @@ namespace MyPDF
                 {
                     int total = pdf.GetNumberOfPages();
 
+                    // 構文チェック(PageRangeHelper.csを呼ぶ)して格納
+                    var pages = PageRangeHelper.ParsePageRanges(pageText, total);
+
+                    // 後ろから削除
+                    foreach (int p in pages.OrderByDescending(x => x))
+                    {
+                        pdf.RemovePage(p);
+                    }
+
+                    // しおり補正
+                    AdjustBookmarksAfterDelete(treeView1.Nodes, pages);
+
+                    /*
+                     * 
                     // 範囲補正（安全対策）
                     startPage = Math.Max(1, Math.Min(startPage, total));
                     endPage = Math.Max(1, Math.Min(endPage, total));
@@ -3858,10 +3916,12 @@ namespace MyPDF
                     {
                         pdf.RemovePage(i);
                     }
+
+                    */
                 }
 
                 // しおり補正
-                AdjustBookmarksAfterDelete(treeView1.Nodes, startPage, endPage);
+                //AdjustBookmarksAfterDelete(treeView1.Nodes, startPage, endPage);
 
                 // 一時ファイルを作業用ファイルにコピー
                 File.Copy(tempPath, workingPath, true);
@@ -3908,7 +3968,8 @@ namespace MyPDF
             if (pdfViewer1.Document == null) return;
 
             int page = pdfViewer1.Renderer.Page + 1; // 0始まり→1始まり
-            DeletePages(page, page);
+            //DeletePages(page, page);
+            DeletePages(page.ToString());
         }
 
         // ==============================
@@ -3931,7 +3992,8 @@ namespace MyPDF
                 if (f.ShowDialog() == DialogResult.OK)
                 {
 
-                    DeletePages(f.StartPage, f.EndPage);
+                    //DeletePages(f.StartPage, f.EndPage);
+                    DeletePages(f.ExtractText);
 
                 }
             }
@@ -4236,21 +4298,6 @@ namespace MyPDF
             }
 
             return clone;
-        }
-
-        // ==============================
-        // 抽出を押したとき
-        // ==============================
-        private void PageExtract_Click(object sender, EventArgs e)
-        {
-
-            if (pdfViewer1.Document == null) return;
-
-            int page = pdfViewer1.Renderer.Page + 1; // 0始まり→1始まり
-            //ExtractPages(page, page);
-            ExtractPages(page.ToString());
-
-
         }
 
         // ==============================

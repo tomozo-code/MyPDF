@@ -19,8 +19,7 @@ namespace MyPDF
         private string? toolHintTxt = null;
 
         // 削除設定（外から取得用）
-        public int StartPage { get; private set; }
-        public int EndPage { get; private set; }
+        public string ExtractText { get; private set; } = "";
 
         // 今のページ
         private int nowPage;
@@ -33,21 +32,17 @@ namespace MyPDF
             InitializeComponent();
 
             // フォームサイズ
-            this.Width = 350;
-            this.Height = 350;
-            this.MinimumSize = new Size(300, 300);
+            this.Width = 400;
+            this.Height = 220;
+            this.MinimumSize = new Size(300, 200);
             //this.AutoScaleDimensions = new SizeF(96F, 96F);
 
             // 今のページセット
             this.nowPage = nowPage;
             // 総ページ数をセット
             this.maxPage = maxPage;
-
-            // 開始ページ初期値(今のページ)
-            StartDelTxt.Text = nowPage.ToString();
-
-            // 終了ページ初期値(今のページ)
-            EndDelTxt.Text = nowPage.ToString();
+            // 今のページをセット
+            ExtractTxt.Text = nowPage.ToString();
 
             // 総ページ
             TotalPage.Text = "/ " + maxPage.ToString();
@@ -81,6 +76,9 @@ namespace MyPDF
         // ==============================
         private void OkBtn_Click(object sender, EventArgs e)
         {
+
+            /*
+
             int start, end;
 
             if (!int.TryParse(StartDelTxt.Text, out start) || !int.TryParse(EndDelTxt.Text, out end))
@@ -123,6 +121,31 @@ namespace MyPDF
 
             this.DialogResult = DialogResult.OK;
             this.Close();
+
+            */
+
+            string text = ExtractTxt.Text.Trim();
+
+            if (string.IsNullOrEmpty(text))
+            {
+                MessageBox.Show("ページを入力してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            try
+            {
+                // 構文チェック(PageRangeHelper.csを呼ぶ)
+                PageRangeHelper.ParsePageRanges(text, maxPage);
+
+                ExtractText = text;
+
+                this.DialogResult = DialogResult.OK;
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
 
         }
 
