@@ -467,7 +467,6 @@ namespace MyPDF
                 }
             }
 
-
             */
 
             currentPassword = null;
@@ -479,7 +478,6 @@ namespace MyPDF
                 "「ファイル(F) - セキュリティ設定(T)...」から再設定してください。" + Environment.NewLine +
                 "権限パスワードのみ設定されているPDFファイルは、パスワードなしで開くことができます。" + Environment.NewLine +
                 "その場合は、編集不可(閲覧モード)になります。";
-
 
             //var result = CheckPdfPermission(path, "閲覧パスワードで開いた場合、編集不可(閲覧モード)になります。");
             var result = CheckPdfPermission(path, PassMessage);
