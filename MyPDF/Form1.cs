@@ -1,3 +1,4 @@
+using iText.IO.Image;
 using iText.Kernel.Colors;
 using iText.Kernel.Geom;
 using iText.Kernel.Pdf;
@@ -5,10 +6,10 @@ using iText.Kernel.Pdf.Navigation;
 using iText.Kernel.XMP;
 using iText.Kernel.XMP.Impl.XPath;
 using iText.Kernel.XMP.Options;
-using iText.StyledXmlParser.Jsoup.Nodes;
 using iText.Layout;
 using iText.Layout.Element;
-using iText.IO.Image;
+using iText.Layout.Font;
+using iText.StyledXmlParser.Jsoup.Nodes;
 using Org.BouncyCastle.Asn1.Cms;
 using PdfiumViewer;
 using System.Buffers;
@@ -16,13 +17,13 @@ using System.Diagnostics;
 using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using DrawingColor = System.Drawing.Color;
-using SysRectangle = System.Drawing.Rectangle;
-using SysImage = System.Drawing.Image;
 using IOPath = System.IO.Path;
 using ITextDoc = iText.Kernel.Pdf.PdfDocument;
+using ITextImage = iText.Layout.Element.Image;
 using PdfiTextReader = iText.Kernel.Pdf.PdfReader;
 using PdfiumDoc = PdfiumViewer.PdfDocument;
-using ITextImage = iText.Layout.Element.Image;
+using SysImage = System.Drawing.Image;
+using SysRectangle = System.Drawing.Rectangle;
 
 
 
@@ -4727,12 +4728,15 @@ namespace MyPDF
 
 
                     // Form12起動
-                    using (var f = new Form12(replacementPath, nowPage, currentSettings.TotalPage, InsTotalPages))
+                    using (var f = new Form12(currentSettings.PdfFileName ?? "", replacementPath, nowPage, currentSettings.TotalPage, InsTotalPages))
                     {
                         if (f.ShowDialog() == DialogResult.OK)
                         {
-                            var range = PageRangeHelper.ParseReplaceRange(f.ReplaceText, currentSettings.TotalPage);
-                            OkikaePdfPage(replacementPath, f.ExtractText, range.Start, range.End, insertProps, insertPassword);
+                            //var range = PageRangeHelper.ParseReplaceRange(f.ReplaceText, currentSettings.TotalPage);
+                            //OkikaePdfPage(replacementPath, f.ExtractText, range.Start, range.End, insertProps, insertPassword);
+                            //OkikaePdfPage(replacementPath, f.ExtractText, f.StartPage, f.EndPage, insertProps, insertPassword);
+                            OkikaePdfPage(replacementPath, f.ExtractText, f.TargetStartPage, f.TargetEndPage, insertProps, insertPassword);
+
                         }
                     }
 
