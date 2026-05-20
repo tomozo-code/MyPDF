@@ -1948,50 +1948,6 @@ namespace MyPDF
         }
 
         // ==============================
-        // しおりページ補正1（削除対応）
-        // ==============================
-        private void AdjustBookmarksAfterDelete(TreeNodeCollection nodes, List<int> deletedPages)
-        {
-            deletedPages = deletedPages
-                .Distinct()
-                .OrderBy(x => x)
-                .ToList();
-
-            for (int i = nodes.Count - 1; i >= 0; i--)
-            {
-                AdjustNodeAfterDelete(nodes[i], deletedPages);
-            }
-        }
-
-        // ==============================
-        // しおりページ補正2（削除対応）
-        // ==============================
-        private void AdjustNodeAfterDelete(TreeNode node, List<int> deletedPages)
-        {
-            if (node.Tag is BookmarkInfo info)
-            {
-                // 削除対象ページ
-                if (deletedPages.Contains(info.Page))
-                {
-                    node.Remove();
-                    return;
-                }
-
-                // 自分より前に消えたページ数
-                int shift = deletedPages.Count(p => p < info.Page);
-
-                // ページ補正
-                info.Page -= shift;
-            }
-
-            // 子ノード
-            for (int i = node.Nodes.Count - 1; i >= 0; i--)
-            {
-                AdjustNodeAfterDelete(node.Nodes[i], deletedPages);
-            }
-        }
-
-        // ==============================
         // コンテキストメニューの表示をリセット
         // ==============================
         private void MenuReset()
@@ -3702,7 +3658,7 @@ namespace MyPDF
                     {
                         pdf.RemovePage(p);
                     }
-
+                    
                     // しおり補正
                     AdjustBookmarksAfterDelete(treeView1.Nodes, pages);
                 }
@@ -3745,6 +3701,93 @@ namespace MyPDF
         }
 
         // ==============================
+        // しおりページ補正1（削除対応）
+        // ==============================
+        private void AdjustBookmarksAfterDelete(TreeNodeCollection nodes, List<int> deletedPages)
+        {
+            deletedPages = deletedPages
+                .Distinct()
+                .OrderBy(x => x)
+                .ToList();
+
+            for (int i = nodes.Count - 1; i >= 0; i--)
+            {
+                AdjustNodeAfterDelete(nodes[i], deletedPages);
+
+            }
+        }
+
+        // ==============================
+        // しおりページ補正2（削除対応）
+        // ==============================
+        private void AdjustNodeAfterDelete(TreeNode node, List<int> deletedPages)
+        {
+
+            // 先に子を処理
+            for (int i = node.Nodes.Count - 1; i >= 0; i--)
+            {
+                AdjustNodeAfterDelete(node.Nodes[i], deletedPages);
+            }
+
+            if (node.Tag is BookmarkInfo info)
+            {
+
+
+                // 削除対象ページ
+                if (deletedPages.Contains(info.Page))
+                {
+
+                    //PromoteChildrenAndRemove(node);
+                    // しおり昇格ロジックへ
+                    PromoteChildrenAndRemove(node, treeView1.Nodes);
+                    return;
+
+                    /*
+
+                    TreeNodeCollection parentNodes;
+
+                    // 親あり？
+                    if (node.Parent != null)
+                    {
+                        parentNodes = node.Parent.Nodes;
+                    }
+                    else
+                    {
+                        parentNodes = treeView1.Nodes;
+                    }
+
+                    int index = parentNodes.IndexOf(node);
+
+                    // 子を繰り上げ
+                    while (node.Nodes.Count > 0)
+                    {
+                        TreeNode child = node.Nodes[0];
+
+                        node.Nodes.Remove(child);
+
+                        parentNodes.Insert(index, child);
+
+                        index++;
+                    }
+
+                    // 自分削除
+                    parentNodes.Remove(node);
+
+                    return;
+
+                    */
+
+                }
+
+                // 自分より前に消えたページ数
+                int shift = deletedPages.Count(p => p < info.Page);
+
+                // ページ補正
+                info.Page -= shift;
+            }
+        }
+
+        // ==============================
         // 表示ページ削除(頃合いを見て消す)
         // ==============================
         private void PageDelete_Click(object sender, EventArgs e)
@@ -3753,6 +3796,50 @@ namespace MyPDF
 
             int page = pdfViewer1.Renderer.Page + 1; // 0始まり→1始まり
             DeletePages(page.ToString());
+        }
+
+        // ==============================
+        // しおり昇格ロジック(抽出、置換、削除)
+        // ==============================
+        private void PromoteChildrenAndRemove(TreeNode node, TreeNodeCollection rootNodes)
+        {
+            TreeNodeCollection parentNodes;
+
+            // 親あり？
+            if (node.Parent != null)
+            {
+                parentNodes = node.Parent.Nodes;
+            }
+            else
+            {
+                // 削除の場合
+                //parentNodes = treeView1.Nodes;
+
+                // 元treeView1ではなく tempTree側を使う
+                //parentNodes = rootNodes;
+
+                // ルートノード
+                parentNodes = rootNodes;
+
+            }
+
+            int index = parentNodes.IndexOf(node);
+
+
+            // 子を繰り上げ
+            while (node.Nodes.Count > 0)
+            {
+                TreeNode child = node.Nodes[0];
+
+                node.Nodes.Remove(child);
+
+                parentNodes.Insert(index, child);
+
+                index++;
+            }
+
+            // 自分削除
+            parentNodes.Remove(node);
         }
 
         // ==============================
@@ -3990,7 +4077,6 @@ namespace MyPDF
         // ==============================
         // しおり抽出処理2
         // ==============================
-        //private void AdjustNodeForExtract(TreeNode node, Dictionary<int, int> pageMap)
         private void AdjustNodeForExtract(TreeNode node, Dictionary<int, int> pageMap, TreeNodeCollection rootNodes)
         {
 
@@ -4006,38 +4092,10 @@ namespace MyPDF
                 // 抽出対象外
                 if (!pageMap.ContainsKey(info.Page))
                 {
-                    TreeNodeCollection parentNodes;
-
-                    // 親あり？
-                    if (node.Parent != null)
-                    {
-                        parentNodes = node.Parent.Nodes;
-                    }
-                    else
-                    {
-                        // 元treeView1ではなく tempTree側を使う
-                        parentNodes = rootNodes;
-                        //parentNodes = treeView1.Nodes;
-                    }
-
-                    int index = parentNodes.IndexOf(node);
-
-                    // 子を昇格
-                    while (node.Nodes.Count > 0)
-                    {
-                        TreeNode child = node.Nodes[0];
-
-                        node.Nodes.Remove(child);
-
-                        parentNodes.Insert(index, child);
-
-                        index++;
-                    }
-
-                    // 自分削除
-                    parentNodes.Remove(node);
-
+                    // しおり昇格ロジックへ
+                    PromoteChildrenAndRemove(node, rootNodes);
                     return;
+
                 }
 
                 // 新ページへ変換
@@ -4055,10 +4113,51 @@ namespace MyPDF
 
             foreach (TreeNode node in original.Nodes)
             {
-                clone.Nodes.Add((TreeNode)node.Clone());
+                //clone.Nodes.Add((TreeNode)node.Clone());
+                clone.Nodes.Add(CloneNode(node));
             }
 
             return clone;
+        }
+
+        // ==============================
+        // しおり抽出処理4(TreeNode深コピー)
+        // ==============================
+        private TreeNode CloneNode(TreeNode source)
+        {
+            TreeNode newNode = new TreeNode(source.Text);
+
+            // 表示関係
+            newNode.ForeColor = source.ForeColor;
+            newNode.BackColor = source.BackColor;
+            newNode.ImageIndex = source.ImageIndex;
+            newNode.SelectedImageIndex = source.SelectedImageIndex;
+
+            if (source.NodeFont != null)
+            {
+                newNode.NodeFont = (Font)source.NodeFont.Clone();
+            }
+
+            // Tagを深コピー
+            if (source.Tag is BookmarkInfo info)
+            {
+                newNode.Tag = new BookmarkInfo
+                {
+                    BmTitle = info.BmTitle,
+                    Page = info.Page,
+                    IsOpen = info.IsOpen,
+                    SelectedColor = info.SelectedColor,
+                    SelectedStyle = info.SelectedStyle
+                };
+            }
+
+            // 子ノード再帰
+            foreach (TreeNode child in source.Nodes)
+            {
+                newNode.Nodes.Add(CloneNode(child));
+            }
+
+            return newNode;
         }
 
         // ==============================
@@ -4856,6 +4955,8 @@ namespace MyPDF
                     using (var repReader2 = new PdfReader(okikaePath, okikaeProps))
                     using (var repPdfDoc = new ITextDoc(repReader2))
                     {
+                        TreeNode? targetNode = FindBookmarkByPage(treeView1.Nodes, start);
+
                         bool hasBookmarks = HasBookmarks(repPdfDoc);
 
                         // 置換PDFにしおりあり → 元しおり削除して置換
@@ -4866,7 +4967,15 @@ namespace MyPDF
                             // 後続補正
                             ShiftBookmarksAfter(start, end, repCount);
                             // 新しおり追加
-                            ImportBookmarksFromPdf(repPdfDoc, replacePageMap, treeView1, true);
+                            if (targetNode != null)
+                            {
+                                MergeBookmarksIntoNode(repPdfDoc, replacePageMap, targetNode);
+                            }
+                            else
+                            {
+                                ImportBookmarksFromPdf(repPdfDoc, replacePageMap, treeView1, true);
+                            }
+
                         }
 
                         // 置換PDFにしおりなし → 元しおり保持
@@ -4876,23 +4985,6 @@ namespace MyPDF
                             ShiftBookmarksAfter(start, end, repCount);
                         }
                     }
-
-
-                    /*
-
-                    // しおり補正
-                    RemoveBookmarksInRange(start, end);
-                    ShiftBookmarksAfter(start, end, repCount);
-
-                    // 置換PDFのしおり追加
-                    using (var repReader2 = new PdfReader(okikaePath, okikaeProps))
-                    using (var repPdfDoc = new ITextDoc(repReader2))
-                    {
-                        ImportBookmarksFromPdf(repPdfDoc, replacePageMap, treeView1,true);
-
-                    }
-
-                    */
 
                 }
 
@@ -4963,34 +5055,23 @@ namespace MyPDF
             {
                 if (info.Page >= start && info.Page <= end)
                 {
-                    TreeNodeCollection parentNodes;
-
-                    // 親があるか？
-                    if (node.Parent != null)
+                    // 開始ページは残す
+                    if (info.Page == start)
                     {
-                        parentNodes = node.Parent.Nodes;
-                    }
-                    else
-                    {
-                        parentNodes = treeView1.Nodes;
-                    }
+                        // 子だけ削除
+                        for (int i = node.Nodes.Count - 1; i >= 0; i--)
+                        {
+                            // しおり昇格ロジック
+                            PromoteChildrenAndRemove(node.Nodes[i], treeView1.Nodes);
+                        }
 
-                    int index = parentNodes.IndexOf(node);
-
-                    // 子を親階層へ昇格
-                    while (node.Nodes.Count > 0)
-                    {
-                        TreeNode child = node.Nodes[0];
-
-                        node.Nodes.Remove(child);
-
-                        parentNodes.Insert(index, child);
-
-                        index++;
+                        return;
                     }
 
-                    // 最後に自分を削除
-                    parentNodes.Remove(node);
+                    // start以外は通常削除
+                    PromoteChildrenAndRemove(node, treeView1.Nodes);
+                    return;
+
                 }
             }
         }
@@ -5026,6 +5107,54 @@ namespace MyPDF
             foreach (TreeNode child in node.Nodes)
             {
                 ShiftNode(child, start, end, diff);
+            }
+        }
+
+        // ==============================
+        // ページ置換処理(しおり補正5)指定ページのしおり取得
+        // ==============================
+        private TreeNode? FindBookmarkByPage(TreeNodeCollection nodes, int page)
+        {
+            foreach (TreeNode node in nodes)
+            {
+                if (node.Tag is BookmarkInfo info)
+                {
+                    if (info.Page == page)
+                        return node;
+                }
+
+                var child = FindBookmarkByPage(node.Nodes, page);
+
+                if (child != null)
+                    return child;
+            }
+
+            return null;
+        }
+
+        // ==============================
+        // ページ置換処理(しおり補正6)置換しおりを既存ノードへマージ
+        // ==============================
+        private void MergeBookmarksIntoNode(ITextDoc pdf, Dictionary<int, int> pageMap, TreeNode targetNode)
+        {
+            var outlines = pdf.GetOutlines(false);
+
+            if (outlines == null)
+                return;
+
+            // 置換PDFのルート
+            foreach (var root in outlines.GetAllChildren())
+            {
+                // root自身ではなく子だけ追加
+                foreach (var child in root.GetAllChildren())
+                {
+                    var childNode = CreateNodeFromOutline(pdf, child, pageMap, true);
+
+                    if (childNode != null)
+                    {
+                        targetNode.Nodes.Add(childNode);
+                    }
+                }
             }
         }
 

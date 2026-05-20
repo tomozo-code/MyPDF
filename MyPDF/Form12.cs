@@ -33,8 +33,6 @@ namespace MyPDF
         private int maxPage;
         // 置換するファイルの総ページ数
         private int InsPage;
-        // 置換先の終了ページ
-        private int aaa;
 
         public string ReplaceText => ExtractTxt.Text;
 
