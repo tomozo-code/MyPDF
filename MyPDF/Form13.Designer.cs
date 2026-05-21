@@ -196,6 +196,7 @@
             // 
             PdfImageSize.DropDownStyle = ComboBoxStyle.DropDownList;
             PdfImageSize.FormattingEnabled = true;
+            PdfImageSize.ItemHeight = 21;
             PdfImageSize.Location = new Point(112, 17);
             PdfImageSize.Name = "PdfImageSize";
             PdfImageSize.Size = new Size(121, 29);

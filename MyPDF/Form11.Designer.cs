@@ -34,6 +34,10 @@
             statusStrip1 = new StatusStrip();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
             groupBox1 = new GroupBox();
+            TotalPage = new Label();
+            label5 = new Label();
+            ExtractTxt = new TextBox();
+            label6 = new Label();
             label3 = new Label();
             MovePlace = new ComboBox();
             label4 = new Label();
@@ -42,10 +46,6 @@
             TargetPageTxt = new TextBox();
             panel1 = new Panel();
             panel2 = new Panel();
-            TotalPage = new Label();
-            label5 = new Label();
-            ExtractTxt = new TextBox();
-            label6 = new Label();
             statusStrip1.SuspendLayout();
             groupBox1.SuspendLayout();
             panel1.SuspendLayout();
@@ -81,6 +81,41 @@
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "移動するページ";
+            // 
+            // TotalPage
+            // 
+            TotalPage.AutoSize = true;
+            TotalPage.Location = new Point(222, 34);
+            TotalPage.Name = "TotalPage";
+            TotalPage.Size = new Size(72, 21);
+            TotalPage.TabIndex = 78;
+            TotalPage.Text = "/ 総ページ";
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(66, 63);
+            label5.Name = "label5";
+            label5.Size = new Size(150, 21);
+            label5.TabIndex = 81;
+            label5.Text = "入力方法：1,2,3,5-9";
+            // 
+            // ExtractTxt
+            // 
+            ExtractTxt.Location = new Point(116, 31);
+            ExtractTxt.Name = "ExtractTxt";
+            ExtractTxt.Size = new Size(100, 29);
+            ExtractTxt.TabIndex = 2;
+            ExtractTxt.Tag = "抽出するページを指定します(入力方法：1,2,3,5-9)";
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(16, 34);
+            label6.Name = "label6";
+            label6.Size = new Size(94, 21);
+            label6.TabIndex = 79;
+            label6.Text = "ページ指定：";
             // 
             // label3
             // 
@@ -164,41 +199,6 @@
             panel2.Size = new Size(392, 290);
             panel2.TabIndex = 76;
             // 
-            // TotalPage
-            // 
-            TotalPage.AutoSize = true;
-            TotalPage.Location = new Point(222, 34);
-            TotalPage.Name = "TotalPage";
-            TotalPage.Size = new Size(72, 21);
-            TotalPage.TabIndex = 78;
-            TotalPage.Text = "/ 総ページ";
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Location = new Point(66, 63);
-            label5.Name = "label5";
-            label5.Size = new Size(150, 21);
-            label5.TabIndex = 81;
-            label5.Text = "入力方法：1,2,3,5-9";
-            // 
-            // ExtractTxt
-            // 
-            ExtractTxt.Location = new Point(116, 31);
-            ExtractTxt.Name = "ExtractTxt";
-            ExtractTxt.Size = new Size(100, 29);
-            ExtractTxt.TabIndex = 80;
-            ExtractTxt.Tag = "抽出するページを指定します(入力方法：1,2,3,5-9)";
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Location = new Point(16, 34);
-            label6.Name = "label6";
-            label6.Size = new Size(94, 21);
-            label6.TabIndex = 79;
-            label6.Text = "ページ指定：";
-            // 
             // Form11
             // 
             AutoScaleDimensions = new SizeF(96F, 96F);
@@ -213,7 +213,7 @@
             MinimizeBox = false;
             Name = "Form11";
             StartPosition = FormStartPosition.CenterParent;
-            Text = "ページを移動";
+            Text = "ページを指定して移動";
             Load += Form11_Load;
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();

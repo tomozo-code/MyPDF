@@ -78,7 +78,7 @@
             CancelBtn.Location = new Point(128, 7);
             CancelBtn.Name = "CancelBtn";
             CancelBtn.Size = new Size(112, 35);
-            CancelBtn.TabIndex = 4;
+            CancelBtn.TabIndex = 7;
             CancelBtn.Tag = "中止してウィンドウを閉じます";
             CancelBtn.Text = "Cancel";
             CancelBtn.UseVisualStyleBackColor = true;
@@ -89,7 +89,7 @@
             OkBtn.Location = new Point(9, 7);
             OkBtn.Name = "OkBtn";
             OkBtn.Size = new Size(112, 35);
-            OkBtn.TabIndex = 3;
+            OkBtn.TabIndex = 6;
             OkBtn.Tag = "ページ指定を確定し挿入を実行します";
             OkBtn.Text = "OK";
             OkBtn.UseVisualStyleBackColor = true;
@@ -127,7 +127,7 @@
             groupBox2.Location = new Point(9, 157);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(363, 118);
-            groupBox2.TabIndex = 79;
+            groupBox2.TabIndex = 3;
             groupBox2.TabStop = false;
             groupBox2.Text = "挿入先";
             // 
@@ -156,7 +156,7 @@
             InsertPlace.Location = new Point(136, 73);
             InsertPlace.Name = "InsertPlace";
             InsertPlace.Size = new Size(121, 29);
-            InsertPlace.TabIndex = 79;
+            InsertPlace.TabIndex = 5;
             InsertPlace.Tag = "挿入する場所を指定します";
             // 
             // setPage
@@ -164,7 +164,7 @@
             setPage.Location = new Point(136, 31);
             setPage.Name = "setPage";
             setPage.Size = new Size(100, 29);
-            setPage.TabIndex = 78;
+            setPage.TabIndex = 4;
             setPage.Tag = "挿入先のページを指定します";
             // 
             // label3
@@ -188,7 +188,7 @@
             groupBox1.Location = new Point(9, 12);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(363, 139);
-            groupBox1.TabIndex = 78;
+            groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "挿入するファイルの設定";
             // 
@@ -215,7 +215,7 @@
             ExtractTxt.Location = new Point(136, 73);
             ExtractTxt.Name = "ExtractTxt";
             ExtractTxt.Size = new Size(100, 29);
-            ExtractTxt.TabIndex = 84;
+            ExtractTxt.TabIndex = 2;
             ExtractTxt.Tag = "挿入するファイルのページを指定します(入力方法：1,2,3,5-9)";
             // 
             // label6
@@ -259,7 +259,7 @@
             MinimizeBox = false;
             Name = "Form10";
             StartPosition = FormStartPosition.CenterParent;
-            Text = "ページを挿入";
+            Text = "ページを指定して挿入";
             Load += Form10_Load;
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();

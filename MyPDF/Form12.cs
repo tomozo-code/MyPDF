@@ -81,7 +81,7 @@ namespace MyPDF
 
 
 
-            toolHintTxt = "ファイルからページを挿入します";
+            toolHintTxt = "ファイルからページを置換します";
 
             toolTip1.InitialDelay = 500;   // 表示までの時間(ms)
             toolTip1.AutoPopDelay = 5000;  // 表示時間

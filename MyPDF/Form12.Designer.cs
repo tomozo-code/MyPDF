@@ -91,7 +91,7 @@
             OkBtn.Name = "OkBtn";
             OkBtn.Size = new Size(112, 35);
             OkBtn.TabIndex = 30;
-            OkBtn.Tag = "ページ指定を確定し挿入を実行します";
+            OkBtn.Tag = "ページ指定を確定し置換を実行します";
             OkBtn.Text = "OK";
             OkBtn.UseVisualStyleBackColor = true;
             OkBtn.Click += OkBtn_Click;
@@ -108,7 +108,7 @@
             groupBox1.Location = new Point(12, 12);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(507, 140);
-            groupBox1.TabIndex = 2;
+            groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "置換先(現在表示しているPDFファイル)";
             // 
@@ -144,7 +144,7 @@
             ExtractTxt.Location = new Point(141, 74);
             ExtractTxt.Name = "ExtractTxt";
             ExtractTxt.Size = new Size(100, 29);
-            ExtractTxt.TabIndex = 0;
+            ExtractTxt.TabIndex = 1;
             ExtractTxt.Tag = "置換先のページを指定します(入力方法：1-9)";
             // 
             // label7
@@ -197,7 +197,7 @@
             groupBox2.Location = new Point(12, 167);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(507, 120);
-            groupBox2.TabIndex = 1;
+            groupBox2.TabIndex = 2;
             groupBox2.TabStop = false;
             groupBox2.Text = "置換するPDFファイル";
             // 
@@ -215,8 +215,8 @@
             txtPage.Location = new Point(141, 79);
             txtPage.Name = "txtPage";
             txtPage.Size = new Size(100, 29);
-            txtPage.TabIndex = 1;
-            txtPage.Tag = "置換するファイルのページを指定します(入力方法：1,2,3,5-9)";
+            txtPage.TabIndex = 2;
+            txtPage.Tag = "置換するファイルの開始ページを指定します";
             // 
             // label6
             // 
@@ -259,7 +259,7 @@
             MinimizeBox = false;
             Name = "Form12";
             StartPosition = FormStartPosition.CenterParent;
-            Text = "ページを置換";
+            Text = "ページを指定して置換";
             Load += Form12_Load;
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
