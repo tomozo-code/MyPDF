@@ -61,7 +61,7 @@
             // 
             statusStrip1.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
-            statusStrip1.Location = new Point(0, 352);
+            statusStrip1.Location = new Point(0, 360);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Padding = new Padding(1, 0, 16, 0);
             statusStrip1.Size = new Size(535, 26);
@@ -105,7 +105,7 @@
             groupBox1.Controls.Add(ExtractTxt);
             groupBox1.Controls.Add(label7);
             groupBox1.Controls.Add(TotalPage);
-            groupBox1.Location = new Point(12, 147);
+            groupBox1.Location = new Point(12, 12);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(507, 140);
             groupBox1.TabIndex = 2;
@@ -144,7 +144,7 @@
             ExtractTxt.Location = new Point(141, 74);
             ExtractTxt.Name = "ExtractTxt";
             ExtractTxt.Size = new Size(100, 29);
-            ExtractTxt.TabIndex = 1;
+            ExtractTxt.TabIndex = 0;
             ExtractTxt.Tag = "置換先のページを指定します(入力方法：1-9)";
             // 
             // label7
@@ -170,7 +170,7 @@
             panel1.Controls.Add(OkBtn);
             panel1.Controls.Add(CancelBtn);
             panel1.Dock = DockStyle.Bottom;
-            panel1.Location = new Point(0, 302);
+            panel1.Location = new Point(0, 310);
             panel1.Name = "panel1";
             panel1.Size = new Size(535, 50);
             panel1.TabIndex = 76;
@@ -183,7 +183,7 @@
             panel2.Dock = DockStyle.Fill;
             panel2.Location = new Point(0, 0);
             panel2.Name = "panel2";
-            panel2.Size = new Size(535, 302);
+            panel2.Size = new Size(535, 310);
             panel2.TabIndex = 77;
             // 
             // groupBox2
@@ -194,7 +194,7 @@
             groupBox2.Controls.Add(label6);
             groupBox2.Controls.Add(label1);
             groupBox2.Controls.Add(KaeFileName);
-            groupBox2.Location = new Point(12, 12);
+            groupBox2.Location = new Point(12, 167);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(507, 120);
             groupBox2.TabIndex = 1;
@@ -215,7 +215,7 @@
             txtPage.Location = new Point(141, 79);
             txtPage.Name = "txtPage";
             txtPage.Size = new Size(100, 29);
-            txtPage.TabIndex = 0;
+            txtPage.TabIndex = 1;
             txtPage.Tag = "置換するファイルのページを指定します(入力方法：1,2,3,5-9)";
             // 
             // label6
@@ -249,7 +249,7 @@
             // 
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
-            ClientSize = new Size(535, 378);
+            ClientSize = new Size(535, 386);
             Controls.Add(panel2);
             Controls.Add(panel1);
             Controls.Add(statusStrip1);

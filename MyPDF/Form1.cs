@@ -3799,7 +3799,7 @@ namespace MyPDF
         }
 
         // ==============================
-        // しおり昇格ロジック(抽出、置換、削除)
+        // しおり昇格ロジック(挿入、抽出、置換、削除)
         // ==============================
         private void PromoteChildrenAndRemove(TreeNode node, TreeNodeCollection rootNodes)
         {
@@ -4339,8 +4339,9 @@ namespace MyPDF
                 {
                     ImportBookmarksFromPdf(insertPdfDoc, insertPageMap, treeView1, false);
 
-                    Debug.WriteLine("--- 挿入 -----------------");
-                    Debug.WriteLine("inserPage：" + insertPage);
+                    // 不要ノード整理
+                    CleanupInsertedBookmarks(treeView1.Nodes, insertPageMap);
+
 
                 }
 
@@ -4411,17 +4412,27 @@ namespace MyPDF
         // ==============================
         private void ImportBookmarksFromPdf(ITextDoc insertPdf, Dictionary<int, int> pageMap, TreeView treeView, bool isReplace)
         {
+
             var outlines = insertPdf.GetOutlines(false);
-            if (outlines == null) return;
+
+            if (outlines == null)
+                return;
 
             int insertIndex = FindInsertIndex(treeView.Nodes, pageMap.Values.Min());
 
-            foreach (var child in outlines.GetAllChildren())
+            // 完全Tree生成
+            foreach (var root in outlines.GetAllChildren())
             {
-                var node = CreateNodeFromOutline(insertPdf, child, pageMap, isReplace);
+                var node = CreateNodeFromOutline(
+                    insertPdf,
+                    root,
+                    pageMap,
+                    isReplace);
+
                 if (node != null)
                 {
                     treeView.Nodes.Insert(insertIndex, node);
+
                     insertIndex++;
                 }
             }
@@ -4527,18 +4538,40 @@ namespace MyPDF
                 if (isReplace)
                 {
                     // 置換
-                    if (!pageMap.ContainsKey(page))
-                        return null;
+                    //if (!pageMap.ContainsKey(page))
+                    //    return null;
 
-                    newPage = pageMap[page];
+                    //newPage = pageMap[page];
+
+                    // 置換位置に合わせて補正
+                    newPage = -1;
+
+                    // pageMap にあるページだけ有効
+                    if (pageMap.ContainsKey(page))
+                    {
+                        newPage = pageMap[page];
+                    }
+
                 }
                 else
                 {
                     // 挿入
-                    if (!pageMap.ContainsKey(page))
-                        return null;
+                    //if (!pageMap.ContainsKey(page))
+                    //    return null;
 
-                    newPage = pageMap[page];
+                    //newPage = pageMap[page];
+
+                    // 挿入位置に合わせて補正
+                    newPage = -1;
+
+                    // pageMap にあるページだけ有効
+                    if (pageMap.ContainsKey(page))
+                    {
+                        newPage = pageMap[page];
+                    }
+
+
+
                 }
 
                 bool isOpen = true;
@@ -4629,6 +4662,38 @@ namespace MyPDF
             catch
             {
                 return null;
+            }
+        }
+
+        // ==============================
+        // 挿入しおり整理
+        // ==============================
+        private void CleanupInsertedBookmarks(TreeNodeCollection nodes, Dictionary<int, int> pageMap)
+        {
+            for (int i = nodes.Count - 1; i >= 0; i--)
+            {
+                CleanupInsertedNode(nodes[i], nodes, pageMap);
+            }
+        }
+
+        // ==============================
+        // 挿入しおり整理（再帰）
+        // ==============================
+        private void CleanupInsertedNode(TreeNode node, TreeNodeCollection rootNodes, Dictionary<int, int> pageMap)
+        {
+            // 先に子
+            for (int i = node.Nodes.Count - 1; i >= 0; i--)
+            {
+                CleanupInsertedNode(node.Nodes[i], rootNodes, pageMap);
+            }
+
+            if (node.Tag is BookmarkInfo info)
+            {
+                // Page=-1 → 対象外
+                if (info.Page == -1)
+                {
+                    PromoteChildrenAndRemove(node, rootNodes);
+                }
             }
         }
 
@@ -4955,6 +5020,36 @@ namespace MyPDF
                     using (var repReader2 = new PdfReader(okikaePath, okikaeProps))
                     using (var repPdfDoc = new ITextDoc(repReader2))
                     {
+                        bool hasBookmarks = HasBookmarks(repPdfDoc);
+
+                        // 置換PDFにしおりあり
+                        if (hasBookmarks)
+                        {
+                            // 元しおり削除
+                            RemoveBookmarksInRange(start, end);
+
+                            // 後続ページ補正
+                            ShiftBookmarksAfter(start, end, repCount);
+
+                            // 新しおり追加
+                            ImportBookmarksFromPdf(
+                                repPdfDoc,
+                                replacePageMap,
+                                treeView1,
+                                true);
+
+                            // Page=-1 を昇格
+                            CleanupImportedBookmarks(treeView1.Nodes);
+                        }
+
+                        // 置換PDFにしおりなし
+                        else
+                        {
+                            ShiftBookmarksAfter(start, end, repCount);
+                        }
+
+                        /*
+                        
                         TreeNode? targetNode = FindBookmarkByPage(treeView1.Nodes, start);
 
                         bool hasBookmarks = HasBookmarks(repPdfDoc);
@@ -4984,6 +5079,8 @@ namespace MyPDF
                             // 全部保持したままページだけ補正
                             ShiftBookmarksAfter(start, end, repCount);
                         }
+
+                        */
                     }
 
                 }
@@ -5017,6 +5114,38 @@ namespace MyPDF
         }
 
         // ==============================
+        // ページ置換処理()1
+        // ==============================
+        private void CleanupImportedBookmarks(TreeNodeCollection nodes)
+        {
+            for (int i = nodes.Count - 1; i >= 0; i--)
+            {
+                CleanupNode(nodes[i], nodes);
+            }
+        }
+
+        // ==============================
+        // ページ置換処理()2
+        // ==============================
+        private void CleanupNode(TreeNode node, TreeNodeCollection rootNodes)
+        {
+            // 先に子
+            for (int i = node.Nodes.Count - 1; i >= 0; i--)
+            {
+                CleanupNode(node.Nodes[i], rootNodes);
+            }
+
+            if (node.Tag is BookmarkInfo info)
+            {
+                // Page=-1 は対象外
+                if (info.Page == -1)
+                {
+                    PromoteChildrenAndRemove(node, rootNodes);
+                }
+            }
+        }
+
+        // ==============================
         // ページ置換処理(PDFにしおりが存在するか)
         // ==============================
         private bool HasBookmarks(ITextDoc pdf)
@@ -5045,6 +5174,22 @@ namespace MyPDF
         // ==============================
         private void RemoveNode(TreeNode node, int start, int end)
         {
+            // 先に子
+            for (int i = node.Nodes.Count - 1; i >= 0; i--)
+            {
+                RemoveNode(node.Nodes[i], start, end);
+            }
+
+            if (node.Tag is BookmarkInfo info)
+            {
+                if (info.Page >= start && info.Page <= end)
+                {
+                    PromoteChildrenAndRemove(node, treeView1.Nodes);
+                }
+            }
+
+            /*
+
             // 先に子を処理
             for (int i = node.Nodes.Count - 1; i >= 0; i--)
             {
@@ -5074,6 +5219,9 @@ namespace MyPDF
 
                 }
             }
+
+            */
+
         }
 
         // ==============================
@@ -5113,6 +5261,9 @@ namespace MyPDF
         // ==============================
         // ページ置換処理(しおり補正5)指定ページのしおり取得
         // ==============================
+
+        /*
+
         private TreeNode? FindBookmarkByPage(TreeNodeCollection nodes, int page)
         {
             foreach (TreeNode node in nodes)
@@ -5132,9 +5283,15 @@ namespace MyPDF
             return null;
         }
 
+        */
+
+
         // ==============================
         // ページ置換処理(しおり補正6)置換しおりを既存ノードへマージ
         // ==============================
+
+        /*
+
         private void MergeBookmarksIntoNode(ITextDoc pdf, Dictionary<int, int> pageMap, TreeNode targetNode)
         {
             var outlines = pdf.GetOutlines(false);
@@ -5157,6 +5314,8 @@ namespace MyPDF
                 }
             }
         }
+
+        */
 
         // ==============================
         // 画像をPDFに変換を押したとき
