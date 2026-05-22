@@ -4317,6 +4317,9 @@ namespace MyPDF
                 // 保存との整合性 作業用ファイルのデータを入れる
                 currentSettings = LoadPdfSettings(workingPath, currentPassword);
 
+                // ツリービューの右クリックメニュー ON/OFF
+                UpdateContextMenuState();
+
                 // フラグ
                 isDirty = true;
             }
@@ -4375,25 +4378,90 @@ namespace MyPDF
             if (outlines == null)
                 return;
 
-            int insertIndex = FindInsertIndex(treeView.Nodes, pageMap.Values.Min());
+
+            // 挿入開始ページ
+            int firstInsertPage = pageMap.Values.Min();
+
+            // 「挿入直前ページ」のしおりを探す
+            TreeNode? baseNode = FindBookmarkByPage(treeView.Nodes, firstInsertPage - 1);
+
+            // 追加先
+            TreeNodeCollection targetNodes;
+
+            // 挿入Index
+            int insertIndex;
+
+
+            // 挿入先決定
+            if (baseNode != null)
+            {
+                // 子がある場合
+                if (baseNode.Nodes.Count > 0)
+                {
+                    // 子階層へ入れる
+                    targetNodes = baseNode.Nodes;
+
+                    // 先頭へ
+                    insertIndex = 0;
+                }
+                else
+                {
+                    // 子なし → 同階層の次へ
+                    if (baseNode.Parent != null)
+                    {
+                        targetNodes = baseNode.Parent.Nodes;
+                    }
+                    else
+                    {
+                        targetNodes = treeView.Nodes;
+                    }
+
+                    insertIndex = targetNodes.IndexOf(baseNode) + 1;
+                }
+            }
+            else
+            {
+                // fallback
+                targetNodes = treeView.Nodes;
+
+                insertIndex = FindInsertIndex(treeView.Nodes, firstInsertPage);
+            }
 
             // 完全Tree生成
             foreach (var root in outlines.GetAllChildren())
             {
-                var node = CreateNodeFromOutline(
-                    insertPdf,
-                    root,
-                    pageMap,
-                    isReplace);
+                var node = CreateNodeFromOutline(insertPdf, root, pageMap, isReplace);
 
                 if (node != null)
                 {
-                    treeView.Nodes.Insert(insertIndex, node);
+                    targetNodes.Insert(insertIndex, node);
 
                     insertIndex++;
                 }
             }
 
+        }
+
+        // ==============================
+        // 指定ページのしおり取得
+        // ==============================
+        private TreeNode? FindBookmarkByPage(TreeNodeCollection nodes, int page)
+        {
+            foreach (TreeNode node in nodes)
+            {
+                if (node.Tag is BookmarkInfo info)
+                {
+                    if (info.Page == page)
+                        return node;
+                }
+
+                var child = FindBookmarkByPage(node.Nodes, page);
+
+                if (child != null)
+                    return child;
+            }
+
+            return null;
         }
 
         // ==============================
@@ -5010,6 +5078,9 @@ namespace MyPDF
                 pdfViewer1.Document = doc;
 
                 currentSettings = LoadPdfSettings(workingPath, currentPassword);
+
+                // ツリービューの右クリックメニュー ON/OFF
+                UpdateContextMenuState();
 
                 isDirty = true;
             }

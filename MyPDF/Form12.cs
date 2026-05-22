@@ -121,7 +121,7 @@ namespace MyPDF
                 MessageBox.Show("開始ページは1以上の値を入力してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            if (sourceStart > maxPage)
+            if (sourceStart > InsPage)
             {
                 MessageBox.Show("開始ページは総ページ数以下の値を入力してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
