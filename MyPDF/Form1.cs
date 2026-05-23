@@ -14,6 +14,7 @@ using Org.BouncyCastle.Asn1.Cms;
 using PdfiumViewer;
 using System.Buffers;
 using System.Diagnostics;
+using System.Drawing.Drawing2D;
 using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using DrawingColor = System.Drawing.Color;
@@ -633,7 +634,6 @@ namespace MyPDF
                 return null;
             }
         }
-
 
         // ==============================
         // PDFの設定情報を読み込む
@@ -1503,7 +1503,6 @@ namespace MyPDF
 
                     // パスありなのでtrueに
                     MsgFlag = true;
-
                 }
                 else
                 {
@@ -1745,8 +1744,9 @@ namespace MyPDF
                 }
 
                 // 一時作業用ファイルを作業用ファイルにコピーして一時ファイルを消す
-                File.Copy(tempPath, workingPath, true);
-                File.Delete(tempPath);
+                File.Move(tempPath, workingPath, true);
+                //File.Copy(tempPath, workingPath, true);
+                //File.Delete(tempPath);
 
                 // 保存できなかっったとき(念のため)
                 try
@@ -1869,7 +1869,7 @@ namespace MyPDF
         }
 
         // ==============================
-        // 作業用ファイル破棄（共通
+        // 作業用ファイル破棄（共通）
         // 前回PDFの tempファイル削除
         // ==============================
         private void CleanupWorkingFile()
@@ -1879,7 +1879,9 @@ namespace MyPDF
                 // Viewer解放（ロック防止）
                 if (pdfViewer1.Document != null)
                 {
+                    // PDF Viewer解放
                     pdfViewer1.Document.Dispose();
+                    // Viewerから切り離し
                     pdfViewer1.Document = null;
                 }
 
@@ -1894,6 +1896,7 @@ namespace MyPDF
                     {
                         try
                         {
+                            // 作業ファイル削除
                             File.Delete(workingPath);
                             break;
                         }
@@ -1908,7 +1911,7 @@ namespace MyPDF
                 // パスもクリア
                 workingPath = "";
             }
-            catch (Exception ex)
+            catch (Exception ex) // エラー補足
             {
 #if DEBUG
                 Extxt.Text = ex.ToString();
@@ -1928,9 +1931,10 @@ namespace MyPDF
         // ==============================
         private bool ConfirmDiscard()
         {
-            // 未保存フラグOFFならONにして戻る
+            // 未保存フラグがfalseなんでそのまま帰返す
             if (!isDirty) return true;
-
+            
+            // 未保存ありなので保存するか聞く
             var result = MessageBox.Show(
                 "変更が保存されていません。上書き保存しますか？" + Environment.NewLine +
                 "はい(Y)：上書き保存" + Environment.NewLine +
@@ -1972,19 +1976,24 @@ namespace MyPDF
 
         // ==============================
         // ツリービューをPDFへ の処理
+        // TreeViewのノードを、PDFの「しおり(PdfOutline)」へ変換するメソッド
+        // 再帰で呼ばれて、階層構造もそのまま保存
         // ==============================
         private void AddOutlineFromNode(ITextDoc pdf, PdfOutline parent, TreeNode node)
         {
 
             // 安全に取り出す
+            // node.Tagには、しおり名、ページ番号、色、スタイル、展開状態が入ってる
             if (node.Tag is not BookmarkInfo info) return;
-
+            // しおりの移動先ページ番号取得
             int page = info.Page;
+            // PDF総ページ数取得
             int max = pdf.GetNumberOfPages();
 
-            // しおり範囲チェック
+            // しおり範囲チェック(ページ番号が異常か確認)
             if (page < 1 || page > max)
             {
+                // 不正なしおりなので保存しない
                 Debug.WriteLine($"しおりスキップ: {node.Text} page={page} max={max}");
                 return;
             }
@@ -1992,14 +2001,14 @@ namespace MyPDF
             // しおり作成
             var outline = parent.AddOutline(node.Text);
 
-            // ページリンク設定
+            // ページリンク設定(しおりクリック時の移動先設定)
             outline.AddDestination(PdfExplicitDestination.CreateFit(pdf.GetPage(page)));
-
 
             // 色の設定
             var c = info.SelectedColor;
+            // RGB値をPDF用カラーへ変換
             outline.SetColor(new DeviceRgb(c.R, c.G, c.B));
-
+            // しおり文字スタイル用フラグ初期化 スタイルは、0 → 通常、1 → イタリック、2 → ボールド、3 → ボールドイタリック
             int style = 0;
 
             // 両方通ると ボールドイタリックになるはず
@@ -2013,30 +2022,30 @@ namespace MyPDF
             Debug.WriteLine("-----文字スタイル2------------------------");
             Debug.WriteLine("style: " + style);
 
+            // iText標準APIでスタイル設定
             outline.SetStyle(style);
 
             // "/F"を強制的に書き込む
-            outline.GetContent().Put(
-                PdfName.F,
-                new PdfNumber(style)
-            );
+            outline.GetContent().Put(PdfName.F, new PdfNumber(style));
 
             Debug.WriteLine("保存直後 style: " + outline.GetStyle());
 
+            // しおり内部辞書取得
             var dict = outline.GetContent();
+            // /F の実値取得
             var f = dict.GetAsNumber(PdfName.F);
 
             Debug.WriteLine("F raw: " + f);
 
-            // しおりの展開状態
+            // しおりの展開状態(info.IsOpenがtrue:展開、false:縮小)
             outline.SetOpen(info.IsOpen);
 
             // 子ノード再帰(階層構造維持)(再帰)
             foreach (TreeNode child in node.Nodes)
             {
+                // 再帰呼び出し
                 AddOutlineFromNode(pdf, outline, child);
             }
-
         }
 
         // ==============================
@@ -2098,10 +2107,7 @@ namespace MyPDF
             ZoomtoolStripComboBox.Enabled = false;
             // 閉じる
             CloseMenu.Enabled = false;
-
         }
-
-
 
         // ==============================
         // 右クリックメニュー更新 ON/OFF
@@ -2110,9 +2116,9 @@ namespace MyPDF
         {
             // ツリービューノードが0以上:true
             bool hasNodes = treeView1.Nodes.Count > 0;
-
+            // 表示しているPDFの総ページ数取得
             int pageCount = pdfViewer1.Document.PageCount;
-
+            // 編集可能か？(true:可能、false:不可)
             if (!canEdit)
             {
                 // セキュリティありの場合
@@ -2223,7 +2229,6 @@ namespace MyPDF
             ZoomtoolStripComboBox.Enabled = true;
             // 閉じる
             CloseMenu.Enabled = true;
-
         }
 
         // ==============================
@@ -2231,26 +2236,31 @@ namespace MyPDF
         // ==============================
         private void AddShioriToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            // 新しく作るしおりノード変数
             TreeNode? newNode = null;
-
+            // TreeView描画停止(大量更新中のちらつき防止と再描画負荷低減)
             treeView1.BeginUpdate();
 
             try
             {
+                // 新しいTreeNode作成
                 newNode = new TreeNode("新しいしおり")
                 {
+                    // 通常アイコン(桃豚アイコン)
                     ImageIndex = 0,
+                    // 選択時アイコン(白豚アイコン)
                     SelectedImageIndex = 1
                 };
 
                 // 現在の表示ページを取得
                 int currentPage = 1;
-
+                // PDF開いてる？
                 if (pdfViewer1.Document != null)
                 {
+                    // 現在表示ページ取得(ゼロ始まりなので +1 する)
                     currentPage = pdfViewer1.Renderer.Page + 1;
                 }
-
+                // BookmarkInfo初期化開始
                 newNode.Tag = new BookmarkInfo
                 {
                     // しおり名
@@ -2268,44 +2278,46 @@ namespace MyPDF
                 // 選択ノードがあるか？
                 if (treeView1.SelectedNode != null)
                 {
-                    // 兄弟(同レベル)として追加
+                    // 現在選択ノード取得
                     TreeNode selected = treeView1.SelectedNode;
-
+                    // 親ノード取得
                     TreeNode? parent = selected.Parent;
-
-                    TreeNodeCollection nodes =
-                        parent == null ? treeView1.Nodes : parent.Nodes;
-
-                    // 下に追加
+                    // 追加先ノード一覧決定 親なし → ルート 親あり → 親の子一覧
+                    TreeNodeCollection nodes = parent == null ? treeView1.Nodes : parent.Nodes;
+                    // 下に追加(選択ノードの次位置)
                     int index = selected.Index + 1;
-
+                    // 選択ノードの直下へ挿入
                     nodes.Insert(index, newNode);
-
                 }
                 else
                 {
-                    // ルートに追加
+                    // 選択ノードが無い場合はルートに追加
                     treeView1.Nodes.Add(newNode);
                 }
 
                 // 追加したノードを選択
                 treeView1.SelectedNode = newNode;
+                // 自動スクロール
                 newNode.EnsureVisible();
+                // TreeViewへフォーカス戻す
                 treeView1.Focus();
 
                 // 未保存フラグON
                 isDirty = true;
 
             }
-            finally
+            finally // エラーでも必ず実行
             {
+                // TreeView再描画再開
                 treeView1.EndUpdate();
 
                 // 作成すると何故かノードの一番上で編集状態になるので苦肉の策(ちょっと遅らせる)
                 BeginInvoke(new Action(() =>
                 {
+                    // もう一回遅らせる
                     BeginInvoke(new Action(() =>
                     {
+                        // TreeView再描画
                         treeView1.Refresh();
                         // そのまま名前編集
                         newNode?.BeginEdit();
@@ -2314,9 +2326,7 @@ namespace MyPDF
                     // 右クリックメニュー更新
                     UpdateContextMenuState();
                 }));
-
             }
-
         }
 
         // ==============================
@@ -2325,19 +2335,20 @@ namespace MyPDF
         // ==============================
         private void treeView1_MouseDown(object sender, MouseEventArgs e)
         {
+            // しおりを右クリック？
             if (e.Button == MouseButtons.Right)
             {
+                // 右クリックで選択中フラグ」をON
                 isRightClickSelecting = true;
-
+                // マウス位置にあるノード(しおり)取得
                 var node = treeView1.GetNodeAt(e.X, e.Y);
-
+                // ノード(しおり)上をクリックした？
                 if (node != null)
                 {
                     // 右クリックでも選択状態に
                     treeView1.SelectedNode = node;
                 }
             }
-
         }
 
         // ==============================
@@ -2346,26 +2357,29 @@ namespace MyPDF
         // ==============================
         private void treeView1_MouseUp(object sender, MouseEventArgs e)
         {
+            // しおりを右クリック？
             if (e.Button == MouseButtons.Right)
             {
+                // 右クリックで選択中フラグ」をOFF
                 isRightClickSelecting = false;
             }
         }
-
 
         // ==============================
         // 右クリックメニューの「しおり削除」を押したとき
         // ==============================
         private void DelShioriToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            // 選択ノードが無ければ戻る
             if (treeView1.SelectedNode == null) return;
-
+            // 現在選択されているしおり取得
             var node = treeView1.SelectedNode;
 
             if (MessageBox.Show($"「{node.Text}」を削除しますか？" + Environment.NewLine + "配下のしおりも削除されます。",
                 "しおり削除", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1) == DialogResult.No)
+                // Noなら中止
                 return;
-
+            // 選択しおり削除
             treeView1.SelectedNode.Remove();
 
             // 右クリックメニュー更新
@@ -2373,7 +2387,6 @@ namespace MyPDF
 
             // 未保存フラグON
             isDirty = true;
-
         }
 
 
@@ -2580,7 +2593,6 @@ namespace MyPDF
 
         }
 
-
         // ==============================
         // ツリービューのしおり ドラッグ中にマウスがツリービューから離れたらイベント発生
         // ==============================
@@ -2641,7 +2653,97 @@ namespace MyPDF
                     );
             }
 
-            // + - ボタン描画
+            // --- ツリー線描画 ----------------
+            // 線色(選択状態は白、未選択はピンク)
+            DrawingColor lineColor =
+                isSelected
+                ? DrawingColor.White
+                : DrawingColor.Pink;
+
+            using (Pen linePen = new Pen(lineColor))
+            {
+                // 使える線種
+                // DashStyle.Solid       実線
+                // DashStyle.Dot         点線 ← Explorer風
+                // DashStyle.Dash        長い破線
+                // DashStyle.DashDot     一点鎖線
+                // DashStyle.DashDotDot  二点鎖線
+                //linePen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
+                linePen.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
+
+                // 線幅
+                linePen.Width = 2;
+
+                // 線を線幅の真ん中に書く
+                linePen.Alignment = System.Drawing.Drawing2D.PenAlignment.Center;
+
+                int midY = e.Bounds.Top + treeView1.ItemHeight / 2;
+
+                // +ボックス中央X
+                int glyphX = e.Bounds.X - 25;
+
+                // 横線（+からアイコン方向）
+                // ルート以外だけ横線
+                if (e.Node.Level > 0)
+                {
+                    g.DrawLine(
+                    linePen,
+                    glyphX + 5,
+                    midY,
+                    glyphX + 20,
+                    midY
+                    );
+                }
+
+                // 縦線（自ノード）
+                // 末っ子なら中央まで
+                int bottomY;
+
+                if (e.Node.NextNode == null)
+                {
+                    // └
+                    bottomY = midY;
+                }
+                else
+                {
+                    // ├
+                    bottomY = e.Bounds.Bottom;
+                }
+
+                g.DrawLine(
+                    linePen,
+                    glyphX + 5,
+                    e.Bounds.Top,
+                    glyphX + 5,
+                    bottomY
+                );
+
+                // 親階層の縦線
+                TreeNode? parent = e.Node.Parent;
+
+                int parentX = glyphX - 20;
+
+                while (parent != null)
+                {
+                    // 親階層のXを計算
+                    int x = (e.Bounds.X - 25) - ((e.Node.Level - parent.Level) * 16);
+
+                    // 次兄弟があるなら縦線継続
+                    if (parent.NextNode != null)
+                    {
+                        g.DrawLine(
+                            linePen,
+                            x + 5,
+                            e.Bounds.Top,
+                            x + 5,
+                            e.Bounds.Bottom
+                        );
+                    }
+                    parent = parent.Parent;
+                }
+            }
+
+            // ---  + - ボタン描画  --------------------------
             if (e.Node.Nodes.Count > 0)
             {
                 // 四角領域を作成
@@ -2851,17 +2953,13 @@ namespace MyPDF
         {
             // 全選択
             NewPagetoolStripTextBox.SelectAll();
-
         }
 
         private void NewPagetoolStripTextBox_Click(object sender, EventArgs e)
         {
             // 全選択
             NewPagetoolStripTextBox.SelectAll();
-
         }
-
-
 
         // ==============================
         // 表示されているページをしおりにセット
@@ -2889,8 +2987,6 @@ namespace MyPDF
             //treeView1.SelectedNode.Text = $"{treeView1.SelectedNode.Text.Split('(')[0].Trim()} ({currentPage})";
         }
 
-
-
         // ==============================
         // 終了を押したとき
         // ==============================
@@ -2898,7 +2994,6 @@ namespace MyPDF
         {
             // 現在のフォームを閉じる
             this.Close();
-
         }
 
         // ==============================
@@ -2906,18 +3001,14 @@ namespace MyPDF
         // ==============================
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-
             // 未保存チェック
             if (!ConfirmDiscard())
             {
                 e.Cancel = true;
                 return;
             }
-
             // 作業用ファイルを破棄(前回PDFの tempファイル削除)
             CleanupWorkingFile();
-
-
         }
 
         // ==============================
@@ -3009,7 +3100,6 @@ namespace MyPDF
         {
             // 全てのしおりを展開
             treeView1.ExpandAll();
-
         }
 
         // ==============================
@@ -3019,7 +3109,6 @@ namespace MyPDF
         {
             // 全てのしおりを縮小
             treeView1.CollapseAll();
-
         }
 
         // ==============================
@@ -3032,7 +3121,6 @@ namespace MyPDF
             var node = treeView1.SelectedNode;
             // 選択中のしおり以下を展開
             node.ExpandAll();
-
         }
 
         // ==============================
@@ -3385,42 +3473,52 @@ namespace MyPDF
 
         // ==============================
         // しおり(ツリービュー)構築
+        // CSVから読み込んだ「しおり一覧」を使って、TreeViewに階層構造を作るメソッド
         // ==============================
         private void BuildTreeFromCsv(List<CsvBookmark> list)
         {
+            // 親子関係を管理するためにStack（スタック）を作成
+            // スタックは、後入れ先出し（LIFO）の入れ物
             Stack<TreeNode> stack = new Stack<TreeNode>();
 
+            // CSVのしおりを1件ずつ処理
             foreach (var item in list)
             {
+                // TreeView用ノード作成 表示文字列はCSVのタイトル
                 TreeNode node = new TreeNode(item.Title);
 
                 // しおりクラスに入れる
                 node.Tag = new BookmarkInfo
                 {
-                    BmTitle = item.Title,
-                    Page = item.Page,
-                    IsOpen = true,
-                    SelectedColor = item.Color,
-                    SelectedStyle = item.Style
+                    BmTitle = item.Title, // しおり名
+                    Page = item.Page, // ページ番号
+                    IsOpen = true, // 展開
+                    SelectedColor = item.Color, // 文字色
+                    SelectedStyle = item.Style // スタイル
                 };
 
-                // 見た目
+                // 色をUIに適用
                 node.ForeColor = item.Color;
+                // スタイルをUIに適用
                 node.NodeFont = new Font(treeView1.Font, item.Style);
-
+                // CSVの階層レベル取得
                 int level = item.Level;
 
                 while (stack.Count > level)
+                    // 現在の階層まで戻す
                     stack.Pop();
 
+                // ルート(親)か子か判定
                 if (stack.Count == 0)
+                    // ルートノードとして追加
                     treeView1.Nodes.Add(node);
                 else
+                    // 親あり stackの一番上を親として追加
                     stack.Peek().Nodes.Add(node);
-
+                // 今追加したノードをstackへ積む 次の子要素の親候補になる
                 stack.Push(node);
             }
-
+            // 全しおりを展開表示
             treeView1.ExpandAll();
         }
 
@@ -4019,103 +4117,118 @@ namespace MyPDF
 
             try
             {
-                // 保存ダイアログ
-                using (SaveFileDialog sfd = new SaveFileDialog())
+                // 保存パス用
+                string savePath = "";
+
+                while (true)
                 {
-                    string baseName = IOPath.GetFileNameWithoutExtension(originalPath);
-                    sfd.Title = "抽出PDFを保存";
-                    sfd.Filter = "PDFファイル (*.pdf)|*.pdf";
-                    sfd.FileName = baseName + "_Extract.pdf";
+                    // 保存ダイアログ
+                    using (SaveFileDialog sfd = new SaveFileDialog())
+                    {
+                        string baseName = IOPath.GetFileNameWithoutExtension(originalPath);
+                        sfd.Title = "抽出PDFを保存";
+                        sfd.Filter = "PDFファイル (*.pdf)|*.pdf";
+                        sfd.FileName = baseName + "_Extract.pdf";
 
-                    if (sfd.ShowDialog() != DialogResult.OK)
-                        return;
+                        // 前回入力したパスを保持
+                        if (!string.IsNullOrEmpty(savePath))
+                        {
+                            sfd.FileName = IOPath.GetFileName(savePath);
+                            sfd.InitialDirectory = IOPath.GetDirectoryName(savePath);
+                        }
 
-                    string savePath = sfd.FileName;
+                        // キャンセル
+                        if (sfd.ShowDialog() != DialogResult.OK)
+                            return;
+
+                        savePath = sfd.FileName;
+                    }
 
                     // 保存できるかチェック(他のアプリで開いてる？)
                     try
                     {
-                        // 誰とも共有せず読み書きで開こうとする Acrobatなどで開かれていると失敗する
-                        using (var test = new FileStream(savePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+                        // 既に存在する場合だけチェック
+                        if (File.Exists(savePath))
                         {
-                            // 開けるか確認だけなんで、何もしない
+                            // 誰とも共有せず読み書きで開こうとする Acrobatなどで開かれていると失敗する
+                            using (var test = new FileStream(savePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+                            {
+                                // 開けるか確認だけなんで、何もしない
+                            }
                         }
+                        // チェックOK
+                        break;
                     }
                     // ロックされているとここへ
                     catch (IOException)
                     {
                         MessageBox.Show(
                             "PDFファイルが他のアプリで開かれています。" + Environment.NewLine +
-                            "閉じてから抽出をやり直してください。",
+                            "ファイル名を変更してください。",
                             "抽出ファイル保存失敗",
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Warning
                         );
-
-                        return;
+                        // SaveFileDialogへ戻る
+                        continue;
                     }
+                }
 
-                    // 読み込みパスワード（今開いてる状態を使う）
-                    ReaderProperties props = string.IsNullOrEmpty(currentPassword)
-                        ? new ReaderProperties()
-                        : new ReaderProperties().SetPassword(Encoding.UTF8.GetBytes(currentPassword));
+                // 読み込みパスワード（今開いてる状態を使う）
+                ReaderProperties props = string.IsNullOrEmpty(currentPassword)
+                    ? new ReaderProperties()
+                    : new ReaderProperties().SetPassword(Encoding.UTF8.GetBytes(currentPassword));
 
-                    using (var reader = new PdfReader(workingPath, props))
-                    using (var srcPdf = new ITextDoc(reader))
-                    using (var writer = new PdfWriter(savePath))
-                    using (var destPdf = new ITextDoc(writer))
+                using (var reader = new PdfReader(workingPath, props))
+                using (var srcPdf = new ITextDoc(reader))
+                using (var writer = new PdfWriter(savePath))
+                using (var destPdf = new ITextDoc(writer))
+                {
+                    int total = srcPdf.GetNumberOfPages();
+
+                    // 構文チェック(PageRangeHelper.csを呼ぶ)して格納
+                    var pages = PageRangeHelper.ParsePageRanges(pageText, total);
+
+                    // ページコピー
+                    foreach (int p in pages)
                     {
-                        int total = srcPdf.GetNumberOfPages();
-
-                        // 構文チェック(PageRangeHelper.csを呼ぶ)して格納
-                        var pages = PageRangeHelper.ParsePageRanges(pageText, total);
-
-                        // ページコピー
-                        foreach (int p in pages)
-                        {
-                            srcPdf.CopyPagesTo(p, p, destPdf);
-                        }
-
-                        // しおり複製用Tree作成
-                        TreeView tempTree = CloneTreeView(treeView1);
-
-                        // しおり抽出
-                        //AdjustBookmarksForExtract(startPage, endPage);
-                        AdjustBookmarksForExtract(tempTree.Nodes, pages);
-
-                        // PDFへしおり追加
-                        var destOutlines = destPdf.GetOutlines(true);
-
-                        foreach (TreeNode node in tempTree.Nodes)
-                        {
-                            AddOutlineFromNode(destPdf, destOutlines, node);
-                        }
-
+                        srcPdf.CopyPagesTo(p, p, destPdf);
                     }
+                    // しおり複製用Tree作成
+                    TreeView tempTree = CloneTreeView(treeView1);
 
-                    //MessageBox.Show("抽出完了", "抽出確認", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    // しおり抽出
+                    //AdjustBookmarksForExtract(startPage, endPage);
+                    AdjustBookmarksForExtract(tempTree.Nodes, pages);
 
-                    if (MessageBox.Show("抽出したPDFを既定のPDFアプリで開きますか？", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
+                    // PDFへしおり追加
+                    var destOutlines = destPdf.GetOutlines(true);
+                    foreach (TreeNode node in tempTree.Nodes)
                     {
-                        try
+                        AddOutlineFromNode(destPdf, destOutlines, node);
+                    }
+                }
+
+                //MessageBox.Show("抽出完了", "抽出確認", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                if (MessageBox.Show("抽出したPDFを既定のPDFアプリで開きますか？", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
+                {
+                    try
+                    {
+                        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
                         {
-                            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
-                            {
-                                FileName = savePath,
-                                UseShellExecute = true
-                            });
-                        }
-                        catch (Exception ex)
-                        {
+                            FileName = savePath,
+                            UseShellExecute = true
+                        });
+                    }
+                    catch (Exception ex)
+                    {
 #if DEBUG
-                            Extxt.Text = ex.Message;
-                            MessageBox.Show("外部アプリで開けませんでした。\n" + ex.Message, "外部アプリオープンエラー", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        Extxt.Text = ex.Message;
+                        MessageBox.Show("外部アプリで開けませんでした。\n" + ex.Message, "外部アプリオープンエラー", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 #else
-                            MessageBox.Show("外部アプリで開けませんでした。", "外部アプリオープン失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                            System.Diagnostics.Debug.WriteLine(ex.ToString());
+                        MessageBox.Show("外部アプリで開けませんでした。", "外部アプリオープン失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        System.Diagnostics.Debug.WriteLine(ex.ToString());
 #endif
-                        }
-
                     }
                 }
             }
@@ -5556,7 +5669,9 @@ namespace MyPDF
 
                                     TreeNode newNode = new TreeNode(bookmarkName)
                                     {
+                                        // 通常アイコン(桃豚アイコン)
                                         ImageIndex = 0,
+                                        // 選択時アイコン(白豚アイコン)
                                         SelectedImageIndex = 1
                                     };
 
