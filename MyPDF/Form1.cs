@@ -563,6 +563,15 @@ namespace MyPDF
                 // iTextでしおり取得
                 ShowBookmarks(workingPath, openPassword);
 
+                // しおりの先頭へスクロール
+                if (treeView1.Nodes.Count > 0)
+                {
+                    treeView1.TopNode = treeView1.Nodes[0];
+
+                    // 選択解除したい場合
+                    treeView1.SelectedNode = null;
+                }
+
                 // 右クリックメニュー更新
                 UpdateContextMenuState();
 
@@ -951,6 +960,9 @@ namespace MyPDF
         {
             // ツリービューを初期化
             treeView1.Nodes.Clear();
+            // TreeView描画停止(大量更新中のちらつき防止と再描画負荷低減)
+            treeView1.BeginUpdate();
+            treeView1.SuspendLayout();
             // 選択解除（安全）
             treeView1.SelectedNode = null;
             // ツールチップ消す
@@ -1005,6 +1017,12 @@ namespace MyPDF
                 MessageBox.Show("しおりの取得に失敗しました。", "しおり取得失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 System.Diagnostics.Debug.WriteLine(ex.ToString());
 #endif
+            }
+            finally // エラーでも必ず実行
+            {
+                // TreeView再描画再開
+                treeView1.ResumeLayout();
+                treeView1.EndUpdate();
             }
         }
 
@@ -2240,6 +2258,8 @@ namespace MyPDF
             TreeNode? newNode = null;
             // TreeView描画停止(大量更新中のちらつき防止と再描画負荷低減)
             treeView1.BeginUpdate();
+            treeView1.SuspendLayout();
+
 
             try
             {
@@ -2309,6 +2329,7 @@ namespace MyPDF
             finally // エラーでも必ず実行
             {
                 // TreeView再描画再開
+                treeView1.ResumeLayout();
                 treeView1.EndUpdate();
 
                 // 作成すると何故かノードの一番上で編集状態になるので苦肉の策(ちょっと遅らせる)
@@ -2654,11 +2675,11 @@ namespace MyPDF
             }
 
             // --- ツリー線描画 ----------------
-            // 線色(選択状態は白、未選択はピンク)
+            // 線色(選択状態は白、未選択はデープピンク)
             DrawingColor lineColor =
                 isSelected
                 ? DrawingColor.White
-                : DrawingColor.Pink;
+                : DrawingColor.DeepPink;
 
             using (Pen linePen = new Pen(lineColor))
             {
@@ -2672,7 +2693,7 @@ namespace MyPDF
                 linePen.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
 
                 // 線幅
-                linePen.Width = 2;
+                linePen.Width = 1;
 
                 // 線を線幅の真ん中に書く
                 linePen.Alignment = System.Drawing.Drawing2D.PenAlignment.Center;
