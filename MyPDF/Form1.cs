@@ -340,15 +340,28 @@ namespace MyPDF
             try
             {
                 // ファイル選択ダイアログを作成
-                using (var ofd = new CommonOpenFileDialog())
+                using (OpenFileDialog ofd = new OpenFileDialog())
                 {
-                    // ファイル選択
-                    ofd.IsFolderPicker = false;
                     ofd.Title = "PDFファイルを開く";
                     //PDFだけに制限
-                    ofd.Filters.Add(new CommonFileDialogFilter("PDFファイル", "*.pdf"));
-                    if (ofd.ShowDialog() == CommonFileDialogResult.Ok)
+                    ofd.Filter = "PDFファイル (*.pdf)|*.pdf";
+                    // ダイアログ表示 「開く」ボタンが押されたときだけ中に入る
+                    if (ofd.ShowDialog() == DialogResult.OK)
                     {
+                        /*
+
+                        using (var ofd = new CommonOpenFileDialog())
+                        {
+                            // ファイル選択
+                            ofd.IsFolderPicker = false;
+                            ofd.Title = "PDFファイルを開く";
+                            //PDFだけに制限
+                            ofd.Filters.Add(new CommonFileDialogFilter("PDFファイル", "*.pdf"));
+                            if (ofd.ShowDialog() == CommonFileDialogResult.Ok)
+                            {
+
+
+                        */
                         try
                         {
                             // 作業用ファイルを破棄(前回PDFの tempファイル削除)
@@ -1427,17 +1440,32 @@ namespace MyPDF
             // PDFのパスが空ならやめる
             if (string.IsNullOrEmpty(originalPath)) return;
             // 保存ダイアログを表示
-            using (var sfd = new CommonSaveFileDialog())
+            using (SaveFileDialog sfd = new SaveFileDialog())
             {
                 // 今開いているファイル名を取得
                 string baseName = IOPath.GetFileNameWithoutExtension(originalPath);
                 sfd.Title = "名前を付けてPDFファイルを保存";
-                //PDFだけに制限
-                sfd.Filters.Add(new CommonFileDialogFilter("PDFファイル", "*.pdf"));
-                // 今開いているファイル名の後に _new.pdf を付ける
-                sfd.DefaultFileName = baseName + "_new.pdf"; 
-                if (sfd.ShowDialog() == CommonFileDialogResult.Ok)
+                sfd.Filter = "PDFファイル (*.pdf)|*.pdf";
+                sfd.FileName = baseName + "_new.pdf"; // 今開いているファイル名の後に _new.pdf を付ける
+
+                if (sfd.ShowDialog() == DialogResult.OK)
                 {
+                    /*
+
+                    using (var sfd = new CommonSaveFileDialog())
+                    {
+                        // 今開いているファイル名を取得
+                        string baseName = IOPath.GetFileNameWithoutExtension(originalPath);
+                        sfd.Title = "名前を付けてPDFファイルを保存";
+                        //PDFだけに制限
+                        sfd.Filters.Add(new CommonFileDialogFilter("PDFファイル", "*.pdf"));
+                        // 今開いているファイル名の後に _new.pdf を付ける
+                        sfd.DefaultFileName = baseName + "_new.pdf"; 
+                        if (sfd.ShowDialog() == CommonFileDialogResult.Ok)
+                        {
+
+                    */
+
                     // OK 押したら 保存処理へ PDFのパスを渡す
                     SavePdf(sfd.FileName);
                 }
@@ -2127,6 +2155,9 @@ namespace MyPDF
             PageDeleteSetting.Enabled = false;
             // 回転
             RotatePagesSetting.Enabled = false;
+            // 画像変換
+            Pdf2Image.Enabled = false;
+
 
             // 全てのしおりを展開
             AllShioriTenkaiToolStripMenuItem.Enabled = false;
@@ -3467,15 +3498,25 @@ namespace MyPDF
         // ==============================
         private void ImportShioriToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (var ofd = new CommonOpenFileDialog())
+            using (OpenFileDialog ofd = new OpenFileDialog())
             {
-                // ファイル選択
-                ofd.IsFolderPicker = false;
                 ofd.Title = "しおりファイル(CSV)をインポート";
-                //CSVだけに制限
-                ofd.Filters.Add(new CommonFileDialogFilter("CSVファイル", "*.csv"));
-                if (ofd.ShowDialog() != CommonFileDialogResult.Ok)
+                ofd.Filter = "CSVファイル (*.csv)|*.csv";
+
+                if (ofd.ShowDialog() != DialogResult.OK)
                     return;
+
+                /*
+                using (var ofd = new CommonOpenFileDialog())
+                {
+                    // ファイル選択
+                    ofd.IsFolderPicker = false;
+                    ofd.Title = "しおりファイル(CSV)をインポート";
+                    //CSVだけに制限
+                    ofd.Filters.Add(new CommonFileDialogFilter("CSVファイル", "*.csv"));
+                    if (ofd.ShowDialog() != CommonFileDialogResult.Ok)
+                        return;
+                */
 
                 try
                 {
@@ -3628,15 +3669,27 @@ namespace MyPDF
                 return;
             }
 
-            using (var sfd = new CommonSaveFileDialog())
+            using (SaveFileDialog sfd = new SaveFileDialog())
             {
                 sfd.Title = "しおりをCSV形式でエクスポート";
-                //CSVだけに制限
-                sfd.Filters.Add(new CommonFileDialogFilter("CSVファイル", "*.csv"));
-                // 今開いているファイル名の後に _new.pdf を付ける
-                sfd.DefaultFileName = "shiori.csv";
-                if (sfd.ShowDialog() != CommonFileDialogResult.Ok)
+                sfd.Filter = "CSVファイル (*.csv)|*.csv";
+                sfd.FileName = "shiori.csv";
+
+                if (sfd.ShowDialog() != DialogResult.OK)
                     return;
+
+                /*
+                using (var sfd = new CommonSaveFileDialog())
+                {
+                    sfd.Title = "しおりをCSV形式でエクスポート";
+                    //CSVだけに制限
+                    sfd.Filters.Add(new CommonFileDialogFilter("CSVファイル", "*.csv"));
+                    // 今開いているファイル名の後に _new.pdf を付ける
+                    sfd.DefaultFileName = "shiori.csv";
+                    if (sfd.ShowDialog() != CommonFileDialogResult.Ok)
+                        return;
+
+                */
 
                 try
                 {
@@ -4205,25 +4258,50 @@ namespace MyPDF
                 while (true)
                 {
                     // 保存ダイアログ
-                    using (var sfd = new CommonSaveFileDialog())
+                    using (SaveFileDialog sfd = new SaveFileDialog())
                     {
-                        // 今開いているファイル名を取得
                         string baseName = IOPath.GetFileNameWithoutExtension(originalPath);
                         sfd.Title = "抽出PDFを保存";
-                        //PDFだけに制限
-                        sfd.Filters.Add(new CommonFileDialogFilter("PDFファイル", "*.pdf"));
-                        // 今開いているファイル名の後に _Extract.pdf" を付ける
-                        sfd.DefaultFileName = baseName + "_Extract.pdf";
+                        sfd.Filter = "PDFファイル (*.pdf)|*.pdf";
+                        sfd.FileName = baseName + "_Extract.pdf";
+
                         // 前回入力したパスを保持
                         if (!string.IsNullOrEmpty(savePath))
                         {
-                            sfd.DefaultFileName = IOPath.GetFileName(savePath);
+                            sfd.FileName = IOPath.GetFileName(savePath);
                             sfd.InitialDirectory = IOPath.GetDirectoryName(savePath);
                         }
 
                         // キャンセル
+                        if (sfd.ShowDialog() != DialogResult.OK)
+                            return;
+
+                        /*
+
+                        using (var sfd = new CommonSaveFileDialog())
+                        {
+                            // 今開いているファイル名を取得
+                            string baseName = IOPath.GetFileNameWithoutExtension(originalPath);
+                            sfd.Title = "抽出PDFを保存";
+                            //PDFだけに制限
+                            sfd.Filters.Add(new CommonFileDialogFilter("PDFファイル", "*.pdf"));
+                            // 今開いているファイル名の後に _Extract.pdf" を付ける
+                            sfd.DefaultFileName = baseName + "_Extract.pdf";
+                            // 前回入力したパスを保持
+                            if (!string.IsNullOrEmpty(savePath))
+                            {
+                                sfd.DefaultFileName = IOPath.GetFileName(savePath);
+                                sfd.InitialDirectory = IOPath.GetDirectoryName(savePath);
+                            }
+
+
+
+                        // キャンセル
                         if (sfd.ShowDialog() != CommonFileDialogResult.Ok)
                             return;
+
+                        */
+
 
                         savePath = sfd.FileName;
                     }
@@ -4491,18 +4569,32 @@ namespace MyPDF
             try
             {
                 // ファイル選択ダイアログ作成
-                using (var ofd = new CommonOpenFileDialog())
+                using (OpenFileDialog ofd = new OpenFileDialog())
                 {
                     // 表示しているページを取得
                     int nowPage = pdfViewer1.Renderer.Page + 1;
-                    // ファイル選択
-                    ofd.IsFolderPicker = false;
+
                     ofd.Title = "挿入するPDFを選択";
-                    //PDFだけに制限
-                    ofd.Filters.Add(new CommonFileDialogFilter("PDFファイル", "*.pdf"));
+                    ofd.Filter = "PDFファイル (*.pdf)|*.pdf";
                     // ダイアログ表示(キャンセルなら戻る)
-                    if (ofd.ShowDialog() != CommonFileDialogResult.Ok)
+                    if (ofd.ShowDialog() != DialogResult.OK)
                         return;
+
+                    /*
+                    using (var ofd = new CommonOpenFileDialog())
+                    {
+                        // 表示しているページを取得
+                        int nowPage = pdfViewer1.Renderer.Page + 1;
+                        // ファイル選択
+                        ofd.IsFolderPicker = false;
+                        ofd.Title = "挿入するPDFを選択";
+                        //PDFだけに制限
+                        ofd.Filters.Add(new CommonFileDialogFilter("PDFファイル", "*.pdf"));
+                        // ダイアログ表示(キャンセルなら戻る)
+                        if (ofd.ShowDialog() != CommonFileDialogResult.Ok)
+                            return;
+
+                    */
 
                     // 選択されたPDFのフルパス取得
                     string insertPath = ofd.FileName;
@@ -5261,15 +5353,25 @@ namespace MyPDF
 
             try
             {
-                using (var ofd = new CommonOpenFileDialog())
+                using (OpenFileDialog ofd = new OpenFileDialog())
                 {
-                    // ファイル選択
-                    ofd.IsFolderPicker = false;
                     ofd.Title = "置換するPDFを選択";
-                    //PDFだけに制限
-                    ofd.Filters.Add(new CommonFileDialogFilter("PDFファイル", "*.pdf"));
-                    if (ofd.ShowDialog() != CommonFileDialogResult.Ok)
+                    ofd.Filter = "PDFファイル (*.pdf)|*.pdf";
+
+                    if (ofd.ShowDialog() != DialogResult.OK)
                         return;
+                    /*
+                    using (var ofd = new CommonOpenFileDialog())
+                    {
+                        // ファイル選択
+                        ofd.IsFolderPicker = false;
+                        ofd.Title = "置換するPDFを選択";
+                        //PDFだけに制限
+                        ofd.Filters.Add(new CommonFileDialogFilter("PDFファイル", "*.pdf"));
+                        if (ofd.ShowDialog() != CommonFileDialogResult.Ok)
+                            return;
+
+                    */
 
                     string replacementPath = ofd.FileName;
 
@@ -5599,17 +5701,31 @@ namespace MyPDF
             try
             {
                 // ファイル選択ダイアログを作成
-                using (var ofd = new CommonOpenFileDialog())
+                using (OpenFileDialog ofd = new OpenFileDialog())
                 {
-                    // ファイル選択
-                    ofd.IsFolderPicker = false;
                     ofd.Title = "PDFに変換する画像を選択";
-                    //画像だけに制限
-                    ofd.Filters.Add(new CommonFileDialogFilter("画像ファイル", "*.jpg;*.jpeg;*.png;*.bmp;*.tif;*.tiff"));
+                    //画像ファイル
+                    ofd.Filter = "画像ファイル (*.jpg;*.jpeg;*.png;*.bmp;*.tif;*.tiff)|*.jpg;*.jpeg;*.png;*.bmp;*.tif;*.tiff";
                     // 複数選択
                     ofd.Multiselect = true;
-                    if (ofd.ShowDialog() != CommonFileDialogResult.Ok)
+                    // ダイアログ表示(キャンセルなら戻る)
+                    if (ofd.ShowDialog() != DialogResult.OK)
                         return;
+
+                    /*
+                    using (var ofd = new CommonOpenFileDialog())
+                    {
+                        // ファイル選択
+                        ofd.IsFolderPicker = false;
+                        ofd.Title = "PDFに変換する画像を選択";
+                        //画像だけに制限
+                        ofd.Filters.Add(new CommonFileDialogFilter("画像ファイル", "*.jpg;*.jpeg;*.png;*.bmp;*.tif;*.tiff"));
+                        // 複数選択
+                        ofd.Multiselect = true;
+                        if (ofd.ShowDialog() != CommonFileDialogResult.Ok)
+                            return;
+
+                    */
 
                     // 画像PDFのサイズ設定
                     // Form13起動
@@ -5628,18 +5744,35 @@ namespace MyPDF
                     }
 
                     // 保存先選択
-                    using (var sfd = new CommonSaveFileDialog())
+                    using (SaveFileDialog sfd = new SaveFileDialog())
                     {
-                        // 最初の画像を取得
-                        string firstPath = ofd.FileNames.First();
                         sfd.Title = "保存先を選択";
-                        //PDFだけに制限
-                        sfd.Filters.Add(new CommonFileDialogFilter("PDFファイル", "*.pdf"));
+                        sfd.Filter = "PDFファイル (*.pdf)|*.pdf";
+                        //sfd.FileName = "NewPDF.pdf";
                         // 最初の画像をベースにファイル名を設定
-                        string firstName = IOPath.GetFileNameWithoutExtension(firstPath);
-                        sfd.DefaultFileName = firstName + ".pdf";
-                        if (sfd.ShowDialog() != CommonFileDialogResult.Ok)
+                        string firstName = IOPath.GetFileNameWithoutExtension(ofd.FileNames[0]);
+                        sfd.FileName = firstName + ".pdf";
+
+                        // 保存ダイアログ(キャンセルなら戻る)
+                        if (sfd.ShowDialog() != DialogResult.OK)
                             return;
+                        /*
+
+                        using (var sfd = new CommonSaveFileDialog())
+                        {
+                            // 最初の画像を取得
+                            string firstPath = ofd.FileNames.First();
+                            sfd.Title = "保存先を選択";
+                            //PDFだけに制限
+                            sfd.Filters.Add(new CommonFileDialogFilter("PDFファイル", "*.pdf"));
+                            // 最初の画像をベースにファイル名を設定
+                            string firstName = IOPath.GetFileNameWithoutExtension(firstPath);
+                            sfd.DefaultFileName = firstName + ".pdf";
+                            if (sfd.ShowDialog() != CommonFileDialogResult.Ok)
+                                return;
+
+
+                        */
 
                         // 未保存フラグOFF
                         isDirty = false;
@@ -5920,6 +6053,9 @@ namespace MyPDF
         // ==============================
         private async void Pdf2Image_Click(object sender, EventArgs e)
         {
+
+            /*
+
             // PDFが開かれていないなら処理しない
             if (pdfViewer1.Document == null)
             {
@@ -6030,6 +6166,8 @@ namespace MyPDF
                     }
                 }
             }
+
+            */
         }
 
         // ==============================

@@ -230,7 +230,6 @@
             Pdf2Image.Size = new Size(174, 26);
             Pdf2Image.Text = "画像変換(&G)...";
             Pdf2Image.ToolTipText = "ページを指定して画像に変換します";
-            Pdf2Image.Click += Pdf2Image_Click;
             // 
             // PageEditMenu
             // 
