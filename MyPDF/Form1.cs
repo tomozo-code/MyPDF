@@ -10,13 +10,17 @@ using iText.Layout;
 using iText.Layout.Element;
 using iText.Layout.Font;
 using iText.StyledXmlParser.Jsoup.Nodes;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using Org.BouncyCastle.Asn1.Cms;
 using PdfiumViewer;
 using System.Buffers;
 using System.Diagnostics;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using DrawingColor = System.Drawing.Color;
 using IOPath = System.IO.Path;
 using ITextDoc = iText.Kernel.Pdf.PdfDocument;
@@ -25,7 +29,8 @@ using PdfiTextReader = iText.Kernel.Pdf.PdfReader;
 using PdfiumDoc = PdfiumViewer.PdfDocument;
 using SysImage = System.Drawing.Image;
 using SysRectangle = System.Drawing.Rectangle;
-
+using System.Linq;
+using System.Runtime.InteropServices;
 
 
 // ==============================
@@ -59,6 +64,8 @@ using SysRectangle = System.Drawing.Rectangle;
 // Form11:指定ページの移動
 // Form12:指定ページの置換
 // Form13:画像PDF変換の設定
+// Form14:PDF画像変換の設定
+// Form15:処理中ですを出す
 // ==============================
 
 namespace MyPDF
@@ -121,6 +128,15 @@ namespace MyPDF
         private float PdfMarginLeft = 0;
         private float PdfMarginRight = 0;
 
+        // 画像変換用
+        public enum SaveConflictMode
+        {
+            Ask,
+            Overwrite, // 上書き
+            Rename // 別名
+        }
+        private SaveConflictMode _conflictMode = SaveConflictMode.Ask;
+        private bool _applyToAll = false;
 
         // アプリ名（タイトルバー表示用）
         private string myName = "ともさんのPDF編集帖";
@@ -152,6 +168,7 @@ namespace MyPDF
 
             panel1.Width = 300;
             treeView1.Dock = DockStyle.Fill;
+            treeView1.ShowNodeToolTips = false;
 
             toolStripStatusLabel1.Text = "ファイル: PDF未選択";
             TotalPagetoolStripLabel.Text = "/ 1 ";
@@ -227,6 +244,8 @@ namespace MyPDF
             PageExtractSetting.ShortcutKeys = Keys.Shift | Keys.Control | Keys.X;
             // 指定して削除
             PageDeleteSetting.ShortcutKeys = Keys.Shift | Keys.Control | Keys.D;
+            // PDFを画像に変換
+            Pdf2Image.ShortcutKeys = Keys.Shift | Keys.Control | Keys.G;
 
 
             // 0.1秒ごとにページを監視
@@ -321,15 +340,15 @@ namespace MyPDF
             try
             {
                 // ファイル選択ダイアログを作成
-                using (OpenFileDialog ofd = new OpenFileDialog())
+                using (var ofd = new CommonOpenFileDialog())
                 {
+                    // ファイル選択
+                    ofd.IsFolderPicker = false;
                     ofd.Title = "PDFファイルを開く";
                     //PDFだけに制限
-                    ofd.Filter = "PDFファイル (*.pdf)|*.pdf";
-                    // ダイアログ表示 「開く」ボタンが押されたときだけ中に入る
-                    if (ofd.ShowDialog() == DialogResult.OK)
+                    ofd.Filters.Add(new CommonFileDialogFilter("PDFファイル", "*.pdf"));
+                    if (ofd.ShowDialog() == CommonFileDialogResult.Ok)
                     {
-
                         try
                         {
                             // 作業用ファイルを破棄(前回PDFの tempファイル削除)
@@ -1408,15 +1427,16 @@ namespace MyPDF
             // PDFのパスが空ならやめる
             if (string.IsNullOrEmpty(originalPath)) return;
             // 保存ダイアログを表示
-            using (SaveFileDialog sfd = new SaveFileDialog())
+            using (var sfd = new CommonSaveFileDialog())
             {
                 // 今開いているファイル名を取得
                 string baseName = IOPath.GetFileNameWithoutExtension(originalPath);
                 sfd.Title = "名前を付けてPDFファイルを保存";
-                sfd.Filter = "PDFファイル (*.pdf)|*.pdf";
-                sfd.FileName = baseName + "_new.pdf"; // 今開いているファイル名の後に _new.pdf を付ける
-
-                if (sfd.ShowDialog() == DialogResult.OK)
+                //PDFだけに制限
+                sfd.Filters.Add(new CommonFileDialogFilter("PDFファイル", "*.pdf"));
+                // 今開いているファイル名の後に _new.pdf を付ける
+                sfd.DefaultFileName = baseName + "_new.pdf"; 
+                if (sfd.ShowDialog() == CommonFileDialogResult.Ok)
                 {
                     // OK 押したら 保存処理へ PDFのパスを渡す
                     SavePdf(sfd.FileName);
@@ -2172,10 +2192,12 @@ namespace MyPDF
                 ReplacementMenu.Enabled = false;
                 // 抽出
                 PageExtractSetting.Enabled = false;
-                // ページ削除
+                // 削除
                 PageDeleteSetting.Enabled = false;
                 // 回転
                 RotatePagesSetting.Enabled = false;
+                // 画像変換
+                Pdf2Image.Enabled = false;
 
             }
             else
@@ -2215,7 +2237,7 @@ namespace MyPDF
                 ReplacementMenu.Enabled = true;
                 // 抽出
                 PageExtractSetting.Enabled = true;
-                // ページ削除
+                // 削除
                 if (pageCount <= 1)
                 {
                     PageDeleteSetting.Enabled = false;
@@ -2227,6 +2249,9 @@ namespace MyPDF
                 }
                 // 回転
                 RotatePagesSetting.Enabled = true;
+                // 画像変換
+                Pdf2Image.Enabled = true;
+
 
             }
 
@@ -3437,18 +3462,19 @@ namespace MyPDF
             return "標準";
         }
 
-
         // ==============================
         // しおりインポート
         // ==============================
         private void ImportShioriToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (OpenFileDialog ofd = new OpenFileDialog())
+            using (var ofd = new CommonOpenFileDialog())
             {
+                // ファイル選択
+                ofd.IsFolderPicker = false;
                 ofd.Title = "しおりファイル(CSV)をインポート";
-                ofd.Filter = "CSVファイル (*.csv)|*.csv";
-
-                if (ofd.ShowDialog() != DialogResult.OK)
+                //CSVだけに制限
+                ofd.Filters.Add(new CommonFileDialogFilter("CSVファイル", "*.csv"));
+                if (ofd.ShowDialog() != CommonFileDialogResult.Ok)
                     return;
 
                 try
@@ -3602,13 +3628,14 @@ namespace MyPDF
                 return;
             }
 
-            using (SaveFileDialog sfd = new SaveFileDialog())
+            using (var sfd = new CommonSaveFileDialog())
             {
                 sfd.Title = "しおりをCSV形式でエクスポート";
-                sfd.Filter = "CSVファイル (*.csv)|*.csv";
-                sfd.FileName = "shiori.csv";
-
-                if (sfd.ShowDialog() != DialogResult.OK)
+                //CSVだけに制限
+                sfd.Filters.Add(new CommonFileDialogFilter("CSVファイル", "*.csv"));
+                // 今開いているファイル名の後に _new.pdf を付ける
+                sfd.DefaultFileName = "shiori.csv";
+                if (sfd.ShowDialog() != CommonFileDialogResult.Ok)
                     return;
 
                 try
@@ -3832,9 +3859,17 @@ namespace MyPDF
         // ==============================
         private void RotatePagesSetting_Click(object sender, EventArgs e)
         {
-            if (currentSettings == null)
+            // PDFが開かれていないなら処理しない
+            if (pdfViewer1.Document == null)
             {
                 MessageBox.Show("PDFが開かれていません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // PDF設定情報が存在するか確認
+            if (currentSettings == null)
+            {
+                MessageBox.Show("PDF設定情報の取得に失敗しました。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -4041,10 +4076,17 @@ namespace MyPDF
         // ==============================
         private void PageDeleteSetting_Click(object sender, EventArgs e)
         {
-
-            if (currentSettings == null)
+            // PDFが開かれていないなら処理しない
+            if (pdfViewer1.Document == null)
             {
                 MessageBox.Show("PDFが開かれていません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // PDF設定情報が存在するか確認
+            if (currentSettings == null)
+            {
+                MessageBox.Show("PDF設定情報の取得に失敗しました。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -4163,22 +4205,24 @@ namespace MyPDF
                 while (true)
                 {
                     // 保存ダイアログ
-                    using (SaveFileDialog sfd = new SaveFileDialog())
+                    using (var sfd = new CommonSaveFileDialog())
                     {
+                        // 今開いているファイル名を取得
                         string baseName = IOPath.GetFileNameWithoutExtension(originalPath);
                         sfd.Title = "抽出PDFを保存";
-                        sfd.Filter = "PDFファイル (*.pdf)|*.pdf";
-                        sfd.FileName = baseName + "_Extract.pdf";
-
+                        //PDFだけに制限
+                        sfd.Filters.Add(new CommonFileDialogFilter("PDFファイル", "*.pdf"));
+                        // 今開いているファイル名の後に _Extract.pdf" を付ける
+                        sfd.DefaultFileName = baseName + "_Extract.pdf";
                         // 前回入力したパスを保持
                         if (!string.IsNullOrEmpty(savePath))
                         {
-                            sfd.FileName = IOPath.GetFileName(savePath);
+                            sfd.DefaultFileName = IOPath.GetFileName(savePath);
                             sfd.InitialDirectory = IOPath.GetDirectoryName(savePath);
                         }
 
                         // キャンセル
-                        if (sfd.ShowDialog() != DialogResult.OK)
+                        if (sfd.ShowDialog() != CommonFileDialogResult.Ok)
                             return;
 
                         savePath = sfd.FileName;
@@ -4397,9 +4441,17 @@ namespace MyPDF
         // ==============================
         private void PageExtractSetting_Click(object sender, EventArgs e)
         {
-            if (currentSettings == null)
+            // PDFが開かれていないなら処理しない
+            if (pdfViewer1.Document == null)
             {
                 MessageBox.Show("PDFが開かれていません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // PDF設定情報が存在するか確認
+            if (currentSettings == null)
+            {
+                MessageBox.Show("PDF設定情報の取得に失敗しました。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -4423,28 +4475,35 @@ namespace MyPDF
         private void PageInsert_Click(object sender, EventArgs e)
         {
             // PDFが開かれていないなら処理しない
-            if (pdfViewer1.Document == null) return;
+            if (pdfViewer1.Document == null)
+            {
+                MessageBox.Show("PDFが開かれていません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             // PDF設定情報が存在するか確認
             if (currentSettings == null)
             {
-                // ない
-                MessageBox.Show("PDFが開かれていません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("PDF設定情報の取得に失敗しました。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             try
             {
                 // ファイル選択ダイアログ作成
-                using (OpenFileDialog ofd = new OpenFileDialog())
+                using (var ofd = new CommonOpenFileDialog())
                 {
                     // 表示しているページを取得
                     int nowPage = pdfViewer1.Renderer.Page + 1;
-
+                    // ファイル選択
+                    ofd.IsFolderPicker = false;
                     ofd.Title = "挿入するPDFを選択";
-                    ofd.Filter = "PDFファイル (*.pdf)|*.pdf";
+                    //PDFだけに制限
+                    ofd.Filters.Add(new CommonFileDialogFilter("PDFファイル", "*.pdf"));
                     // ダイアログ表示(キャンセルなら戻る)
-                    if (ofd.ShowDialog() != DialogResult.OK)
+                    if (ofd.ShowDialog() != CommonFileDialogResult.Ok)
                         return;
+
                     // 選択されたPDFのフルパス取得
                     string insertPath = ofd.FileName;
 
@@ -5007,9 +5066,17 @@ namespace MyPDF
         // ==============================
         private void PageMove_Click(object sender, EventArgs e)
         {
-            if (currentSettings == null)
+            // PDFが開かれていないなら処理しない
+            if (pdfViewer1.Document == null)
             {
                 MessageBox.Show("PDFが開かれていません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // PDF設定情報が存在するか確認
+            if (currentSettings == null)
+            {
+                MessageBox.Show("PDF設定情報の取得に失敗しました。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -5178,22 +5245,30 @@ namespace MyPDF
         // ==============================
         private void ReplacementMenu_Click(object sender, EventArgs e)
         {
-            if (pdfViewer1.Document == null) return;
-
-            if (currentSettings == null)
+            // PDFが開かれていないなら処理しない
+            if (pdfViewer1.Document == null)
             {
                 MessageBox.Show("PDFが開かれていません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
+            // PDF設定情報が存在するか確認
+            if (currentSettings == null)
+            {
+                MessageBox.Show("PDF設定情報の取得に失敗しました。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             try
             {
-                using (OpenFileDialog ofd = new OpenFileDialog())
+                using (var ofd = new CommonOpenFileDialog())
                 {
+                    // ファイル選択
+                    ofd.IsFolderPicker = false;
                     ofd.Title = "置換するPDFを選択";
-                    ofd.Filter = "PDFファイル (*.pdf)|*.pdf";
-
-                    if (ofd.ShowDialog() != DialogResult.OK)
+                    //PDFだけに制限
+                    ofd.Filters.Add(new CommonFileDialogFilter("PDFファイル", "*.pdf"));
+                    if (ofd.ShowDialog() != CommonFileDialogResult.Ok)
                         return;
 
                     string replacementPath = ofd.FileName;
@@ -5524,15 +5599,16 @@ namespace MyPDF
             try
             {
                 // ファイル選択ダイアログを作成
-                using (OpenFileDialog ofd = new OpenFileDialog())
+                using (var ofd = new CommonOpenFileDialog())
                 {
+                    // ファイル選択
+                    ofd.IsFolderPicker = false;
                     ofd.Title = "PDFに変換する画像を選択";
-                    //画像ファイル
-                    ofd.Filter = "画像ファイル (*.jpg;*.jpeg;*.png;*.bmp;*.tif;*.tiff)|*.jpg;*.jpeg;*.png;*.bmp;*.tif;*.tiff";
+                    //画像だけに制限
+                    ofd.Filters.Add(new CommonFileDialogFilter("画像ファイル", "*.jpg;*.jpeg;*.png;*.bmp;*.tif;*.tiff"));
                     // 複数選択
                     ofd.Multiselect = true;
-                    // ダイアログ表示(キャンセルなら戻る)
-                    if (ofd.ShowDialog() != DialogResult.OK)
+                    if (ofd.ShowDialog() != CommonFileDialogResult.Ok)
                         return;
 
                     // 画像PDFのサイズ設定
@@ -5552,17 +5628,17 @@ namespace MyPDF
                     }
 
                     // 保存先選択
-                    using (SaveFileDialog sfd = new SaveFileDialog())
+                    using (var sfd = new CommonSaveFileDialog())
                     {
+                        // 最初の画像を取得
+                        string firstPath = ofd.FileNames.First();
                         sfd.Title = "保存先を選択";
-                        sfd.Filter = "PDFファイル (*.pdf)|*.pdf";
-                        //sfd.FileName = "NewPDF.pdf";
+                        //PDFだけに制限
+                        sfd.Filters.Add(new CommonFileDialogFilter("PDFファイル", "*.pdf"));
                         // 最初の画像をベースにファイル名を設定
-                        string firstName = IOPath.GetFileNameWithoutExtension(ofd.FileNames[0]);
-                        sfd.FileName = firstName + ".pdf";
-
-                        // 保存ダイアログ(キャンセルなら戻る)
-                        if (sfd.ShowDialog() != DialogResult.OK)
+                        string firstName = IOPath.GetFileNameWithoutExtension(firstPath);
+                        sfd.DefaultFileName = firstName + ".pdf";
+                        if (sfd.ShowDialog() != CommonFileDialogResult.Ok)
                             return;
 
                         // 未保存フラグOFF
@@ -5838,5 +5914,418 @@ namespace MyPDF
         {
             treeView1.Refresh();
         }
+
+        // ==============================
+        // PDFを画像に変換を押したとき
+        // ==============================
+        private async void Pdf2Image_Click(object sender, EventArgs e)
+        {
+            // PDFが開かれていないなら処理しない
+            if (pdfViewer1.Document == null)
+            {
+                MessageBox.Show("PDFが開かれていません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // PDF設定情報が存在するか確認
+            if (currentSettings == null)
+            {
+                MessageBox.Show("PDF設定情報の取得に失敗しました。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // PDFパスが取得できているか確認
+            if (string.IsNullOrEmpty(currentSettings.PdfPath))
+            {
+                MessageBox.Show("PDFパスが取得できません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // 表示しているページを取得
+            int nowPage = pdfViewer1.Renderer.Page + 1;
+
+            // 今開いているファイル名を取得
+            string baseName = IOPath.GetFileNameWithoutExtension(originalPath);
+
+            // Form14起動
+            using (var f = new Form14(nowPage, baseName, currentSettings.TotalPage))
+            {
+                if (f.ShowDialog() == DialogResult.OK)
+                {
+                    string saveFolder = "";
+
+                    using (var ofd = new CommonOpenFileDialog())
+                    {
+                        ofd.IsFolderPicker = true;
+                        ofd.Title = "保存先フォルダ選択";
+                        ofd.InitialDirectory = IOPath.GetDirectoryName(originalPath);
+
+                        if (ofd.ShowDialog() != CommonFileDialogResult.Ok)
+                            return;
+
+                        saveFolder = ofd.FileName;
+                    }
+
+                    this.Enabled = false;
+
+                    string title = "画像変換中...";
+                    string msg = "画像変換中です..." + Environment.NewLine + "しばらくお待ちください";
+
+                    using (var loading = new Form15(title, msg))
+                    {
+                        loading.Show();
+                        loading.Refresh();
+
+
+                        try
+                        {
+                            await Task.Run(() =>
+                            {
+                                PdfConvImage(f.ExtractText, f.ImgFileName, originalPath, f.ImgDpi, f.ImgType, f.IsColor, saveFolder, loading);
+
+                            });
+
+                            // 完了メッセージは必ずUIスレッド
+                            this.Invoke((Action)(() =>
+                            {
+                                if (MessageBox.Show("画像変換が完了しました。" + Environment.NewLine +
+                                    "保存先フォルダを開きますか？", "変換完了", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
+                                {
+                                    try
+                                    {
+                                        System.Diagnostics.Process.Start(
+                                            new System.Diagnostics.ProcessStartInfo
+                                            {
+                                                FileName = saveFolder,
+                                                UseShellExecute = true
+                                            }
+                                        );
+                                    }
+                                    catch (Exception ex)
+                                    {
+#if DEBUG
+                                        Extxt.Text = ex.ToString();
+
+                                        MessageBox.Show("保存先フォルダオープンエラー:\n" + ex.ToString(), "フォルダオープン失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+#else
+                        MessageBox.Show("保存先フォルダを開けませんでした。", "フォルダオープン失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                        System.Diagnostics.Debug.WriteLine(ex.ToString());
+#endif
+                                    }
+                                }
+                            }));
+
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            MessageBox.Show("処理をキャンセルしました。", "画像変換キャンセル", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            return;
+                        }
+                        finally
+                        {
+                            loading.Close();
+                            this.Enabled = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        // ==============================
+        // PDFを画像に変換処理
+        // ==============================
+        private void PdfConvImage(string pageText, string imgFileName, string PdfPath, int imgDpi, string imgType, bool isColor, string saveFolder, Form15 loading)
+        {
+            // PDFが開かれていないなら処理しない
+            if (pdfViewer1.Document == null)
+            {
+                MessageBox.Show("PDFが開かれていません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            // PDF設定情報が存在するか確認
+            if (currentSettings == null)
+            {
+                MessageBox.Show("PDF設定情報の取得に失敗しました。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                // 総ページ数取得
+                int total = currentSettings.TotalPage;
+
+                // 上書きグラグ初期化
+                _applyToAll = false;
+                _conflictMode = SaveConflictMode.Ask;
+
+                // ページ解析
+                var pages = PageRangeHelper.ParsePageRanges(pageText, total).Distinct().OrderBy(x => x).ToList();
+
+                int totalPages = pages.Count;
+                int index = 0;
+
+                try
+                {
+
+                    // 各ページ
+                    foreach (int p in pages)
+                    {
+                        index++;
+                        int percent = (int)((index / (float)totalPages) * 100);
+                        // UI更新は必ずInvoke
+                        loading.Invoke((Action)(() =>
+                        {
+                            loading.SetProgress(percent);
+                        }));
+
+                        // PDFサイズ取得
+                        var size = pdfViewer1.Document.PageSizes[p - 1];
+
+                        // DPIからピクセル計算
+                        int width = (int)(size.Width / 72f * imgDpi);
+
+                        int height = (int)(size.Height / 72f * imgDpi);
+
+                        // PDFiumでBitmap化
+                        using Bitmap bmp =
+                            (Bitmap)pdfViewer1.Document.Render(
+                                p - 1,
+                                width,
+                                height,
+                                imgDpi,
+                                imgDpi,
+                                PdfRenderFlags.Annotations
+                            );
+
+                        using Bitmap saveBmp = isColor
+                            ? bmp
+                            : ToGrayScale(bmp);
+
+                        // 拡張子
+                        string ext = imgType.ToLower();
+
+                        // 保存パス
+                        string savePath = IOPath.Combine(saveFolder, $"{imgFileName}{p}.{ext}");
+                        savePath = GetSafeSavePath(savePath);
+
+                        // 画像形式選択
+                        ImageFormat format = ImageFormat.Png;
+
+                        switch (ext)
+                        {
+                            case "jpg":
+                            case "jpeg":
+                                format = ImageFormat.Jpeg;
+                                break;
+
+                            case "png":
+                                format = ImageFormat.Png;
+                                break;
+
+                            case "bmp":
+                                format = ImageFormat.Bmp;
+                                break;
+
+                            case "tif":
+                            case "tiff":
+                                format = ImageFormat.Tiff;
+                                break;
+                        }
+
+                        // 保存
+                        saveBmp.Save(savePath, format);
+
+                    }
+                }
+                catch
+                {
+
+                }
+                //catch (OperationCanceledException)
+                //{
+                //    MessageBox.Show("処理をキャンセルしました。", "画像変換キャンセル", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                //    return;
+                //}
+
+            }
+            catch (Exception ex)
+            {
+#if DEBUG
+                Extxt.Text = ex.ToString();
+                MessageBox.Show("画像変換エラー:\n" + ex.ToString());
+#else
+                MessageBox.Show("画像変換中にエラーが発生しました。", "変換失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+#endif
+            }
+
+        }
+
+        // ==============================
+        // 画像白黒変換処理
+        // ==============================
+        private Bitmap ToGrayScale(Bitmap src)
+        {
+            // 24bitへ変換
+            Bitmap bmp = new Bitmap(
+                src.Width,
+                src.Height,
+                System.Drawing.Imaging.PixelFormat.Format24bppRgb
+            );
+
+            bmp.SetResolution(src.HorizontalResolution, src.VerticalResolution);
+
+            using (Graphics g = Graphics.FromImage(bmp))
+            {
+                g.DrawImage(src, 0, 0);
+            }
+
+            SysRectangle rect = new SysRectangle(0, 0, bmp.Width, bmp.Height);
+
+            // Bitmapロック
+            BitmapData data =
+                bmp.LockBits(
+                    rect,
+                    ImageLockMode.ReadWrite,
+                    PixelFormat.Format24bppRgb
+                );
+
+            int stride = data.Stride;
+            IntPtr ptr = data.Scan0;
+
+            int bytes = Math.Abs(stride) * bmp.Height;
+
+            byte[] rgbValues = new byte[bytes];
+
+            // Bitmap → byte配列
+            Marshal.Copy(ptr, rgbValues, 0, bytes);
+
+            // 1ピクセルずつ処理
+            for (int y = 0; y < bmp.Height; y++)
+            {
+                int row = y * stride;
+
+                for (int x = 0; x < bmp.Width; x++)
+                {
+                    int index = row + (x * 3);
+
+                    byte b = rgbValues[index];
+                    byte g = rgbValues[index + 1];
+                    byte r = rgbValues[index + 2];
+
+                    // グレースケール計算
+                    byte gray =
+                        (byte)(
+                            r * 0.299 +
+                            g * 0.587 +
+                            b * 0.114
+                        );
+
+                    // RGB全部へ同じ値
+                    rgbValues[index] = gray;
+                    rgbValues[index + 1] = gray;
+                    rgbValues[index + 2] = gray;
+                }
+            }
+
+            // byte配列 → Bitmap
+            Marshal.Copy(rgbValues, 0, ptr, bytes);
+
+            // ロック解除
+            bmp.UnlockBits(data);
+
+            return bmp;
+        }
+
+        // ==============================
+        // ヘルパー関数(画像白黒変換処理)
+        // ==============================
+        private string GetSafeSavePath(string path)
+        {
+            if (!File.Exists(path))
+                return path;
+
+            if (_applyToAll)
+                return ResolvePath(path, _conflictMode);
+
+            DialogResult result = MessageBox.Show(
+                //$"同名ファイルが存在します。\n\n{IOPath.GetFileName(path)}\n\n上書きしますか？",
+                "同名ファイルが存在します。" + Environment.NewLine +
+                IOPath.GetFileName(path) + Environment.NewLine + Environment.NewLine +
+                "上書きしますか？" + Environment.NewLine +
+                "はい(Y)：上書き保存" + Environment.NewLine +
+                "いいえ(N)：枝番を付けて保存" + Environment.NewLine +
+                "キャンセル：全処理中止",
+                "確認",
+                MessageBoxButtons.YesNoCancel,
+                MessageBoxIcon.Question);
+
+            if (result == DialogResult.Cancel)
+                throw new OperationCanceledException();
+
+            if (result == DialogResult.Yes)
+            {
+                if (AskApplyAll())
+                {
+                    _applyToAll = true;
+                    _conflictMode = SaveConflictMode.Overwrite;
+                }
+
+                return path;
+            }
+
+            if (result == DialogResult.No)
+            {
+                if (AskApplyAll())
+                {
+                    _applyToAll = true;
+                    _conflictMode = SaveConflictMode.Rename;
+                }
+
+                return ResolvePath(path, SaveConflictMode.Rename);
+            }
+
+            return path;
+        }
+
+        // ==============================
+        // 全部適用(画像白黒変換処理)
+        // ==============================
+        private bool AskApplyAll()
+        {
+            return MessageBox.Show(
+                "この選択をすべてに適用しますか？",
+                "確認",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question) == DialogResult.Yes;
+        }
+
+        // ==============================
+        // 別名生成(画像白黒変換処理)
+        // ==============================
+        private string ResolvePath(string path, SaveConflictMode mode)
+        {
+            if (mode == SaveConflictMode.Overwrite)
+                return path;
+
+            string? dir = IOPath.GetDirectoryName(path);
+            string name = IOPath.GetFileNameWithoutExtension(path);
+            string ext = IOPath.GetExtension(path);
+
+            int i = 1;
+            string newPath;
+
+            do
+            {
+                newPath = IOPath.Combine(dir ?? "", $"{name}_{i}{ext}");
+                i++;
+            }
+            while (File.Exists(newPath));
+
+            return newPath;
+        }
+
     }
 }
