@@ -260,6 +260,7 @@
             treeView1.MouseLeave += treeView1_MouseLeave;
             treeView1.MouseMove += treeView1_MouseMove;
             treeView1.MouseUp += treeView1_MouseUp;
+            treeView1.Resize += treeView1_Resize;
             // 
             // contextMenuStrip1
             // 
@@ -446,7 +447,6 @@
             panel1.Controls.Add(panel3);
             panel1.Dock = DockStyle.Left;
             panel1.Location = new Point(0, 35);
-            panel1.MaximumSize = new Size(500, 0);
             panel1.MinimumSize = new Size(50, 0);
             panel1.Name = "panel1";
             panel1.Size = new Size(200, 353);
