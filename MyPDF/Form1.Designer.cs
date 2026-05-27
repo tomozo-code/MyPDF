@@ -41,6 +41,8 @@
             PageExtractSetting = new ToolStripMenuItem();
             RotatePagesSetting = new ToolStripMenuItem();
             PageDeleteSetting = new ToolStripMenuItem();
+            toolStripMenuItem2 = new ToolStripSeparator();
+            ConvImgSetting = new ToolStripMenuItem();
             PageEditMenu = new ToolStripDropDownButton();
             treeView1 = new TreeView();
             contextMenuStrip1 = new ContextMenuStrip(components);
@@ -146,15 +148,15 @@
             // contextMenuStrip2
             // 
             contextMenuStrip2.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
-            contextMenuStrip2.Items.AddRange(new ToolStripItem[] { PageMove, PageInsert, ReplacementMenu, PageExtractSetting, RotatePagesSetting, PageDeleteSetting });
+            contextMenuStrip2.Items.AddRange(new ToolStripItem[] { PageMove, PageInsert, ReplacementMenu, PageExtractSetting, RotatePagesSetting, PageDeleteSetting, toolStripMenuItem2, ConvImgSetting });
             contextMenuStrip2.Name = "contextMenuStrip2";
-            contextMenuStrip2.Size = new Size(146, 160);
+            contextMenuStrip2.Size = new Size(175, 192);
             // 
             // PageMove
             // 
             PageMove.Enabled = false;
             PageMove.Name = "PageMove";
-            PageMove.Size = new Size(145, 26);
+            PageMove.Size = new Size(174, 26);
             PageMove.Text = "移動(&M)...";
             PageMove.ToolTipText = "ページを指定して移動します";
             PageMove.Click += PageMove_Click;
@@ -165,7 +167,7 @@
             // 
             PageInsert.Enabled = false;
             PageInsert.Name = "PageInsert";
-            PageInsert.Size = new Size(145, 26);
+            PageInsert.Size = new Size(174, 26);
             PageInsert.Text = "挿入(&I)...";
             PageInsert.ToolTipText = "ファイルからページを挿入します";
             PageInsert.Click += PageInsert_Click;
@@ -176,7 +178,7 @@
             // 
             ReplacementMenu.Enabled = false;
             ReplacementMenu.Name = "ReplacementMenu";
-            ReplacementMenu.Size = new Size(145, 26);
+            ReplacementMenu.Size = new Size(174, 26);
             ReplacementMenu.Text = "置換(&K)...";
             ReplacementMenu.ToolTipText = "ファイルからページを置換します";
             ReplacementMenu.Click += ReplacementMenu_Click;
@@ -187,7 +189,7 @@
             // 
             PageExtractSetting.Enabled = false;
             PageExtractSetting.Name = "PageExtractSetting";
-            PageExtractSetting.Size = new Size(145, 26);
+            PageExtractSetting.Size = new Size(174, 26);
             PageExtractSetting.Text = "抽出(&X)...";
             PageExtractSetting.ToolTipText = "ページを指定して抽出します";
             PageExtractSetting.Click += PageExtractSetting_Click;
@@ -198,7 +200,7 @@
             // 
             RotatePagesSetting.Enabled = false;
             RotatePagesSetting.Name = "RotatePagesSetting";
-            RotatePagesSetting.Size = new Size(145, 26);
+            RotatePagesSetting.Size = new Size(174, 26);
             RotatePagesSetting.Text = "回転(&R)...";
             RotatePagesSetting.ToolTipText = "ページを指定して回転します";
             RotatePagesSetting.Click += RotatePagesSetting_Click;
@@ -209,12 +211,26 @@
             // 
             PageDeleteSetting.Enabled = false;
             PageDeleteSetting.Name = "PageDeleteSetting";
-            PageDeleteSetting.Size = new Size(145, 26);
+            PageDeleteSetting.Size = new Size(174, 26);
             PageDeleteSetting.Text = "削除(&D)...";
             PageDeleteSetting.ToolTipText = "ページを指定して削除します";
             PageDeleteSetting.Click += PageDeleteSetting_Click;
             PageDeleteSetting.MouseEnter += menuStrip1_MouseEnter;
             PageDeleteSetting.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // toolStripMenuItem2
+            // 
+            toolStripMenuItem2.Name = "toolStripMenuItem2";
+            toolStripMenuItem2.Size = new Size(171, 6);
+            // 
+            // ConvImgSetting
+            // 
+            ConvImgSetting.Enabled = false;
+            ConvImgSetting.Name = "ConvImgSetting";
+            ConvImgSetting.Size = new Size(174, 26);
+            ConvImgSetting.Tag = "ページを指定して画像に変換します";
+            ConvImgSetting.Text = "画像変換(&G)...";
+            ConvImgSetting.Click += ConvImgSetting_Click;
             // 
             // PageEditMenu
             // 
@@ -260,6 +276,7 @@
             treeView1.MouseLeave += treeView1_MouseLeave;
             treeView1.MouseMove += treeView1_MouseMove;
             treeView1.MouseUp += treeView1_MouseUp;
+            treeView1.Resize += treeView1_Resize;
             // 
             // contextMenuStrip1
             // 
@@ -446,7 +463,6 @@
             panel1.Controls.Add(panel3);
             panel1.Dock = DockStyle.Left;
             panel1.Location = new Point(0, 35);
-            panel1.MaximumSize = new Size(500, 0);
             panel1.MinimumSize = new Size(50, 0);
             panel1.Name = "panel1";
             panel1.Size = new Size(200, 353);
@@ -840,5 +856,7 @@
         private ToolStripMenuItem ConvPdf;
         private ToolStripSeparator toolStripMenuItem15;
         private ImageList imageList1;
+        private ToolStripSeparator toolStripMenuItem2;
+        private ToolStripMenuItem ConvImgSetting;
     }
 }
