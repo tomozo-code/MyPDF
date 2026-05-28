@@ -31,7 +31,8 @@
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             statusStrip1 = new StatusStrip();
-            toolStripStatusLabel1 = new ToolStripStatusLabel();
+            StatusLabel = new ToolStripStatusLabel();
+            ProgressBar = new ToolStripProgressBar();
             splitter1 = new Splitter();
             pdfViewer1 = new PdfiumViewer.PdfViewer();
             contextMenuStrip2 = new ContextMenuStrip(components);
@@ -110,7 +111,7 @@
             // statusStrip1
             // 
             statusStrip1.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
-            statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
+            statusStrip1.Items.AddRange(new ToolStripItem[] { StatusLabel, ProgressBar });
             statusStrip1.Location = new Point(0, 388);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Padding = new Padding(1, 0, 16, 0);
@@ -118,11 +119,18 @@
             statusStrip1.TabIndex = 1;
             statusStrip1.Text = "statusStrip1";
             // 
-            // toolStripStatusLabel1
+            // StatusLabel
             // 
-            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            toolStripStatusLabel1.Size = new Size(138, 21);
-            toolStripStatusLabel1.Text = "ファイル: PDF未選択";
+            StatusLabel.Name = "StatusLabel";
+            StatusLabel.Size = new Size(138, 21);
+            StatusLabel.Text = "ファイル: PDF未選択";
+            // 
+            // ProgressBar
+            // 
+            ProgressBar.Name = "ProgressBar";
+            ProgressBar.Size = new Size(100, 20);
+            ProgressBar.Style = ProgressBarStyle.Continuous;
+            ProgressBar.Visible = false;
             // 
             // splitter1
             // 
@@ -794,7 +802,7 @@
         private StatusStrip statusStrip1;
         private Splitter splitter1;
         private Panel panel1;
-        private ToolStripStatusLabel toolStripStatusLabel1;
+        private ToolStripStatusLabel StatusLabel;
         private TreeView treeView1;
         private PdfiumViewer.PdfViewer pdfViewer1;
         private ContextMenuStrip contextMenuStrip1;
@@ -858,5 +866,6 @@
         private ImageList imageList1;
         private ToolStripSeparator toolStripMenuItem2;
         private ToolStripMenuItem ConvImgSetting;
+        private ToolStripProgressBar ProgressBar;
     }
 }
