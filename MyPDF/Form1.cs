@@ -1905,30 +1905,29 @@ namespace MyPDF
         // ==============================
         private void ReloadPdf(int currentPage)
         {
+            // 再読込用パス(パスワード取得)
             string? openPassword = GetOpenPassword();
-
+            // pdfiumViewer読み込み(パスがある場合はパスで読み込み)
             var doc = string.IsNullOrEmpty(openPassword)
-                ? PdfiumDoc.Load(workingPath)
-                : PdfiumDoc.Load(workingPath, openPassword);
-
+                ? PdfiumDoc.Load(workingPath) // パスなし
+                : PdfiumDoc.Load(workingPath, openPassword); // パスあり
+            // PDF表示
             pdfViewer1.Document = doc;
-
+            // パスワードを更新
             currentPassword = openPassword;
-
-            currentSettings = LoadPdfSettings(
-                workingPath,
-                openPassword);
-
+            // 保存との整合性 作業用ファイルのデータを入れる
+            currentSettings = LoadPdfSettings(workingPath, openPassword);
+            // ステータスバーにファイル名(元ファイル)と総ページ数
             UpdateStatus(originalPath, doc.PageCount);
-
-            if (currentPage >= 0 &&
-                currentPage < doc.PageCount)
+            // ページ範囲チェック(読み込んだときに1ページ目にもどるので、退避しておいたページをセット)
+            if (currentPage >= 0 && currentPage < doc.PageCount)
             {
+                // 保存前のページへ戻す
                 pdfViewer1.Renderer.Page = currentPage;
             }
-
+            // ファイル名だけ取得
             string fileName = IOPath.GetFileName(originalPath);
-
+            // タイトルバー更新
             this.Text = $"{myName} - [ {fileName} ]";
         }
 
@@ -1938,9 +1937,11 @@ namespace MyPDF
         // ==============================
         private string? GetOpenPassword()
         {
+            // 権限パスが設定されている場合はパスを取得
+            // 権限パスをセット
             if (!string.IsNullOrEmpty(currentSecurity?.OwnerPassword))
                 return currentSecurity.OwnerPassword;
-
+            // 閲覧パスをセット
             if (!string.IsNullOrEmpty(currentSecurity?.UserPassword))
                 return currentSecurity.UserPassword;
 
@@ -1957,11 +1958,7 @@ namespace MyPDF
             Extxt.Text = ex.ToString();
             MessageBox.Show(ex.ToString());
 #else
-            MessageBox.Show(
-                "保存に失敗しました。",
-                "保存失敗",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Warning);
+            MessageBox.Show("保存に失敗しました。", "保存失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
             System.Diagnostics.Debug.WriteLine(ex.ToString());
 #endif
