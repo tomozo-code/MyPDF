@@ -134,7 +134,14 @@ namespace MyPDF
             try
             {
                 // 構文チェック(PageRangeHelper.csを呼ぶ)
-                PageRangeHelper.ParsePageRanges(text, maxPage);
+                var pages = PageRangeHelper.ParsePageRanges(text, maxPage);
+
+                // 全ページ削除禁止
+                if (pages.Count >= maxPage)
+                {
+                    MessageBox.Show("最低1ページは残してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
 
                 ExtractText = text;
 
