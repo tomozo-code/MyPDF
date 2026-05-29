@@ -524,59 +524,19 @@ namespace MyPDF
             // セキュリティ設定を格納
             SetupSecurityInfo(result);
 
-            /*
-
-            // セキュリティ情報(SecuritySettings生成)
-            currentSecurity ??= new SecuritySettings();
-            // Owner権限で開いたか保存
-            currentSecurity.IsOwnerOpened = result.IsOwner;
-            // AES256など暗号方式保存
-            currentSecurity.Encryption = result.CryptoMode;
-            // チェック状態リセット
-            currentSecurity.Check_Owner = false;
-            currentSecurity.Check_User = false;
-
-            // Owner権限で開いた場合
-            if (result.IsOwner)
-            {
-                // 編集モード
-                // 入力されたOwnerパス保存
-                currentSecurity.OwnerPassword = result.Password ?? "";
-                // Userパスは未使用
-                currentSecurity.UserPassword = null;
-                // 現在開いているPDFのパスワード保存
-                currentPassword = result.Password;
-            }
-            else
-            {
-                // 閲覧モード
-                // Userパス保存
-                currentSecurity.UserPassword = result.Password ?? "";
-                // Ownerパス無し
-                currentSecurity.OwnerPassword = null;
-                // 編集不可なので編集処理へパスは流さない
-                currentPassword = null;
-            }
-
-            */
-
-
             // しおり名編集 ON/OFF (true:編集可、false:編集不可)
             treeView1.LabelEdit = canEdit;
 
             // 作業用ファイルを破棄(前回PDFの tempファイル削除)
             CleanupWorkingFile();
+
             try
             {
                 // 元ファイルパス
                 originalPath = path;
 
                 // 作業ファイル作成
-                // C:\Users\<ユーザー名>\AppData\Local\Temp\ に作業用ファイルを置く
-                // $"MyPDFwork_{Guid.NewGuid()}.pdf"はランダムファイル名生成
-                workingPath = IOPath.Combine(IOPath.GetTempPath(), $"MyPDFwork_{Guid.NewGuid()}.pdf");
-                // 元ファイルを作業用ファイルにコピー true:同じ名前は上書き
-                File.Copy(path, workingPath, true);
+                workingPath = PdfFileUtil.CreateTempPdfCopy(path);
 
                 // Pdfiumで表示
                 // パス有無判定(パスワードがnull? nullならパスワードなし)
