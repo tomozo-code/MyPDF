@@ -422,7 +422,8 @@ namespace MyPDF
                         pdf.Close();
                         reader.Close();
                         // パスワード入力ダイアログ表示
-                        password = ShowPasswordDialog();
+                        //password = ShowPasswordDialog();
+                        password = ShowPasswordDialog(PassMessage);
 
                         if (password == null)
                         {
@@ -461,7 +462,8 @@ namespace MyPDF
                 catch (iText.Kernel.Exceptions.BadPasswordException)
                 {
                     // パスワード再入力(ダイアログ表示)
-                    password = ShowPasswordDialog();
+                    //password = ShowPasswordDialog();
+                    password = ShowPasswordDialog(PassMessage);
 
                     if (password == null)
                     {
@@ -519,6 +521,11 @@ namespace MyPDF
             // 編集可能判定(true:編集可、false:編集不可)
             canEdit = result.IsOwner;
 
+            // セキュリティ設定を格納
+            SetupSecurityInfo(result);
+
+            /*
+
             // セキュリティ情報(SecuritySettings生成)
             currentSecurity ??= new SecuritySettings();
             // Owner権限で開いたか保存
@@ -550,6 +557,10 @@ namespace MyPDF
                 // 編集不可なので編集処理へパスは流さない
                 currentPassword = null;
             }
+
+            */
+
+
             // しおり名編集 ON/OFF (true:編集可、false:編集不可)
             treeView1.LabelEdit = canEdit;
 
@@ -605,8 +616,9 @@ namespace MyPDF
                 // 保存との整合性 作業用ファイルのデータを入れる
                 currentSettings = LoadPdfSettings(workingPath, openPassword);
                 // チェック状態初期化
-                currentSecurity.Check_Owner = false;
-                currentSecurity.Check_User = false;
+                //currentSecurity.Check_Owner = false;
+                //currentSecurity.Check_User = false;
+                
                 // ファイル名取得
                 string fileName = IOPath.GetFileName(path);
                 // タイトルバー更新
@@ -644,12 +656,49 @@ namespace MyPDF
         }
 
         // ==============================
-        // 開くときにパスワードがある場合のダイアログ
+        // 開く
+        // セキュリティ設定を格納
         // ==============================
-        private string? ShowPasswordDialog()
+        private void SetupSecurityInfo(PdfOpenResult result)
+        {
+            // セキュリティ情報(SecuritySettings生成)
+            currentSecurity ??= new SecuritySettings();
+            // Owner権限で開いたか保存
+            currentSecurity.IsOwnerOpened = result.IsOwner;
+            // AES256など暗号方式保存
+            currentSecurity.Encryption = result.CryptoMode;
+            // チェック状態リセット
+            currentSecurity.Check_Owner = false;
+            currentSecurity.Check_User = false;
+            // Owner権限で開いた場合
+            if (result.IsOwner)
+            {
+                // 編集モード
+                // 入力されたOwnerパス保存
+                currentSecurity.OwnerPassword = result.Password ?? "";
+                currentSecurity.UserPassword = null;　// Userパスは未使用
+                // 現在開いているPDFのパスワード保存
+                currentPassword = result.Password;
+            }
+            else
+            {
+                // 閲覧モード
+                // Userパス保存
+                currentSecurity.UserPassword = result.Password ?? "";
+                currentSecurity.OwnerPassword = null;　// Ownerパス無し
+                // 編集不可なので編集処理へパスは流さない
+                currentPassword = null;
+            }
+        }
+
+        // ==============================
+        // 開く
+        // パスワードがある場合のダイアログ
+        // ==============================
+        private string? ShowPasswordDialog(string message)
         {
             // 流用しているので、出すメッセージをセットしている
-            using (var f = new Form5(PassMessage))
+            using (var f = new Form5(message))
             {
                 var result = f.ShowDialog();
 
@@ -798,9 +847,9 @@ namespace MyPDF
                 // PDF変換
                 settings.Producer = info.GetProducer() ?? "";
                 // 作成日
-                settings.CreationDate = FormatPdfDate(info.GetMoreInfo("CreationDate")) ?? "";
+                settings.CreationDate = PdfDateUtil.FormatPdfDate(info.GetMoreInfo("CreationDate")) ?? "";
                 // 更新日
-                settings.ModDate = FormatPdfDate(info.GetMoreInfo("ModDate")) ?? "";
+                settings.ModDate = PdfDateUtil.FormatPdfDate(info.GetMoreInfo("ModDate")) ?? "";
 
 
                 // デバッグ出力確認
@@ -927,6 +976,7 @@ namespace MyPDF
             return settings;
         }
 
+        /*
         // ==============================
         // 日付変換メソッド
         // PDF内部では、D:20260419153022+09'00'　な感じ
@@ -970,6 +1020,8 @@ namespace MyPDF
                 return pdfDate;
             }
         }
+
+        */
 
         // ==============================
         // PDFのしおり取得
