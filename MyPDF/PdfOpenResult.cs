@@ -11,6 +11,7 @@ namespace MyPDF
 {
     public class PdfOpenResult
     {
+        // 開けた？
         public bool Success { get; set; }
         // 管理者(制限パス)で開いてる true:制限パス false:以外)
         public bool IsOwner { get; set; }
@@ -22,7 +23,7 @@ namespace MyPDF
         public int CryptoMode { get; set; }
         // パスワード
         public string? Password { get; set; }
-
+        // iText Reader設定
         public ReaderProperties ReaderProps { get; set; }
             = new ReaderProperties();
     }
