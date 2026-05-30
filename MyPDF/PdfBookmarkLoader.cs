@@ -9,7 +9,7 @@ using DrawingColor = System.Drawing.Color;
 using PdfiTextReader = iText.Kernel.Pdf.PdfReader;
 
 // ==============================
-// PDFのしおり取得
+// PDFのしおり取得用
 // PDFからしおりを読み取り、TreeView(treeView1) に表示する
 // ==============================
 
