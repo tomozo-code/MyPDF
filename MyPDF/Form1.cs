@@ -366,11 +366,14 @@ namespace MyPDF
                     {
                         try
                         {
-                            // 作業用ファイルを破棄(前回PDFの tempファイル削除)
-                            CleanupWorkingFile();
+                            this.Enabled = false;
+                            UseWaitCursor = true;
 
-                            // 開く処理へ
-                            OpenPdf(ofd.FileName);
+                            // 作業用ファイルを破棄(前回PDFの tempファイル削除)
+                            //CleanupWorkingFile();
+
+                            // 開く処理へ awaitを付けて非同期メソッドを呼び出す
+                            await OpenPdfAsync(ofd.FileName);
                         }
                         finally
                         {
@@ -394,7 +397,7 @@ namespace MyPDF
         // 1. パスワード確認
         // 2. セキュリティ情報設定
         // 3. 作業ファイル作成
-        // 4. PDF設定読込
+        // 4. PDF設定読み込み
         // 5. PDF表示
         // 6. しおり表示
         // 7. しおりスクロール
@@ -403,7 +406,7 @@ namespace MyPDF
         // 10. タイトル更新
         // 11. 閲覧モード通知
         // ==============================
-        private void OpenPdf(string path)
+        private async Task OpenPdfAsync(string path)
         {
             // パスワード保持用初期化
             currentPassword = null;
@@ -429,8 +432,15 @@ namespace MyPDF
             try
             {
                 // PDF読み込み
-                LoadPdfContents(path, result.Password);
-
+                var loadResult = await Task.Run(() => LoadPdfData(path, result.Password));
+                // 元ファイルパス
+                originalPath = path;
+                // 作業用ファイルパス
+                workingPath = loadResult.WorkingPath;
+                // 保存との整合性
+                currentSettings = loadResult.Settings;
+                // UI処理
+                LoadPdfUi(path, loadResult.Document, result.Password);
                 // 未保存フラグOFF
                 isDirty = false;
 #if DEBUG
@@ -449,6 +459,30 @@ namespace MyPDF
                 System.Diagnostics.Debug.WriteLine(ex.ToString());
 #endif
             }
+        }
+
+        // ==============================
+        // PDF読み込み→PdfLoadResultへ格納
+        // ==============================
+        private PdfLoadResult LoadPdfData(string path, string? password)
+        {
+            // 作業用ファイルパス
+            string workingPath = PdfFileUtil.CreateTempPdfCopy(path);
+            // 保存との整合性 作業用ファイルのデータを入れる
+            var settings = PdfSettingsLoader.LoadPdfSettings(workingPath, path, password);
+            // Pdfiumで表示
+            // パス有無判定(パスワードがnull? nullならパスワードなし)
+            var document = string.IsNullOrEmpty(password)
+                ? PdfiumDoc.Load(workingPath) // パスワードなし
+                : PdfiumDoc.Load(workingPath, password); // パスワードあり
+
+            // PdfLoadResultへ格納
+            return new PdfLoadResult
+            {
+                WorkingPath = workingPath,
+                Settings = settings,
+                Document = document
+            };
         }
 
         // ==============================
@@ -487,21 +521,12 @@ namespace MyPDF
         }
 
         // ==============================
-        // PDF読み込み
+        // UI処理
         // ==============================
-        private void LoadPdfContents(string path, string? password)
+        private void LoadPdfUi(string path, PdfiumViewer.PdfDocument document, string? password)
         {
-            // 元ファイルパス
-            originalPath = path;
-
-            // 作業ファイル作成
-            workingPath = PdfFileUtil.CreateTempPdfCopy(path);
-
-            // 保存との整合性 作業用ファイルのデータを入れる
-            currentSettings = PdfSettingsLoader.LoadPdfSettings(workingPath, originalPath, password);
-
             // PDF表示
-            DisplayPdf(workingPath, password);
+            DisplayPdf(document);
 
             // iTextでしおり取得
             ShowBookmarks(workingPath, password);
@@ -513,26 +538,20 @@ namespace MyPDF
             UpdateContextMenuState();
 
             // ステータスバーにファイル名(元ファイル)と総ページ数
-            UpdateStatus(originalPath, currentSettings.TotalPage);
+            UpdateStatus(originalPath, currentSettings?.TotalPage ?? 0);
 
             // タイトルバー更新
             UpdateWindowTitle(path, canEdit);
 
             // 閲覧モードメッセージ表示
             ShowReadOnlyMessage(path);
-
         }
 
         // ==============================
         // PDF表示
         // ==============================
-        private void DisplayPdf(string pdfPath, string? password)
+        private void DisplayPdf(PdfiumViewer.PdfDocument document)
         {
-            // Pdfiumで表示
-            // パス有無判定(パスワードがnull? nullならパスワードなし)
-            PdfiumViewer.PdfDocument document = string.IsNullOrEmpty(password)
-                ? PdfiumDoc.Load(pdfPath) // パスワードなし
-                : PdfiumDoc.Load(pdfPath, password); // パスワードあり
             // PDFを表示
             pdfViewer1.Document = document;
 
@@ -564,8 +583,10 @@ namespace MyPDF
 
             try
             {
+                var list = PdfBookmarkLoader.Load(path, password);
+                BuildTree(list, treeView1.Nodes);
 
-                PdfBookmarkLoader.Load(path, password, treeView1.Nodes, treeView1.Font);
+                //PdfBookmarkLoader.Load(path, password, treeView1.Nodes, treeView1.Font);
 
             }
             catch (Exception ex) //エラー補足
@@ -586,6 +607,34 @@ namespace MyPDF
                 treeView1.EndUpdate();
             }
         }
+
+        // ==============================
+        // しおり表示UI専用
+        // ==============================
+        private void BuildTree(IEnumerable<BookmarkInfo> items, TreeNodeCollection nodes)
+        {
+            foreach (var item in items)
+            {
+                var node = new TreeNode(item.BmTitle)
+                {
+                    ForeColor = item.SelectedColor,
+                    NodeFont = new Font(treeView1.Font, item.SelectedStyle),
+                    Tag = item,
+                    // 通常アイコン(桃豚アイコン)
+                    ImageIndex = 0,
+                    // 選択時アイコン(白豚アイコン)
+                    SelectedImageIndex = 1
+                };
+
+                nodes.Add(node);
+
+                BuildTree(item.Children, node.Nodes);
+
+                if (item.IsOpen)
+                    node.Expand();
+            }
+        }
+
 
         // ==============================
         // しおりの先頭へスクロール
