@@ -20,7 +20,7 @@ namespace MyPDF
 {
     public static class PdfSettingsLoader
     {
-        public static PdfSettings LoadPdfSettings(string path, string originalPath, int pageCount, string? password = null)
+        public static PdfSettings LoadPdfSettings(string path, string originalPath, string? password = null)
         {
             // PdfSettings クラスの新しいインスタンス作成
             // 読み取った情報をここへ保存
@@ -62,7 +62,10 @@ namespace MyPDF
                 // pdfViewerのページ数取得
                 //int pageCount = pdfViewer1.Document.PageCount;
                 // 総ページ数をデータへ
-                settings.TotalPage = pageCount;
+                settings.TotalPage = pdf.GetNumberOfPages();
+
+
+                //settings.TotalPage = pageCount;
 
                 // ステータスバーにファイル名(元ファイル)と総ページ数
                 //UpdateStatus(originalPath, pageCount);
