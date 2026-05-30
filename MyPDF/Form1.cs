@@ -133,12 +133,27 @@ namespace MyPDF
         private SaveConflictMode _conflictMode = SaveConflictMode.Ask;
         private bool _applyToAll = false;
 
+        // PDF開くのパスワード入力時メッセージ
+        private static readonly string PasswordOpenMessage = "閲覧パスワードで開いた場合、編集不可(閲覧モード)になります。" + Environment.NewLine +
+            "権限パスワードで開いた場合、編集可能(編集モード)になります。" + Environment.NewLine +
+            "権限パスワードで開いたPDFファイルは、保存時に制限やパスワードが破棄されますので、" + Environment.NewLine +
+            "保護を設定したい場合は" + Environment.NewLine +
+            "「ファイル(F) - セキュリティ設定(T)...」から再設定してください。" + Environment.NewLine +
+            "権限パスワードのみ設定されているPDFファイルは、パスワードなしで開くことができます。" + Environment.NewLine +
+            "その場合は、編集不可(閲覧モード)になります。";
+
+        // 挿入処理のパスワード入力時メッセージ
+        private static readonly string InsertPassMessage = "挿入するPDFファイルは保護されています。" + Environment.NewLine +
+            "権限パスワードの場合は挿入可能ですが、閲覧パスワードの場合は挿入できません。";
+
+        // 置換処理のパスワード入力時メッセージ
+        private static readonly string OkikaePassMessage = "置換するPDFファイルは保護されています。" + Environment.NewLine +
+                        "権限パスワードの場合は置換可能ですが、閲覧パスワードの場合は置換できません。";
+
         // アプリ名（タイトルバー表示用）
         private string myName = "ともさんのPDF編集帖";
         // ツールチップ表示用：直前にマウスが乗っていたノード
         private TreeNode? lastNode = null;
-
-        private string PassMessage = "パスワード入力(Form5)のメッセージ用";
 
         public Form1()
         {
@@ -508,20 +523,9 @@ namespace MyPDF
         {
             // パスワード保持用初期化
             currentPassword = null;
-            // パスワード入力ダイアログへ表示する説明文
-            PassMessage = "閲覧パスワードで開いた場合、編集不可(閲覧モード)になります。" + Environment.NewLine +
-                "権限パスワードで開いた場合、編集可能(編集モード)になります。" + Environment.NewLine +
-                "権限パスワードで開いたPDFファイルは、保存時に制限やパスワードが破棄されますので、" + Environment.NewLine +
-                "保護を設定したい場合は" + Environment.NewLine +
-                "「ファイル(F) - セキュリティ設定(T)...」から再設定してください。" + Environment.NewLine +
-                "権限パスワードのみ設定されているPDFファイルは、パスワードなしで開くことができます。" + Environment.NewLine +
-                "その場合は、編集不可(閲覧モード)になります。";
 
             // PDFを開いて権限確認へ(パス入力、PDFオープン、権限確認、暗号方式取得)
-            var result = PdfSecurityHelper.CheckPdfPermission(path, PassMessage, () => ShowPasswordDialog(PassMessage));
-
-            //var result = CheckPdfPermission(path, PassMessage);
-
+            var result = PdfSecurityHelper.CheckPdfPermission(path, PasswordOpenMessage, () => ShowPasswordDialog(PasswordOpenMessage));
 
             // 開けなかった場合 戻る(キャンセル、パス違う、壊れたPDFとか)
             if (!result.Success)
@@ -546,17 +550,14 @@ namespace MyPDF
                 // 作業ファイル作成
                 workingPath = PdfFileUtil.CreateTempPdfCopy(path);
 
-                // Pdfiumで表示
-                // パス有無判定(パスワードがnull? nullならパスワードなし)
-                PdfiumViewer.PdfDocument document = string.IsNullOrEmpty(result.Password)
-                    // パスワードなし
-                    ? PdfiumDoc.Load(workingPath)
-                    // パスワードあり
-                    : PdfiumDoc.Load(workingPath, result.Password);
-                // PDFを表示
-                pdfViewer1.Document = document;
                 // 実際に入力されたパスをセット
                 string? openPassword = result.Password;
+
+                // 保存との整合性 作業用ファイルのデータを入れる
+                currentSettings = PdfSettingsLoader.LoadPdfSettings(workingPath, originalPath, openPassword);
+
+                // PDF表示
+                DisplayPdf(workingPath, result.Password);
 
                 // iTextでしおり取得
                 ShowBookmarks(workingPath, openPassword);
@@ -573,6 +574,26 @@ namespace MyPDF
                 // 右クリックメニュー更新
                 UpdateContextMenuState();
 
+                // ステータスバーにファイル名(元ファイル)と総ページ数
+                UpdateStatus(originalPath, currentSettings.TotalPage);
+
+                // タイトルバー更新
+                UpdateWindowTitle(path, canEdit);
+
+                /*
+
+                // Pdfiumで表示
+                // パス有無判定(パスワードがnull? nullならパスワードなし)
+                PdfiumViewer.PdfDocument document = string.IsNullOrEmpty(result.Password)
+                    // パスワードなし
+                    ? PdfiumDoc.Load(workingPath)
+                    // パスワードあり
+                    : PdfiumDoc.Load(workingPath, result.Password);
+                // PDFを表示
+                pdfViewer1.Document = document;
+
+
+
                 // 自動調整
                 ZoomtoolStripComboBox.SelectedIndex = 0;
                 // PDF表示を自動調整に
@@ -580,26 +601,34 @@ namespace MyPDF
 
                 // ページ番号「1」を表示
                 NewPagetoolStripTextBox.Text = "1";
+                
+                */
 
-                //currentSettings = LoadPdfSettings(workingPath, openPassword);
 
-                // 保存との整合性 作業用ファイルのデータを入れる
-                currentSettings = PdfSettingsLoader.LoadPdfSettings(workingPath, originalPath, pdfViewer1.Document.PageCount, openPassword);
-                // ステータスバーにファイル名(元ファイル)と総ページ数
-                UpdateStatus(originalPath, currentSettings.TotalPage);
 
                 // チェック状態初期化
                 //currentSecurity.Check_Owner = false;
                 //currentSecurity.Check_User = false;
 
+
+
+                // falseなら閲覧モードのメッセージ
+                if (!canEdit)
+                {
+                    MessageBox.Show(
+                        "[ " + IOPath.GetFileName(path) + " ] は制限が設定されています。" + Environment.NewLine + "編集不可です。",
+                        "制限確認(編集不可)",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information
+                    );
+                }
+
+
+                /*
+
                 // ファイル名取得
                 string fileName = IOPath.GetFileName(path);
                 // タイトルバー更新
                 this.Text = myName + " - [ " + fileName + " ]";
-#if DEBUG
-                // パスワード確認用
-                Extxt.Text = currentPassword;
-#endif
                 // 編集可能か false:不可
                 if (!canEdit)
                 {
@@ -612,6 +641,13 @@ namespace MyPDF
                         MessageBoxButtons.OK, MessageBoxIcon.Information
                     );
                 }
+
+                */
+
+#if DEBUG
+                // パスワード確認用
+                Extxt.Text = currentPassword;
+#endif
 
                 // 未保存フラグOFF
                 isDirty = false;
@@ -665,7 +701,6 @@ namespace MyPDF
         }
 
         // ==============================
-        // 開く
         // パスワードがある場合のダイアログ
         // ==============================
         private string? ShowPasswordDialog(string message)
@@ -683,6 +718,45 @@ namespace MyPDF
 
                 return null;
             }
+        }
+
+        // ==============================
+        // タイトルバー更新
+        // ==============================
+        private void UpdateWindowTitle(string path, bool canEdit)
+        {
+            // ファイル名取得
+            string fileName = IOPath.GetFileName(path);
+            // フルアクセス
+            this.Text = myName + " - [ " + fileName + " ]";
+            // 閲覧モード
+            if (!canEdit)
+            {
+                this.Text = myName + " - [ " + fileName + "(閲覧モード) ]";
+            }
+        }
+
+        // ==============================
+        // PDF表示
+        // ==============================
+        private void DisplayPdf(string pdfPath, string? password)
+        {
+            // Pdfiumで表示
+            // パス有無判定(パスワードがnull? nullならパスワードなし)
+            PdfiumViewer.PdfDocument document = string.IsNullOrEmpty(password)
+                ? PdfiumDoc.Load(pdfPath) // パスワードなし
+                : PdfiumDoc.Load(pdfPath, password); // パスワードあり
+            // PDFを表示
+            pdfViewer1.Document = document;
+
+            // 自動調整
+            ZoomtoolStripComboBox.SelectedIndex = 0;
+
+            // PDF表示を自動調整に
+            pdfViewer1.ZoomMode = PdfViewerZoomMode.FitBest;
+
+            // ページ番号表示
+            NewPagetoolStripTextBox.Text = "1";
         }
 
         /*
@@ -1925,7 +1999,7 @@ namespace MyPDF
             //UpdateStatus(originalPath, doc.PageCount);
 
             // 保存との整合性 作業用ファイルのデータを入れる
-            currentSettings = PdfSettingsLoader.LoadPdfSettings(workingPath, originalPath, pdfViewer1.Document.PageCount, openPassword);
+            currentSettings = PdfSettingsLoader.LoadPdfSettings(workingPath, originalPath, openPassword);
             // ステータスバーにファイル名(元ファイル)と総ページ数
             UpdateStatus(originalPath, currentSettings.TotalPage);
 
@@ -2286,8 +2360,12 @@ namespace MyPDF
         {
             // ツリービューノードが0以上:true
             bool hasNodes = treeView1.Nodes.Count > 0;
+
             // 表示しているPDFの総ページ数取得
-            int pageCount = pdfViewer1.Document.PageCount;
+            int pageCount = currentSettings?.TotalPage ?? 0;
+
+            //int pageCount = pdfViewer1.Document.PageCount;
+
             // 編集可能か？(true:可能、false:不可)
             if (!canEdit)
             {
@@ -3095,15 +3173,18 @@ namespace MyPDF
         {
             // エンター以外なら戻る
             if (e.KeyCode != Keys.Enter) return;
-            // PDFにページがないなら戻る
-            if (pdfViewer1.Document == null) return;
+            // プロパティ情報ががないなら戻る
+            if (currentSettings == null) return;
 
             // 数値チェック
             if (!int.TryParse(NewPagetoolStripTextBox.Text, out int page))
                 return;
 
             // ページ範囲チェック
-            int maxPage = pdfViewer1.Document.PageCount;
+            int maxPage = currentSettings?.TotalPage ?? 0;
+
+            //int maxPage = pdfViewer1.Document.PageCount;
+
             // ページ範囲外なら戻る
             if (page < 1 || page > maxPage)
                 return;
@@ -3119,15 +3200,17 @@ namespace MyPDF
         {
             // エンター以外なら戻る
             if (e.KeyCode != Keys.Enter) return;
-            // PDFにページがないなら戻る
-            if (pdfViewer1.Document == null) return;
+            // プロパティ情報ががないなら戻る
+            if (currentSettings == null) return;
 
             // 数値チェック
             if (!int.TryParse(NewPagetoolStripTextBox.Text, out int page))
                 return;
 
             // ページ範囲チェック
-            int maxPage = pdfViewer1.Document.PageCount;
+            int maxPage = currentSettings?.TotalPage ?? 0;
+            //int maxPage = pdfViewer1.Document.PageCount;
+
             // ページ範囲外なら戻る
             if (page < 1 || page > maxPage)
                 return;
@@ -4095,7 +4178,7 @@ namespace MyPDF
                 //currentSettings = LoadPdfSettings(workingPath, currentPassword);
 
                 // 保存との整合性 作業用ファイルのデータを入れる
-                currentSettings = PdfSettingsLoader.LoadPdfSettings(workingPath, originalPath, pdfViewer1.Document.PageCount, currentPassword);
+                currentSettings = PdfSettingsLoader.LoadPdfSettings(workingPath, originalPath, currentPassword);
                 // ステータスバーにファイル名(元ファイル)と総ページ数
                 UpdateStatus(originalPath, currentSettings.TotalPage);
 
@@ -4646,14 +4729,8 @@ namespace MyPDF
                     // 選択されたPDFのフルパス取得
                     string insertPath = ofd.FileName;
 
-                    // PDFを開いて権限確認(挿入・置換用)
-                    PassMessage = "挿入するPDFファイルは保護されています。" + Environment.NewLine +
-                        "権限パスワードの場合は挿入可能ですが、閲覧パスワードの場合は挿入できません。";
-
                     // PDFを開いて権限確認へ(パス入力、PDFオープン、権限確認、暗号方式取得)
-                    var result = PdfSecurityHelper.CheckPdfPermission(insertPath, PassMessage, () => ShowPasswordDialog(PassMessage));
-
-                    //var result = CheckPdfPermission(insertPath, PassMessage);
+                    var result = PdfSecurityHelper.CheckPdfPermission(insertPath, InsertPassMessage, () => ShowPasswordDialog(InsertPassMessage));
 
                     // 開けた？ あかんかったら戻る
                     if (!result.Success)
@@ -4811,7 +4888,7 @@ namespace MyPDF
                 //currentSettings = LoadPdfSettings(workingPath, currentPassword);
 
                 // 保存との整合性 作業用ファイルのデータを入れる
-                currentSettings = PdfSettingsLoader.LoadPdfSettings(workingPath, originalPath, pdfViewer1.Document.PageCount, currentPassword);
+                currentSettings = PdfSettingsLoader.LoadPdfSettings(workingPath, originalPath, currentPassword);
                 // ステータスバーにファイル名(元ファイル)と総ページ数
                 UpdateStatus(originalPath, currentSettings.TotalPage);
 
@@ -5343,7 +5420,7 @@ namespace MyPDF
                 //currentSettings = LoadPdfSettings(workingPath, currentPassword);
 
                 // 保存との整合性 作業用ファイルのデータを入れる
-                currentSettings = PdfSettingsLoader.LoadPdfSettings(workingPath, originalPath, pdfViewer1.Document.PageCount, currentPassword);
+                currentSettings = PdfSettingsLoader.LoadPdfSettings(workingPath, originalPath, currentPassword);
                 // ステータスバーにファイル名(元ファイル)と総ページ数
                 UpdateStatus(originalPath, currentSettings.TotalPage);
 
@@ -5422,14 +5499,8 @@ namespace MyPDF
 
                     string replacementPath = ofd.FileName;
 
-                    // PDFを開いて権限確認(挿入・置換用)
-                    PassMessage = "置換するPDFファイルは保護されています。" + Environment.NewLine +
-                        "権限パスワードの場合は置換可能ですが、閲覧パスワードの場合は置換できません。";
-
                     // PDFを開いて権限確認へ(パス入力、PDFオープン、権限確認、暗号方式取得)
-                    var result = PdfSecurityHelper.CheckPdfPermission(replacementPath, PassMessage, () => ShowPasswordDialog(PassMessage));
-
-                    //var result = CheckPdfPermission(replacementPath, PassMessage);
+                    var result = PdfSecurityHelper.CheckPdfPermission(replacementPath, OkikaePassMessage, () => ShowPasswordDialog(OkikaePassMessage));
 
                     if (!result.Success)
                         return;
@@ -5600,7 +5671,7 @@ namespace MyPDF
                 //currentSettings = LoadPdfSettings(workingPath, currentPassword);
 
                 // 保存との整合性 作業用ファイルのデータを入れる
-                currentSettings = PdfSettingsLoader.LoadPdfSettings(workingPath, originalPath, pdfViewer1.Document.PageCount, currentPassword);
+                currentSettings = PdfSettingsLoader.LoadPdfSettings(workingPath, originalPath, currentPassword);
                 // ステータスバーにファイル名(元ファイル)と総ページ数
                 UpdateStatus(originalPath, currentSettings.TotalPage);
 
@@ -6048,7 +6119,7 @@ namespace MyPDF
                             //currentSettings = LoadPdfSettings(workingPath, null);
 
                             // 保存との整合性 作業用ファイルのデータを入れる
-                            currentSettings = PdfSettingsLoader.LoadPdfSettings(workingPath, originalPath, pdfViewer1.Document.PageCount, null);
+                            currentSettings = PdfSettingsLoader.LoadPdfSettings(workingPath, originalPath, null);
                             // ステータスバーにファイル名(元ファイル)と総ページ数
                             UpdateStatus(originalPath, currentSettings.TotalPage);
 
