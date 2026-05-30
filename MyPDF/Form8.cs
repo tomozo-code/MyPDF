@@ -77,53 +77,6 @@ namespace MyPDF
         private void OkBtn_Click(object sender, EventArgs e)
         {
 
-            /*
-
-            int start, end;
-
-            if (!int.TryParse(StartDelTxt.Text, out start) || !int.TryParse(EndDelTxt.Text, out end))
-            {
-                MessageBox.Show("数値を入力してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            if (start < 1 || end < 1)
-            {
-                MessageBox.Show("1以上の値を入力してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            if (start > end)
-            {
-                MessageBox.Show("開始ページは終了ページ以下にしてください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            if (start > maxPage || end > maxPage)
-            {
-                MessageBox.Show("総ページ数以下の値を入力してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-
-            }
-
-            // 削除後0ページを回避
-            int deleteCount = end - start + 1;
-            int remain = maxPage - deleteCount;
-
-            if (remain <= 0)
-            {
-                MessageBox.Show("最低1ページは残す必要があります。", "削除エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            StartPage = start;
-            EndPage = end;
-
-            this.DialogResult = DialogResult.OK;
-            this.Close();
-
-            */
-
             string text = ExtractTxt.Text.Trim();
 
             if (string.IsNullOrEmpty(text))
