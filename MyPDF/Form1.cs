@@ -369,9 +369,6 @@ namespace MyPDF
                         {
                             BeginOpenUi();
 
-                            // 作業用ファイルを破棄(前回PDFの tempファイル削除)
-                            //CleanupWorkingFile();
-
                             // 開く処理へ awaitを付けて非同期メソッドを呼び出す
                             await OpenPdfAsync(ofd.FileName);
                         }
@@ -499,49 +496,6 @@ namespace MyPDF
                     ShowReadOnlyMessage(path);
                 });
 
-                /*
-
-                // PDF読み込み
-                var loadResult = await Task.Run(() => LoadPdfData(path, result.Password));
-                // 元ファイルパス
-                originalPath = path;
-                // 作業用ファイルパス
-                workingPath = loadResult.WorkingPath;
-                // 保存との整合性
-                currentSettings = loadResult.Settings;
-
-
-                // UI処理
-                // PDF表示だけ先にUIスレッドでやる
-                this.Invoke(() =>
-                {
-                    DisplayPdf(loadResult.Document);
-                });
-                // しおりは別でUIに反映
-                var list = await Task.Run(() =>  PdfBookmarkLoader.Load(path, result.Password));
-
-                this.Invoke(() =>
-                {
-                    treeView1.Nodes.Clear();
-                    BuildTree(list, treeView1.Nodes);
-                    // しおりの先頭へスクロール
-                    ResetBookmarkView();
-                    // 右クリックメニュー更新
-                    UpdateContextMenuState();
-                    // ステータスバーにファイル名(元ファイル)と総ページ数
-                    UpdateStatus(originalPath, currentSettings?.TotalPage ?? 0);
-                    // タイトルバー更新
-                    UpdateWindowTitle(path, canEdit);
-                    // 閲覧モードメッセージ表示
-                    ShowReadOnlyMessage(path);
-                });
-
-                */
-
-
-                //LoadPdfUi(path, loadResult.Document, result.Password);
-
-
                 // 未保存フラグOFF
                 isDirty = false;
 #if DEBUG
@@ -621,37 +575,6 @@ namespace MyPDF
             }
         }
 
-        /*
-
-        // ==============================
-        // UI処理
-        // ==============================
-        private void LoadPdfUi(string path, PdfiumViewer.PdfDocument document, string? password)
-        {
-            // PDF表示
-            DisplayPdf(document);
-
-            // iTextでしおり取得
-            //ShowBookmarks(workingPath, password);
-
-            // しおりの先頭へスクロール
-            ResetBookmarkView();
-
-            // 右クリックメニュー更新
-            UpdateContextMenuState();
-
-            // ステータスバーにファイル名(元ファイル)と総ページ数
-            UpdateStatus(originalPath, currentSettings?.TotalPage ?? 0);
-
-            // タイトルバー更新
-            UpdateWindowTitle(path, canEdit);
-
-            // 閲覧モードメッセージ表示
-            ShowReadOnlyMessage(path);
-        }
-
-        */
-
         // ==============================
         // PDF表示
         // ==============================
@@ -669,59 +592,6 @@ namespace MyPDF
             // ページ番号表示
             NewPagetoolStripTextBox.Text = "1";
         }
-
-        /*
-
-        // ==============================
-        // PDFのしおり取得
-        // PDFからしおりを読み取り、TreeView(treeView1) に表示するメソッド
-        // ==============================
-        private async void ShowBookmarks(string path, string? password = null)
-        {
-            // ツリービューを初期化
-            treeView1.Nodes.Clear();
-            // TreeView描画停止(大量更新中のちらつき防止と再描画負荷低減)
-            treeView1.BeginUpdate();
-            treeView1.SuspendLayout();
-            // 選択解除（安全）
-            treeView1.SelectedNode = null;
-            // ツールチップ消す
-            treeToolTip.SetToolTip(treeView1, "");
-
-            try
-            {
-                //var list = PdfBookmarkLoader.Load(path, password);
-                var list = await LoadBookmarksAsync(workingPath, password);
-                BuildTree(list, treeView1.Nodes);
-
-                //PdfBookmarkLoader.Load(path, password, treeView1.Nodes, treeView1.Font);
-
-            }
-            catch (Exception ex) //エラー補足
-            {
-#if DEBUG
-                Extxt.Text = ex.Message;
-                MessageBox.Show($"しおり解析エラー:\n{ex.Message}", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-#else
-
-                MessageBox.Show("しおりの取得に失敗しました。", "しおり取得失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                System.Diagnostics.Debug.WriteLine(ex.ToString());
-#endif
-            }
-            finally // エラーでも必ず実行
-            {
-                // TreeView再描画再開
-                treeView1.ResumeLayout();
-                treeView1.EndUpdate();
-            }
-        }
-
-
-        private async Task<List<BookmarkInfo>> LoadBookmarksAsync(string path, string? password)
-        {
-            return await Task.Run(() => PdfBookmarkLoader.Load(path, password));
-        }
-        */
 
         // ==============================
         // しおり表示UI専用
@@ -749,7 +619,6 @@ namespace MyPDF
                     node.Expand();
             }
         }
-
 
         // ==============================
         // しおりの先頭へスクロール
@@ -1218,25 +1087,7 @@ namespace MyPDF
                     // セキュリティなし
                     writer = new PdfWriter(tempPath);
                 }
-
-                /*
-                // パスワードがあるかどうかで読み込み設定を変える(nullまたは空白:trure、パスあり:false)
-                string? readPassword = null;
-
-                // 最優先：Ownerパス
-                if (currentSecurity?.Check_Owner == true && !string.IsNullOrEmpty(currentSecurity.OwnerPassword))
-                {
-                    // 権限パス使用
-                    readPassword = currentSecurity.OwnerPassword;
-                }
-                // 次点：Userパス
-                else if (currentSecurity?.Check_User == true && !string.IsNullOrEmpty(currentSecurity.UserPassword))
-                {
-                    // 閲覧パス使用
-                    readPassword = currentSecurity.UserPassword;
-                }
-                */
-                
+               
                 // 今開いているPDFのパスで開く
                 ReaderProperties props = string.IsNullOrEmpty(currentPassword)
                     ? new ReaderProperties() // パスなし
@@ -2660,7 +2511,6 @@ namespace MyPDF
             }
         }
 
-
         // ==============================
         // 現在のページ番号表示(NewPagetoolStripTextBox)でキーを押したとき
         // ==============================
@@ -2677,8 +2527,6 @@ namespace MyPDF
 
             // ページ範囲チェック
             int maxPage = currentSettings?.TotalPage ?? 0;
-
-            //int maxPage = pdfViewer1.Document.PageCount;
 
             // ページ範囲外なら戻る
             if (page < 1 || page > maxPage)
@@ -2715,9 +2563,7 @@ namespace MyPDF
 
             // Enter音防止
             e.SuppressKeyPress = true;
-
         }
-
 
         // ==============================
         // NewPagetoolStripTextBoxにフォーカスが当たったら全選択
