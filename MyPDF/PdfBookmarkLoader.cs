@@ -9,22 +9,40 @@ using DrawingColor = System.Drawing.Color;
 using PdfiTextReader = iText.Kernel.Pdf.PdfReader;
 
 // ==============================
-// PDFのしおり取得用
-// PDFからしおりを読み取り、TreeView(treeView1) に表示する
+// PDFのしおり情報取得用
 // ==============================
 
 namespace MyPDF
 {
     public static class PdfBookmarkLoader
     {
-        //public static List<BookmarkInfo> Load(string path, string? password)
-        //{
+        public static List<BookmarkInfo> Load(string path, string? password)
+        {
+            var result = new List<BookmarkInfo>();
 
-        //}
+            ReaderProperties props = new ReaderProperties();
+
+            if (!string.IsNullOrEmpty(password))
+                props.SetPassword(Encoding.UTF8.GetBytes(password));
+
+            using var pdf = new ITextDoc(new PdfiTextReader(path, props));
+
+            var outlines = pdf.GetOutlines(false);
+            if (outlines == null)
+                return result;
+
+            var root = outlines.GetAllChildren();
+
+            foreach (var item in root)
+            {
+                result.Add(ParseBookmark(item, pdf));
+            }
+
+            return result;
+        }
 
         // ==============================
-        // PDFのしおり取得
-        // PDFからしおりを読み取り、TreeView(treeView1) に表示するメソッド
+        // PDFのしおり情報を取得
         // ==============================
         public static void Load(string path, string? password, TreeNodeCollection nodes, Font treeFont)
         {
@@ -53,16 +71,15 @@ namespace MyPDF
                 foreach (var item in root)
                 {
                     // 再帰でTreeViewに変換
-                    AddBookmarkNode(item, nodes, pdf, treeFont);
+                    ParseBookmark(item, pdf);
                 }
             }
         }
 
         // ==============================
-        // PDFのしおりをツリービューに表示
-        // PDFのしおり1個 → TreeViewのノード1個に変換
-        // ==============================
-        private static void AddBookmarkNode(PdfOutline outline, TreeNodeCollection nodes, ITextDoc pdf, Font treeFont)
+        // PDFのしおり情報を整える
+         // ==============================
+        private static BookmarkInfo ParseBookmark(PdfOutline outline, ITextDoc pdf)
         {
             // しおりのページ番号を初期化
             int pageNumber = 0;
@@ -196,38 +213,17 @@ namespace MyPDF
             // 文字スタイル保存
             FontStyle selectedStyle = fontStyle;
 
-            Debug.WriteLine("-----文字スタイル1------------------------");
-            Debug.WriteLine("selectedStyle: " + selectedStyle);
-            // TreeNode作成
-            var node = new TreeNode(title)
+            var info = new BookmarkInfo
             {
-                // 通常アイコン(桃豚アイコン)
-                ImageIndex = 0,
-                // 選択時アイコン(白豚アイコン)
-                SelectedImageIndex = 1,
-                // しおり情報をTagへ保存
-                Tag = new BookmarkInfo
-                {
-                    // しおり名
-                    BmTitle = title,
-                    //　ページ番号
-                    Page = pageNumber,
-                    // 展開 or 縮小
-                    IsOpen = isOpen,
-                    // 色
-                    SelectedColor = selectedColor,
-                    // スタイル
-                    SelectedStyle = selectedStyle
-                }
+                BmTitle = title, // しおり名
+                Page = pageNumber, //　ページ番号
+                IsOpen = isOpen, // 展開 or 縮小
+                SelectedColor = selectedColor, // 色
+                SelectedStyle = selectedStyle // スタイル
             };
 
-            // 色をUIに反映
-            node.ForeColor = selectedColor;
-            // フォントをUIに反映
-            node.NodeFont = new Font(treeFont, selectedStyle);
-            // ノード追加
-            nodes.Add(node);
-
+            Debug.WriteLine("-----文字スタイル1------------------------");
+            Debug.WriteLine("selectedStyle: " + selectedStyle);
             Debug.WriteLine("-----しおり名 → ページ番号------------------------");
             Debug.WriteLine($"{title} → Page:{pageNumber}");
 
@@ -235,23 +231,10 @@ namespace MyPDF
             foreach (var child in outline.GetAllChildren())
             {
                 // 子を再帰追加
-                AddBookmarkNode(child, node.Nodes, pdf, treeFont);
+                info.Children.Add(ParseBookmark(child, pdf));
+                //ParseBookmark(child, node.Nodes, pdf, treeFont);
             }
-
-            // 最後にCollapse（順番重要）
-            // 展開状態反映開始
-            if (isOpen)
-            {
-                // trueなので展開
-                node.Expand();
-            }
-            else
-            {
-                // falseなので縮小
-                node.Collapse();
-            }
-
+            return info;
         }
-
     }
 }
