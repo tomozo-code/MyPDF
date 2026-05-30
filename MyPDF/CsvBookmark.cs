@@ -9,6 +9,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 // CSVしおり用(「CSV → しおり」に変換する中間データ)
 // ==============================
 
+
 // 例: タイトル,1,0,標準,#ff0000
 // これが
 // Title = "タイトル"
