@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Drawing;
 
 // ==============================
 // しおり用(メタデータ)
@@ -8,7 +9,7 @@ using System.Text;
 
 namespace MyPDF
 {
-    internal class BookmarkInfo
+    public class BookmarkInfo
     {
         // しおり名
         public string? BmTitle { get; set; }
@@ -18,8 +19,9 @@ namespace MyPDF
         public bool IsOpen { get; set; }
         // 選択された色
         public Color SelectedColor { get; set; }
-
         // 選択されたスタイル
         public FontStyle SelectedStyle { get; set; }
+        // リスト化
+        public List<BookmarkInfo> Children { get; set; } = new();
     }
 }
