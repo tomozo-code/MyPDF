@@ -573,12 +573,17 @@ namespace MyPDF
                 // ページ番号「1」を表示
                 NewPagetoolStripTextBox.Text = "1";
 
+                //currentSettings = LoadPdfSettings(workingPath, openPassword);
+
                 // 保存との整合性 作業用ファイルのデータを入れる
-                currentSettings = LoadPdfSettings(workingPath, openPassword);
+                currentSettings = PdfSettingsLoader.LoadPdfSettings(workingPath, originalPath, pdfViewer1.Document.PageCount, openPassword);
+                // ステータスバーにファイル名(元ファイル)と総ページ数
+                UpdateStatus(originalPath, currentSettings.TotalPage);
+
                 // チェック状態初期化
                 //currentSecurity.Check_Owner = false;
                 //currentSecurity.Check_User = false;
-                
+
                 // ファイル名取得
                 string fileName = IOPath.GetFileName(path);
                 // タイトルバー更新
@@ -671,6 +676,8 @@ namespace MyPDF
                 return null;
             }
         }
+
+        /*
 
         // ==============================
         // PDFの設定情報を読み込む
@@ -934,51 +941,6 @@ namespace MyPDF
             }
             // 完成した設定情報返す
             return settings;
-        }
-
-        /*
-        // ==============================
-        // 日付変換メソッド
-        // PDF内部では、D:20260419153022+09'00'　な感じ
-        // で 2026/04/19 15:30:22 こうする
-        // ==============================
-        private string FormatPdfDate(string pdfDate)
-        {
-            // pdfDateが null、空文字、空白だったら、空文字を返す
-            if (string.IsNullOrWhiteSpace(pdfDate))
-                return "";
-
-            try
-            {
-                // "D:" がある？
-                if (pdfDate.StartsWith("D:"))
-                    // あったら先頭2文字削除("D:"を削除)
-                    pdfDate = pdfDate.Substring(2);
-
-                // タイムゾーン部分を除去（+09'00' など） + または - を探す
-                int tzIndex = pdfDate.IndexOfAny(new char[] { '+', '-' });
-                // タイムゾーン見つかった？
-                if (tzIndex > 0)
-                    // タイムゾーン以降を切り捨て
-                    pdfDate = pdfDate.Substring(0, tzIndex);
-
-                // 最低14桁必要（yyyyMMddHHmmss）
-                if (pdfDate.Length < 14)
-                    // 足りないなら変換不能
-                    return pdfDate;
-
-                // 先頭14文字だけ取得
-                string datePart = pdfDate.Substring(0, 14);
-                // DateTime変換 System.Globalization.CultureInfo.InvariantCultureはカルチャ非依存(日本語環境でも海外環境でも同じ動作)
-                var dt = DateTime.ParseExact(datePart, "yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture);
-                // 見やすい形式へ変換
-                return dt.ToString("yyyy/MM/dd HH:mm:ss");
-            }
-            catch // エラー補足
-            {
-                // 変換失敗したら元のまま
-                return pdfDate;
-            }
         }
 
         */
@@ -1937,9 +1899,16 @@ namespace MyPDF
             // パスワードを更新
             currentPassword = openPassword;
             // 保存との整合性 作業用ファイルのデータを入れる
-            currentSettings = LoadPdfSettings(workingPath, openPassword);
+            //currentSettings = LoadPdfSettings(workingPath, openPassword);
             // ステータスバーにファイル名(元ファイル)と総ページ数
-            UpdateStatus(originalPath, doc.PageCount);
+            //UpdateStatus(originalPath, doc.PageCount);
+
+            // 保存との整合性 作業用ファイルのデータを入れる
+            currentSettings = PdfSettingsLoader.LoadPdfSettings(workingPath, originalPath, pdfViewer1.Document.PageCount, openPassword);
+            // ステータスバーにファイル名(元ファイル)と総ページ数
+            UpdateStatus(originalPath, currentSettings.TotalPage);
+
+
             // ページ範囲チェック(読み込んだときに1ページ目にもどるので、退避しておいたページをセット)
             if (currentPage >= 0 && currentPage < doc.PageCount)
             {
@@ -4102,7 +4071,13 @@ namespace MyPDF
                 UpdateContextMenuState();
 
                 // 保存との整合性 作業用ファイルのデータを入れる
-                currentSettings = LoadPdfSettings(workingPath, currentPassword);
+                //currentSettings = LoadPdfSettings(workingPath, currentPassword);
+
+                // 保存との整合性 作業用ファイルのデータを入れる
+                currentSettings = PdfSettingsLoader.LoadPdfSettings(workingPath, originalPath, pdfViewer1.Document.PageCount, currentPassword);
+                // ステータスバーにファイル名(元ファイル)と総ページ数
+                UpdateStatus(originalPath, currentSettings.TotalPage);
+
 
                 // 未保存フラグON
                 isDirty = true;
@@ -4809,7 +4784,13 @@ namespace MyPDF
                 pdfViewer1.Document = doc;
 
                 // 保存との整合性 作業用ファイルのデータを入れる
-                currentSettings = LoadPdfSettings(workingPath, currentPassword);
+                //currentSettings = LoadPdfSettings(workingPath, currentPassword);
+
+                // 保存との整合性 作業用ファイルのデータを入れる
+                currentSettings = PdfSettingsLoader.LoadPdfSettings(workingPath, originalPath, pdfViewer1.Document.PageCount, currentPassword);
+                // ステータスバーにファイル名(元ファイル)と総ページ数
+                UpdateStatus(originalPath, currentSettings.TotalPage);
+
 
                 // 右クリックメニュー更新
                 UpdateContextMenuState();
@@ -5335,7 +5316,12 @@ namespace MyPDF
 
                 pdfViewer1.Document = doc;
 
-                currentSettings = LoadPdfSettings(workingPath, currentPassword);
+                //currentSettings = LoadPdfSettings(workingPath, currentPassword);
+
+                // 保存との整合性 作業用ファイルのデータを入れる
+                currentSettings = PdfSettingsLoader.LoadPdfSettings(workingPath, originalPath, pdfViewer1.Document.PageCount, currentPassword);
+                // ステータスバーにファイル名(元ファイル)と総ページ数
+                UpdateStatus(originalPath, currentSettings.TotalPage);
 
                 // 未保存フラグON
                 isDirty = true;
@@ -5585,7 +5571,13 @@ namespace MyPDF
 
                 pdfViewer1.Document = doc;
 
-                currentSettings = LoadPdfSettings(workingPath, currentPassword);
+                //currentSettings = LoadPdfSettings(workingPath, currentPassword);
+
+                // 保存との整合性 作業用ファイルのデータを入れる
+                currentSettings = PdfSettingsLoader.LoadPdfSettings(workingPath, originalPath, pdfViewer1.Document.PageCount, currentPassword);
+                // ステータスバーにファイル名(元ファイル)と総ページ数
+                UpdateStatus(originalPath, currentSettings.TotalPage);
+
 
                 // 右クリックメニュー更新
                 UpdateContextMenuState();
@@ -6027,7 +6019,13 @@ namespace MyPDF
 
 
                             // 保存との整合性 作業用ファイルのデータを入れる
-                            currentSettings = LoadPdfSettings(workingPath, null);
+                            //currentSettings = LoadPdfSettings(workingPath, null);
+
+                            // 保存との整合性 作業用ファイルのデータを入れる
+                            currentSettings = PdfSettingsLoader.LoadPdfSettings(workingPath, originalPath, pdfViewer1.Document.PageCount, null);
+                            // ステータスバーにファイル名(元ファイル)と総ページ数
+                            UpdateStatus(originalPath, currentSettings.TotalPage);
+
 
                             // 念のため
                             //pdfViewer1.Document?.Dispose();
