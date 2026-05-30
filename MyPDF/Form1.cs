@@ -16,6 +16,7 @@ using System.Buffers;
 using System.Diagnostics;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.IO.Pipelines;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.Arm;
 using System.Text;
@@ -366,8 +367,7 @@ namespace MyPDF
                     {
                         try
                         {
-                            this.Enabled = false;
-                            UseWaitCursor = true;
+                            BeginOpenUi();
 
                             // 作業用ファイルを破棄(前回PDFの tempファイル削除)
                             //CleanupWorkingFile();
@@ -378,8 +378,7 @@ namespace MyPDF
                         finally
                         {
                             // 例外が出てもフォームを操作可能にする
-                            this.Enabled = true;
-                            UseWaitCursor = false;
+                            EndOpenUi();
                         }
                     }
                 }
@@ -391,6 +390,33 @@ namespace MyPDF
 
             }
         }
+
+        // ==============================
+        // 開く処理
+        // UI開始
+        // ==============================
+        private void BeginOpenUi()
+        {
+            StatusLabel.Text = "読込中...";
+            ProgressBar.Visible = true;
+            ProgressBar.Style = ProgressBarStyle.Marquee;
+
+            this.Enabled = false;
+        }
+
+        // ==============================
+        // 開く処理
+        // UI終了
+        // ==============================
+        private void EndOpenUi()
+        {
+            StatusLabel.Text = toolHintTxt;
+            ProgressBar.Visible = false;
+            ProgressBar.Style = ProgressBarStyle.Continuous;
+
+            this.Enabled = true;
+        }
+
 
         // ==============================
         // 開く処理
@@ -431,6 +457,50 @@ namespace MyPDF
 
             try
             {
+                // PDF + しおりをまとめてバックグラウンドで作る
+                var resultData = await Task.Run(() =>
+                {
+                    var load = LoadPdfData(path, result.Password);
+
+                    // 元ファイルパス
+                    originalPath = path;
+                    // 作業用ファイルパス
+                    workingPath = load.WorkingPath;
+                    // 保存との整合性
+                    currentSettings = load.Settings;
+
+                    var bookmarks = PdfBookmarkLoader.Load(path, result.Password);
+
+                    return (load, bookmarks);
+                });
+
+                // UIは一回でまとめて更新
+                this.Invoke(() =>
+                {
+                    // PDF表示（最初に）
+                    DisplayPdf(resultData.load.Document);
+
+                    // しおり表示（すぐ続けて）
+                    treeView1.BeginUpdate();
+                    treeView1.Nodes.Clear();
+                    BuildTree(resultData.bookmarks, treeView1.Nodes);
+                    treeView1.EndUpdate();
+
+                    // その他UI更新
+                    // しおりの先頭へスクロール
+                    ResetBookmarkView();
+                    // 右クリックメニュー更新
+                    UpdateContextMenuState();
+                    // ステータスバーにファイル名(元ファイル)と総ページ数
+                    UpdateStatus(originalPath, currentSettings?.TotalPage ?? 0);
+                    // タイトルバー更新
+                    UpdateWindowTitle(path, canEdit);
+                    // 閲覧モードメッセージ表示
+                    ShowReadOnlyMessage(path);
+                });
+
+                /*
+
                 // PDF読み込み
                 var loadResult = await Task.Run(() => LoadPdfData(path, result.Password));
                 // 元ファイルパス
@@ -439,8 +509,39 @@ namespace MyPDF
                 workingPath = loadResult.WorkingPath;
                 // 保存との整合性
                 currentSettings = loadResult.Settings;
+
+
                 // UI処理
-                LoadPdfUi(path, loadResult.Document, result.Password);
+                // PDF表示だけ先にUIスレッドでやる
+                this.Invoke(() =>
+                {
+                    DisplayPdf(loadResult.Document);
+                });
+                // しおりは別でUIに反映
+                var list = await Task.Run(() =>  PdfBookmarkLoader.Load(path, result.Password));
+
+                this.Invoke(() =>
+                {
+                    treeView1.Nodes.Clear();
+                    BuildTree(list, treeView1.Nodes);
+                    // しおりの先頭へスクロール
+                    ResetBookmarkView();
+                    // 右クリックメニュー更新
+                    UpdateContextMenuState();
+                    // ステータスバーにファイル名(元ファイル)と総ページ数
+                    UpdateStatus(originalPath, currentSettings?.TotalPage ?? 0);
+                    // タイトルバー更新
+                    UpdateWindowTitle(path, canEdit);
+                    // 閲覧モードメッセージ表示
+                    ShowReadOnlyMessage(path);
+                });
+
+                */
+
+
+                //LoadPdfUi(path, loadResult.Document, result.Password);
+
+
                 // 未保存フラグOFF
                 isDirty = false;
 #if DEBUG
@@ -520,6 +621,8 @@ namespace MyPDF
             }
         }
 
+        /*
+
         // ==============================
         // UI処理
         // ==============================
@@ -529,7 +632,7 @@ namespace MyPDF
             DisplayPdf(document);
 
             // iTextでしおり取得
-            ShowBookmarks(workingPath, password);
+            //ShowBookmarks(workingPath, password);
 
             // しおりの先頭へスクロール
             ResetBookmarkView();
@@ -546,6 +649,8 @@ namespace MyPDF
             // 閲覧モードメッセージ表示
             ShowReadOnlyMessage(path);
         }
+
+        */
 
         // ==============================
         // PDF表示
@@ -565,11 +670,13 @@ namespace MyPDF
             NewPagetoolStripTextBox.Text = "1";
         }
 
+        /*
+
         // ==============================
         // PDFのしおり取得
         // PDFからしおりを読み取り、TreeView(treeView1) に表示するメソッド
         // ==============================
-        private void ShowBookmarks(string path, string? password = null)
+        private async void ShowBookmarks(string path, string? password = null)
         {
             // ツリービューを初期化
             treeView1.Nodes.Clear();
@@ -583,7 +690,8 @@ namespace MyPDF
 
             try
             {
-                var list = PdfBookmarkLoader.Load(path, password);
+                //var list = PdfBookmarkLoader.Load(path, password);
+                var list = await LoadBookmarksAsync(workingPath, password);
                 BuildTree(list, treeView1.Nodes);
 
                 //PdfBookmarkLoader.Load(path, password, treeView1.Nodes, treeView1.Font);
@@ -607,6 +715,13 @@ namespace MyPDF
                 treeView1.EndUpdate();
             }
         }
+
+
+        private async Task<List<BookmarkInfo>> LoadBookmarksAsync(string path, string? password)
+        {
+            return await Task.Run(() => PdfBookmarkLoader.Load(path, password));
+        }
+        */
 
         // ==============================
         // しおり表示UI専用
