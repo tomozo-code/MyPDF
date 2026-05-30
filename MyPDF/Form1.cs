@@ -374,6 +374,8 @@ namespace MyPDF
             }
         }
 
+        /*
+         
         // ==============================
         // PDFを開いて権限確認(開く・挿入・置換用)
         // パス入力、PDFオープン、権限確認、暗号方式取得
@@ -496,6 +498,8 @@ namespace MyPDF
                 }
             }
         }
+        
+        */
 
         // ==============================
         // 開く処理
@@ -514,7 +518,11 @@ namespace MyPDF
                 "その場合は、編集不可(閲覧モード)になります。";
 
             // PDFを開いて権限確認へ(パス入力、PDFオープン、権限確認、暗号方式取得)
-            var result = CheckPdfPermission(path, PassMessage);
+            var result = PdfSecurityHelper.CheckPdfPermission(path, PassMessage, () => ShowPasswordDialog(PassMessage));
+
+            //var result = CheckPdfPermission(path, PassMessage);
+
+
             // 開けなかった場合 戻る(キャンセル、パス違う、壊れたPDFとか)
             if (!result.Success)
                 return;
@@ -963,6 +971,11 @@ namespace MyPDF
 
             try
             {
+
+                PdfBookmarkLoader.Load(path, password, treeView1.Nodes, treeView1.Font);
+
+                /*
+
                 // iText用のPDF読み込み設定作成
                 ReaderProperties props = new ReaderProperties();
                 // パスワードある？
@@ -999,12 +1012,16 @@ namespace MyPDF
                     }
                 }
 
+                */
+
+
+
             }
             catch (Exception ex) //エラー補足
             {
 #if DEBUG
                 Extxt.Text = ex.Message;
-                MessageBox.Show($"エラー:\n{ex.Message}", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show($"しおり解析エラー:\n{ex.Message}", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 #else
 
                 MessageBox.Show("しおりの取得に失敗しました。", "しおり取得失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -1018,6 +1035,8 @@ namespace MyPDF
                 treeView1.EndUpdate();
             }
         }
+
+        /*
 
         // ==============================
         // PDFのしおりをツリービューに表示
@@ -1226,6 +1245,8 @@ namespace MyPDF
 #endif
             }
         }
+
+        */
 
         // ==============================
         // ツリービューでキーを押したとき
@@ -4630,7 +4651,10 @@ namespace MyPDF
                         "権限パスワードの場合は挿入可能ですが、閲覧パスワードの場合は挿入できません。";
 
                     // PDFを開いて権限確認へ(パス入力、PDFオープン、権限確認、暗号方式取得)
-                    var result = CheckPdfPermission(insertPath, PassMessage);
+                    var result = PdfSecurityHelper.CheckPdfPermission(insertPath, PassMessage, () => ShowPasswordDialog(PassMessage));
+
+                    //var result = CheckPdfPermission(insertPath, PassMessage);
+
                     // 開けた？ あかんかったら戻る
                     if (!result.Success)
                         return;
@@ -5403,7 +5427,9 @@ namespace MyPDF
                         "権限パスワードの場合は置換可能ですが、閲覧パスワードの場合は置換できません。";
 
                     // PDFを開いて権限確認へ(パス入力、PDFオープン、権限確認、暗号方式取得)
-                    var result = CheckPdfPermission(replacementPath, PassMessage);
+                    var result = PdfSecurityHelper.CheckPdfPermission(replacementPath, PassMessage, () => ShowPasswordDialog(PassMessage));
+
+                    //var result = CheckPdfPermission(replacementPath, PassMessage);
 
                     if (!result.Success)
                         return;
