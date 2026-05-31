@@ -112,10 +112,10 @@ namespace MyPDF
 
             // ページ番号取得
             // デバッグ出力確認
-            Debug.WriteLine("----しおり----------------------");
-            Debug.WriteLine(outline.GetTitle());
-            Debug.WriteLine(destObj?.GetType());
-            Debug.WriteLine(destObj);
+            //Debug.WriteLine("----しおり----------------------");
+            //Debug.WriteLine(outline.GetTitle());
+            //Debug.WriteLine(destObj?.GetType());
+            //Debug.WriteLine(destObj);
 
             // ジャンプ先が配列形式？
             if (destObj is PdfArray arr && arr.Size() > 0)
@@ -222,10 +222,10 @@ namespace MyPDF
                 SelectedStyle = selectedStyle // スタイル
             };
 
-            Debug.WriteLine("-----文字スタイル1------------------------");
-            Debug.WriteLine("selectedStyle: " + selectedStyle);
-            Debug.WriteLine("-----しおり名 → ページ番号------------------------");
-            Debug.WriteLine($"{title} → Page:{pageNumber}");
+            //Debug.WriteLine("-----文字スタイル1------------------------");
+            //Debug.WriteLine("selectedStyle: " + selectedStyle);
+            //Debug.WriteLine("-----しおり名 → ページ番号------------------------");
+            //Debug.WriteLine($"{title} → Page:{pageNumber}");
 
             // 再帰
             foreach (var child in outline.GetAllChildren())
