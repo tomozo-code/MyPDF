@@ -403,7 +403,7 @@ namespace MyPDF
         // ==============================
         private void EndProcessUi()
         {
-            //StatusLabel.Text = toolHintTxt;
+            StatusLabel.Text = toolHintTxt;
             ProgressBar.Visible = false;
             ProgressBar.Style = ProgressBarStyle.Continuous;
 
@@ -4163,18 +4163,13 @@ namespace MyPDF
                 // 例えば 挿入PDF:3ページ目 メインPDF:8ページ目へ入った なら 3→8 を記録
                 Dictionary<int, int> insertPageMap = new Dictionary<int, int>();
 
-                StatusLabel.Text = "挿入中...";
+                StatusLabel.Text = "ページ挿入中...";
                 ProgressBar.Visible = true;
                 ProgressBar.Minimum = 0;
                 ProgressBar.Value = 0;
                 ProgressBar.Style = ProgressBarStyle.Continuous;
 
                 this.Enabled = false;
-
-                //this.Invoke(() =>
-                //{
-                //    treeView1.BeginUpdate();
-                //});
 
                 await Task.Run(() =>
                 {
@@ -4218,7 +4213,7 @@ namespace MyPDF
                             this.Invoke(() =>
                             {
                                 ProgressBar.Value = current;
-                                StatusLabel.Text = $"挿入中... {current}/{ProgressBar.Maximum}";
+                                StatusLabel.Text = $"ページ挿入中... {current}/{ProgressBar.Maximum}";
                             });
 
                             // 挿入するPDF Document(insertPdf)のpページを開いているPDF Document(mainPdf)のnewPagePosへ挿入
@@ -4287,11 +4282,7 @@ namespace MyPDF
             }
             finally
             {
-                //this.Invoke(() =>
-                //{
-                //    treeView1.EndUpdate();
-                //});
-
+                StatusLabel.Text = toolHintTxt;
                 ProgressBar.Value = 0;
                 ProgressBar.Visible = false;
                 this.Enabled = true;
@@ -4969,7 +4960,7 @@ namespace MyPDF
 
                 Dictionary<int, int> replacePageMap = new Dictionary<int, int>();
 
-                StatusLabel.Text = "置換中...";
+                StatusLabel.Text = "ページ置換中...";
                 ProgressBar.Visible = true;
                 ProgressBar.Minimum = 0;
                 ProgressBar.Value = 0;
@@ -5007,7 +4998,7 @@ namespace MyPDF
                             this.Invoke(() =>
                             {
                                 ProgressBar.Value = current;
-                                StatusLabel.Text = $"置換中... {current}/{ProgressBar.Maximum}";
+                                StatusLabel.Text = $"ページ置換中... {current}/{ProgressBar.Maximum}";
                             });
 
                             // 置換開始位置
@@ -5109,6 +5100,7 @@ namespace MyPDF
             finally
             {
 
+                StatusLabel.Text = toolHintTxt;
                 ProgressBar.Value = 0;
                 ProgressBar.Visible = false;
                 this.Enabled = true;
@@ -5606,7 +5598,7 @@ namespace MyPDF
             }
             finally
             {
-                //StatusLabel.Text = toolHintTxt;
+                StatusLabel.Text = toolHintTxt;
                 ProgressBar.Value = 0;
                 ProgressBar.Visible = false;
                 this.Enabled = true;

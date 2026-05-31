@@ -46,6 +46,17 @@ namespace MyPDF
             //  EscキーをOKボタンに割り当て
             this.CancelButton = OkBtn;
 
+            LicenseTxtBox.Text = "本ソフトウェアは以下のオープンソースソフトウェアを使用しています：" + Environment.NewLine +
+                "・iText (AGPL License)" + Environment.NewLine +
+                "・PdfiumViewer.Core (Apache License 2.0)" + Environment.NewLine +
+                "　Copyright (c) PdfiumViewer.Core authors" + Environment.NewLine +
+                "・PDFium (BSD 3-Clause License)" + Environment.NewLine +
+                "　Copyright (c) The Chromium Authors" + Environment.NewLine +
+                "著作権表示およびライセンス条件に従って使用しています" + Environment.NewLine +
+                "詳細は同梱のライセンスファイルをご参照ください" + Environment.NewLine +
+                "・しおりアイコン" + Environment.NewLine +
+                "　ICOOON MONO(https://icooon-mono.com/)";
+
             linkLabel1.Tag = "既定のブラウザで " + linkLabel1.Text + " を開きます";
 
 
