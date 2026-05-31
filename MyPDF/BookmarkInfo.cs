@@ -7,8 +7,6 @@ using System.Drawing;
 // しおり用(メタデータ)
 // ==============================
 
-
-
 namespace MyPDF
 {
     public class BookmarkInfo
