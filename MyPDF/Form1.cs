@@ -190,8 +190,8 @@ namespace MyPDF
             treeView1.ShowLines = false;
 
             // エラー表示用
-            //Extxt.Visible = true;
-            //Extxt.Dock = DockStyle.Bottom;
+            Extxt.Visible = true;
+            Extxt.Dock = DockStyle.Bottom;
 
             // しおりドラッグ中のちらつき防止(普通は触れないので呪文を唱える感じ)
             // TreeView の「ダブルバッファ」を強制ONにして、描画ちらつきを減らす
@@ -348,7 +348,6 @@ namespace MyPDF
         // ==============================
         private async void OpenMenu_Click(object sender, EventArgs e)
         {
-
             // 変更がある場合(未保存確認ダイアログ)
             if (!await ConfirmDiscard())
                 // キャンセルの場合は開かない
@@ -367,7 +366,7 @@ namespace MyPDF
                     {
                         try
                         {
-                            BeginOpenUi();
+                            BeginProcessUi("読込中...");
 
                             // 開く処理へ awaitを付けて非同期メソッドを呼び出す
                             await OpenPdfAsync(ofd.FileName);
@@ -375,7 +374,7 @@ namespace MyPDF
                         finally
                         {
                             // 例外が出てもフォームを操作可能にする
-                            EndOpenUi();
+                            EndProcessUi();
                         }
                     }
                 }
@@ -384,17 +383,15 @@ namespace MyPDF
             {
                 // 「開いてるフラグ」を必ず解除
                 isOpening = false;
-
             }
         }
 
         // ==============================
-        // 開く処理
         // UI開始
         // ==============================
-        private void BeginOpenUi()
+        private void BeginProcessUi(string msg)
         {
-            StatusLabel.Text = "読込中...";
+            StatusLabel.Text = msg;
             ProgressBar.Visible = true;
             ProgressBar.Style = ProgressBarStyle.Marquee;
 
@@ -402,18 +399,16 @@ namespace MyPDF
         }
 
         // ==============================
-        // 開く処理
         // UI終了
         // ==============================
-        private void EndOpenUi()
+        private void EndProcessUi()
         {
-            StatusLabel.Text = toolHintTxt;
+            //StatusLabel.Text = toolHintTxt;
             ProgressBar.Visible = false;
             ProgressBar.Style = ProgressBarStyle.Continuous;
 
             this.Enabled = true;
         }
-
 
         // ==============================
         // 開く処理
@@ -457,6 +452,7 @@ namespace MyPDF
                 // PDF + しおりをまとめてバックグラウンドで作る
                 var resultData = await Task.Run(() =>
                 {
+                    // PDF読み込み→PdfLoadResultへ格納
                     var load = LoadPdfData(path, result.Password);
 
                     // 元ファイルパス
@@ -466,6 +462,7 @@ namespace MyPDF
                     // 保存との整合性
                     currentSettings = load.Settings;
 
+                    // PDFのしおり情報を取得
                     var bookmarks = PdfBookmarkLoader.Load(path, result.Password);
 
                     return (load, bookmarks);
@@ -480,6 +477,7 @@ namespace MyPDF
                     // しおり表示（すぐ続けて）
                     treeView1.BeginUpdate();
                     treeView1.Nodes.Clear();
+                    // しおり表示UI専用
                     BuildTree(resultData.bookmarks, treeView1.Nodes);
                     treeView1.EndUpdate();
 
@@ -582,13 +580,10 @@ namespace MyPDF
         {
             // PDFを表示
             pdfViewer1.Document = document;
-
             // 自動調整
             ZoomtoolStripComboBox.SelectedIndex = 0;
-
             // PDF表示を自動調整に
             pdfViewer1.ZoomMode = PdfViewerZoomMode.FitBest;
-
             // ページ番号表示
             NewPagetoolStripTextBox.Text = "1";
         }
@@ -615,6 +610,7 @@ namespace MyPDF
 
                 BuildTree(item.Children, node.Nodes);
 
+                // しおり展開 or 縮小
                 if (item.IsOpen)
                     node.Expand();
             }
@@ -898,7 +894,7 @@ namespace MyPDF
             try
             {
                 // UI開始
-                BeginSaveUi();
+                BeginProcessUi("保存中...");
                 // しおりを退避
                 var bookmarkNodes = CloneBookmarks();
                 // Viewer解放
@@ -923,7 +919,7 @@ namespace MyPDF
             finally
             {
                 // UI終了
-                EndSaveUi();
+                EndProcessUi();
             }
         }
 
@@ -955,32 +951,6 @@ namespace MyPDF
             }
 
             return true;
-        }
-
-        // ==============================
-        // 保存処理(上書き保存、名前を付けて保存 共通)
-        // UI開始
-        // ==============================
-        private void BeginSaveUi()
-        {
-            StatusLabel.Text = "保存中...";
-            ProgressBar.Visible = true;
-            ProgressBar.Style = ProgressBarStyle.Marquee;
-
-            this.Enabled = false;
-        }
-
-        // ==============================
-        // 保存処理(上書き保存、名前を付けて保存 共通)
-        // UI終了
-        // ==============================
-        private void EndSaveUi()
-        {
-            StatusLabel.Text = toolHintTxt;
-            ProgressBar.Visible = false;
-            ProgressBar.Style = ProgressBarStyle.Continuous;
-
-            this.Enabled = true;
         }
 
         // ==============================
@@ -1087,7 +1057,7 @@ namespace MyPDF
                     // セキュリティなし
                     writer = new PdfWriter(tempPath);
                 }
-               
+
                 // 今開いているPDFのパスで開く
                 ReaderProperties props = string.IsNullOrEmpty(currentPassword)
                     ? new ReaderProperties() // パスなし
@@ -1607,8 +1577,8 @@ namespace MyPDF
             if (info.SelectedStyle.HasFlag(FontStyle.Italic))
                 style |= PdfOutline.FLAG_ITALIC;
 
-            Debug.WriteLine("-----文字スタイル2------------------------");
-            Debug.WriteLine("style: " + style);
+            //Debug.WriteLine("-----文字スタイル2------------------------");
+            //Debug.WriteLine("style: " + style);
 
             // iText標準APIでスタイル設定
             outline.SetStyle(style);
@@ -3033,11 +3003,10 @@ namespace MyPDF
             return "標準";
         }
 
-
         // ==============================
         // しおりインポート
         // ==============================
-        private void ImportShioriToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void ImportShioriToolStripMenuItem_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog ofd = new OpenFileDialog())
             {
@@ -3049,12 +3018,21 @@ namespace MyPDF
 
                 try
                 {
-                    var list = LoadCsvBookmarks(ofd.FileName);
+                    BeginProcessUi("読込中...");
+
+                    //var list = LoadCsvBookmarks(ofd.FileName);
+
+                    var list = await Task.Run(() =>
+                    {
+                        return LoadCsvBookmarks(ofd.FileName);
+                    });
 
                     // 既存しおり削除（上書き）
                     treeView1.Nodes.Clear();
 
                     BuildTreeFromCsv(list);
+                    // 右クリックメニュー更新
+                    UpdateContextMenuState();
 
                     // 未保存フラグON
                     isDirty = true;
@@ -3071,6 +3049,10 @@ namespace MyPDF
                         "しおりファイルの内部データを確認してください。", "しおりファイルインポート失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     System.Diagnostics.Debug.WriteLine(ex.ToString());
 #endif
+                }
+                finally
+                {
+                    EndProcessUi();
                 }
 
             }
@@ -3155,7 +3137,7 @@ namespace MyPDF
                 stack.Push(node);
             }
             // 全しおりを展開表示
-            treeView1.ExpandAll();
+            //treeView1.ExpandAll();
         }
 
         // ==============================
@@ -3683,8 +3665,10 @@ namespace MyPDF
         // ==============================
         private async void CloseMenu_Click(object sender, EventArgs e)
         {
-            //if (!ConfirmDiscard())
-            //    return;
+            // 変更がある場合(未保存確認ダイアログ)
+            if (!await ConfirmDiscard())
+                // キャンセルの場合は閉じない
+                return;
 
             // 閉じる処理を呼ぶ
             await CloseCurrentPdf();
@@ -3696,7 +3680,9 @@ namespace MyPDF
         // ==============================
         private async Task CloseCurrentPdf()
         {
+            // 変更がある場合(未保存確認ダイアログ)
             //if (!await ConfirmDiscard())
+            // キャンセルの場合は閉じない
             //    return;
 
             // Viewer完全リセット
@@ -3766,7 +3752,8 @@ namespace MyPDF
         // ==============================
         // ページ抽出処理(複数対応)
         // ==============================
-        private void ExtractPages(string pageText)
+        private async Task ExtractPagesAsync(string pageText)
+        //private void ExtractPages(string pageText)
         {
             if (pdfViewer1.Document == null) return;
 
@@ -3829,40 +3816,45 @@ namespace MyPDF
                     }
                 }
 
-                // 読み込みパスワード（今開いてる状態を使う）
-                ReaderProperties props = string.IsNullOrEmpty(currentPassword)
-                    ? new ReaderProperties()
-                    : new ReaderProperties().SetPassword(Encoding.UTF8.GetBytes(currentPassword));
-
-                using (var reader = new PdfReader(workingPath, props))
-                using (var srcPdf = new ITextDoc(reader))
-                using (var writer = new PdfWriter(savePath))
-                using (var destPdf = new ITextDoc(writer))
+                await Task.Run(() =>
                 {
-                    int total = srcPdf.GetNumberOfPages();
 
-                    // 構文チェック(PageRangeHelper.csを呼ぶ)して格納
-                    var pages = PageRangeHelper.ParsePageRanges(pageText, total);
+                    // 読み込みパスワード（今開いてる状態を使う）
+                    ReaderProperties props = string.IsNullOrEmpty(currentPassword)
+                        ? new ReaderProperties()
+                        : new ReaderProperties().SetPassword(Encoding.UTF8.GetBytes(currentPassword));
 
-                    // ページコピー
-                    foreach (int p in pages)
+                    using (var reader = new PdfReader(workingPath, props))
+                    using (var srcPdf = new ITextDoc(reader))
+                    using (var writer = new PdfWriter(savePath))
+                    using (var destPdf = new ITextDoc(writer))
                     {
-                        srcPdf.CopyPagesTo(p, p, destPdf);
-                    }
-                    // しおり複製用Tree作成
-                    TreeView tempTree = CloneTreeView(treeView1);
+                        int total = srcPdf.GetNumberOfPages();
 
-                    // しおり抽出
-                    //AdjustBookmarksForExtract(startPage, endPage);
-                    AdjustBookmarksForExtract(tempTree.Nodes, pages);
+                        // 構文チェック(PageRangeHelper.csを呼ぶ)して格納
+                        var pages = PageRangeHelper.ParsePageRanges(pageText, total);
 
-                    // PDFへしおり追加
-                    var destOutlines = destPdf.GetOutlines(true);
-                    foreach (TreeNode node in tempTree.Nodes)
-                    {
-                        AddOutlineFromNode(destPdf, destOutlines, node);
+                        // ページコピー
+                        foreach (int p in pages)
+                        {
+                            srcPdf.CopyPagesTo(p, p, destPdf);
+                        }
+                        // しおり複製用Tree作成
+                        TreeView tempTree = CloneTreeView(treeView1);
+
+                        // しおり抽出
+                        //AdjustBookmarksForExtract(startPage, endPage);
+                        AdjustBookmarksForExtract(tempTree.Nodes, pages);
+
+                        // PDFへしおり追加
+                        var destOutlines = destPdf.GetOutlines(true);
+                        foreach (TreeNode node in tempTree.Nodes)
+                        {
+                            AddOutlineFromNode(destPdf, destOutlines, node);
+                        }
                     }
-                }
+
+                });
 
                 //MessageBox.Show("抽出完了", "抽出確認", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 if (MessageBox.Show("抽出したPDFを既定のPDFアプリで開きますか？", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
@@ -4010,7 +4002,7 @@ namespace MyPDF
         // ==============================
         // ページを指定して抽出を押したとき
         // ==============================
-        private void PageExtractSetting_Click(object sender, EventArgs e)
+        private async void PageExtractSetting_Click(object sender, EventArgs e)
         {
             // PDFが開かれていないなら処理しない
             if (pdfViewer1.Document == null)
@@ -4032,17 +4024,24 @@ namespace MyPDF
             {
                 if (f.ShowDialog() == DialogResult.OK)
                 {
+                    try
+                    {
+                        BeginProcessUi("抽出中...");
 
-                    ExtractPages(f.ExtractText);
+                        await ExtractPagesAsync(f.ExtractText);
+                    }
+                    finally
+                    {
+                        EndProcessUi();
+                    }
                 }
             }
-
         }
 
         // ==============================
         // 挿入を押したとき(ファイルから)
         // ==============================
-        private void PageInsert_Click(object sender, EventArgs e)
+        private async void PageInsert_Click(object sender, EventArgs e)
         {
             // PDFが開かれていないなら処理しない
             if (pdfViewer1.Document == null) return;
@@ -4106,7 +4105,9 @@ namespace MyPDF
                         if (f.ShowDialog() == DialogResult.OK)
                         {
                             // PDF挿入処理へ(挿入するPDFパス、挿入するPDFのページ指定、挿入する場所のページ番号、前 or 後、挿入するPDF用の認証情報、挿入するPDFの入力されたパスワード)
-                            InsertPdf(insertPath, f.ExtractText, f.TargetPage, f.InsertBefore, insertProps, insertPassword);
+                            //InsertPdf(insertPath, f.ExtractText, f.TargetPage, f.InsertBefore, insertProps, insertPassword);
+                            await InsertPdfAsync(insertPath, f.ExtractText, f.TargetPage, f.InsertBefore, insertProps, insertPassword);
+
                         }
                     }
 
@@ -4127,7 +4128,7 @@ namespace MyPDF
         // ==============================
         // PDF挿入処理（パスあり対応）
         // ==============================
-        private void InsertPdf(string insertPath, string pageText, int targetPage, bool insertBefore, ReaderProperties insertProps, string? insertPassword)
+        private async Task InsertPdfAsync(string insertPath, string pageText, int targetPage, bool insertBefore, ReaderProperties insertProps, string? insertPassword)
         {
             // 一時作業用ファイル
             string tempPath = workingPath + ".tmp";
@@ -4149,8 +4150,9 @@ namespace MyPDF
 
                 //Application.DoEvents();
 
-                int insertPage;
-                int insertCount;
+
+                int insertPage = 0;
+                int insertCount = 0;
 
                 // 表示しているPDFの
                 ReaderProperties props = string.IsNullOrEmpty(currentPassword)
@@ -4161,41 +4163,74 @@ namespace MyPDF
                 // 例えば 挿入PDF:3ページ目 メインPDF:8ページ目へ入った なら 3→8 を記録
                 Dictionary<int, int> insertPageMap = new Dictionary<int, int>();
 
-                // using は終了時 Dispose 自動実行
-                using (var mainReader = new PdfReader(workingPath, props)) // 開いてるPDFを読込
-                using (var insertReader = new PdfReader(insertPath, insertProps)) // 挿入するPDFを読込
-                using (var writer = new PdfWriter(tempPath)) // 出力するPDFを生成
-                using (var mainPdf = new ITextDoc(mainReader, writer)) // 開いているPDF Document
-                using (var insertPdf = new ITextDoc(insertReader)) // 挿入するPDF Document
+                StatusLabel.Text = "挿入中...";
+                ProgressBar.Visible = true;
+                ProgressBar.Minimum = 0;
+                ProgressBar.Value = 0;
+                ProgressBar.Style = ProgressBarStyle.Continuous;
+
+                this.Enabled = false;
+
+                //this.Invoke(() =>
+                //{
+                //    treeView1.BeginUpdate();
+                //});
+
+                await Task.Run(() =>
                 {
-                    // 開いているPDFの総ページ数を取得
-                    //int total = mainPdf.GetNumberOfPages();
 
-                    // 挿入位置決定
-                    // 例えば、 3の前→3、3の後→4
-                    insertPage = insertBefore ? targetPage : targetPage + 1;
-
-                    // ページ範囲解析
-                    // 例えば、1-3,5の場合、　[1,2,3,5]に .Distinct()重複除去 .OrderBy(x => x)昇順ソート .ToList()リスト化
-                    var insertPages = PageRangeHelper.ParsePageRanges(pageText, insertPdf.GetNumberOfPages()).Distinct().OrderBy(x => x).ToList();
-
-                    // 挿入ページ数
-                    insertCount = insertPages.Count;
-
-                    // コピー先ページ位置
-                    int newPagePos = insertPage;
-
-                    // 1ページずつコピー
-                    foreach (int p in insertPages)
+                    // using は終了時 Dispose 自動実行
+                    using (var mainReader = new PdfReader(workingPath, props)) // 開いてるPDFを読込
+                    using (var insertReader = new PdfReader(insertPath, insertProps)) // 挿入するPDFを読込
+                    using (var writer = new PdfWriter(tempPath)) // 出力するPDFを生成
+                    using (var mainPdf = new ITextDoc(mainReader, writer)) // 開いているPDF Document
+                    using (var insertPdf = new ITextDoc(insertReader)) // 挿入するPDF Document
                     {
-                        // 挿入するPDF Document(insertPdf)のpページを開いているPDF Document(mainPdf)のnewPagePosへ挿入
-                        insertPdf.CopyPagesTo(p, p, mainPdf, newPagePos);
-                        // ページ対応記録
-                        insertPageMap[p] = newPagePos;
-                        // 次ページ位置へ
-                        newPagePos++;
+                        // 開いているPDFの総ページ数を取得
+                        //int total = mainPdf.GetNumberOfPages();
+
+                        // 挿入位置決定
+                        // 例えば、 3の前→3、3の後→4
+                        insertPage = insertBefore ? targetPage : targetPage + 1;
+
+                        // ページ範囲解析
+                        // 例えば、1-3,5の場合、　[1,2,3,5]に .Distinct()重複除去 .OrderBy(x => x)昇順ソート .ToList()リスト化
+                        var insertPages = PageRangeHelper.ParsePageRanges(pageText, insertPdf.GetNumberOfPages()).Distinct().OrderBy(x => x).ToList();
+
+                        // 挿入ページ数
+                        insertCount = insertPages.Count;
+
+                        this.Invoke(() =>
+                        {
+                            ProgressBar.Maximum = insertCount;
+                        });
+
+                        // コピー先ページ位置
+                        int newPagePos = insertPage;
+
+                        int current = 0;
+
+                        // 1ページずつコピー
+                        foreach (int p in insertPages)
+                        {
+                            current++;
+
+                            this.Invoke(() =>
+                            {
+                                ProgressBar.Value = current;
+                                StatusLabel.Text = $"挿入中... {current}/{ProgressBar.Maximum}";
+                            });
+
+                            // 挿入するPDF Document(insertPdf)のpページを開いているPDF Document(mainPdf)のnewPagePosへ挿入
+                            insertPdf.CopyPagesTo(p, p, mainPdf, newPagePos);
+                            // ページ対応記録
+                            insertPageMap[p] = newPagePos;
+                            // 次ページ位置へ
+                            newPagePos++;
+
+                        }
                     }
-                }
+                });
 
                 // 元しおり(開いているPDF)補正
                 // 例えば、4ページ目へ3ページ挿入なら4以降のしおりを+3する
@@ -4249,6 +4284,17 @@ namespace MyPDF
                 MessageBox.Show("挿入中にエラーが発生しました。", "挿入失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 System.Diagnostics.Debug.WriteLine(ex.ToString());
 #endif
+            }
+            finally
+            {
+                //this.Invoke(() =>
+                //{
+                //    treeView1.EndUpdate();
+                //});
+
+                ProgressBar.Value = 0;
+                ProgressBar.Visible = false;
+                this.Enabled = true;
             }
         }
 
@@ -4433,10 +4479,10 @@ namespace MyPDF
 
                 // ページ番号取得
                 // デバッグ出力確認
-                Debug.WriteLine("----しおり----------------------");
-                Debug.WriteLine(outline.GetTitle());
-                Debug.WriteLine(destObj?.GetType());
-                Debug.WriteLine(destObj);
+                //Debug.WriteLine("----しおり----------------------");
+                //Debug.WriteLine(outline.GetTitle());
+                //Debug.WriteLine(destObj?.GetType());
+                //Debug.WriteLine(destObj);
 
                 if (destObj is PdfArray arr && arr.Size() > 0)
                 {
@@ -4549,8 +4595,8 @@ namespace MyPDF
 
                 FontStyle selectedStyle = fontStyle;
 
-                Debug.WriteLine("-----文字スタイル1------------------------");
-                Debug.WriteLine("selectedStyle: " + selectedStyle);
+                //Debug.WriteLine("-----文字スタイル1------------------------");
+                //Debug.WriteLine("selectedStyle: " + selectedStyle);
 
                 var node = new TreeNode(title)
                 {
@@ -4576,8 +4622,8 @@ namespace MyPDF
 
                 //nodes.Add(node);
 
-                Debug.WriteLine("-----しおり名 → ページ番号------------------------");
-                Debug.WriteLine($"{title} → Page:{newPage}");
+                //Debug.WriteLine("-----しおり名 → ページ番号------------------------");
+                //Debug.WriteLine($"{title} → Page:{newPage}");
 
                 // 子も再帰
                 foreach (var child in outline.GetAllChildren())
@@ -4813,7 +4859,7 @@ namespace MyPDF
         // ==============================
         // 置換を押したとき
         // ==============================
-        private void ReplacementMenu_Click(object sender, EventArgs e)
+        private async void ReplacementMenu_Click(object sender, EventArgs e)
         {
             // PDFが開かれていないなら処理しない
             if (pdfViewer1.Document == null)
@@ -4877,7 +4923,9 @@ namespace MyPDF
                             //var range = PageRangeHelper.ParseReplaceRange(f.ReplaceText, currentSettings.TotalPage);
                             //OkikaePdfPage(replacementPath, f.ExtractText, range.Start, range.End, insertProps, insertPassword);
                             //OkikaePdfPage(replacementPath, f.ExtractText, f.StartPage, f.EndPage, insertProps, insertPassword);
-                            OkikaePdfPage(replacementPath, f.ExtractText, f.TargetStartPage, f.TargetEndPage, insertProps, insertPassword);
+                            //OkikaePdfPage(replacementPath, f.ExtractText, f.TargetStartPage, f.TargetEndPage, insertProps, insertPassword);
+                            await ReplacementPdfAsync(replacementPath, f.ExtractText, f.TargetStartPage, f.TargetEndPage, insertProps, insertPassword);
+
 
                         }
                     }
@@ -4899,15 +4947,16 @@ namespace MyPDF
         // ==============================
         // ページ置換処理
         // ==============================
-        private void OkikaePdfPage(string okikaePath, string pageText, int start, int end, ReaderProperties okikaeProps, string? okikaePassword)
+        private async Task ReplacementPdfAsync(string okikaePath, string pageText, int start, int end, ReaderProperties okikaeProps, string? okikaePassword)
         {
 
             string tempPath = workingPath + ".tmp";
 
-
             okikaeProps = string.IsNullOrEmpty(okikaePassword)
                 ? new ReaderProperties()
                 : new ReaderProperties().SetPassword(Encoding.UTF8.GetBytes(okikaePassword));
+
+            int repCount = 0;
 
             try
             {
@@ -4920,82 +4969,107 @@ namespace MyPDF
 
                 Dictionary<int, int> replacePageMap = new Dictionary<int, int>();
 
-                using (var mainReader = new PdfReader(workingPath, props))
-                using (var repReader = new PdfReader(okikaePath, okikaeProps))
-                using (var writer = new PdfWriter(tempPath))
-                using (var mainPdf = new ITextDoc(mainReader))
-                using (var repPdf = new ITextDoc(repReader))
-                using (var destPdf = new ITextDoc(writer))
+                StatusLabel.Text = "置換中...";
+                ProgressBar.Visible = true;
+                ProgressBar.Minimum = 0;
+                ProgressBar.Value = 0;
+                ProgressBar.Style = ProgressBarStyle.Continuous;
+
+                this.Enabled = false;
+
+                await Task.Run(() =>
                 {
-                    int total = mainPdf.GetNumberOfPages();
-
-                    var replacePages = PageRangeHelper.ParsePageRanges(pageText, repPdf.GetNumberOfPages()).Distinct().OrderBy(x => x).ToList();
-
-                    //int repCount = repPdf.GetNumberOfPages();
-                    int repCount = replacePages.Count;
-
-
-                    for (int i = 1; i <= total; i++)
+                    using (var mainReader = new PdfReader(workingPath, props))
+                    using (var repReader = new PdfReader(okikaePath, okikaeProps))
+                    using (var writer = new PdfWriter(tempPath))
+                    using (var mainPdf = new ITextDoc(mainReader))
+                    using (var repPdf = new ITextDoc(repReader))
+                    using (var destPdf = new ITextDoc(writer))
                     {
-                        // 置換開始位置
-                        if (i == start)
+                        int total = mainPdf.GetNumberOfPages();
+
+                        var replacePages = PageRangeHelper.ParsePageRanges(pageText, repPdf.GetNumberOfPages()).Distinct().OrderBy(x => x).ToList();
+
+                        //int repCount = repPdf.GetNumberOfPages();
+                        repCount = replacePages.Count;
+
+                        this.Invoke(() =>
                         {
-                            // 置換PDFをコピー
-                            int destPage = start;
+                            ProgressBar.Maximum = total;
+                        });
 
-                            foreach (int p in replacePages)
+                        int current = 0;
+
+                        for (int i = 1; i <= total; i++)
+                        {
+                            current++;
+
+                            this.Invoke(() =>
                             {
-                                repPdf.CopyPagesTo(p, p, destPdf);
+                                ProgressBar.Value = current;
+                                StatusLabel.Text = $"置換中... {current}/{ProgressBar.Maximum}";
+                            });
 
-                                replacePageMap[p] = destPage;
+                            // 置換開始位置
+                            if (i == start)
+                            {
+                                // 置換PDFをコピー
+                                int destPage = start;
 
-                                destPage++;
+                                foreach (int p in replacePages)
+                                {
+                                    repPdf.CopyPagesTo(p, p, destPdf);
+
+                                    replacePageMap[p] = destPage;
+
+                                    destPage++;
+                                }
                             }
+
+                            // 置換対象はスキップ
+                            if (i >= start && i <= end)
+                                continue;
+
+                            // 通常コピー
+                            mainPdf.CopyPagesTo(i, i, destPdf);
                         }
+                    }
+                });
 
-                        // 置換対象はスキップ
-                        if (i >= start && i <= end)
-                            continue;
+                // 置換PDFのしおり有無確認
+                using (var repReader2 = new PdfReader(okikaePath, okikaeProps))
+                using (var repPdfDoc = new ITextDoc(repReader2))
+                {
+                    bool hasBookmarks = HasBookmarks(repPdfDoc);
 
-                        // 通常コピー
-                        mainPdf.CopyPagesTo(i, i, destPdf);
+                    // 置換PDFにしおりあり
+                    if (hasBookmarks)
+                    {
+                        // 元しおり削除
+                        RemoveBookmarksInRange(start, end);
+
+                        // 後続ページ補正
+                        ShiftBookmarksAfter(start, end, repCount);
+
+                        // 新しおり追加
+                        ImportBookmarksFromPdf(
+                            repPdfDoc,
+                            replacePageMap,
+                            treeView1,
+                            true);
+
+                        // Page=-1 を昇格
+                        CleanupImportedBookmarks(treeView1.Nodes);
                     }
 
-                    // 置換PDFのしおり有無確認
-                    using (var repReader2 = new PdfReader(okikaePath, okikaeProps))
-                    using (var repPdfDoc = new ITextDoc(repReader2))
+                    // 置換PDFにしおりなし
+                    else
                     {
-                        bool hasBookmarks = HasBookmarks(repPdfDoc);
-
-                        // 置換PDFにしおりあり
-                        if (hasBookmarks)
-                        {
-                            // 元しおり削除
-                            RemoveBookmarksInRange(start, end);
-
-                            // 後続ページ補正
-                            ShiftBookmarksAfter(start, end, repCount);
-
-                            // 新しおり追加
-                            ImportBookmarksFromPdf(
-                                repPdfDoc,
-                                replacePageMap,
-                                treeView1,
-                                true);
-
-                            // Page=-1 を昇格
-                            CleanupImportedBookmarks(treeView1.Nodes);
-                        }
-
-                        // 置換PDFにしおりなし
-                        else
-                        {
-                            ShiftBookmarksAfter(start, end, repCount);
-                        }
-
+                        ShiftBookmarksAfter(start, end, repCount);
                     }
 
                 }
+
 
                 // 上書き
                 File.Delete(workingPath);
@@ -5025,12 +5099,19 @@ namespace MyPDF
             catch (Exception ex)
             {
 #if DEBUG
-                Extxt.Text = ex.Message;
+                Extxt.Text = ex.ToString();
                 MessageBox.Show("置換エラー:\n" + ex.ToString());
 #else
                 MessageBox.Show("置換中にエラーが発生しました。", "置換失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 System.Diagnostics.Debug.WriteLine(ex.ToString());
 #endif
+            }
+            finally
+            {
+
+                ProgressBar.Value = 0;
+                ProgressBar.Visible = false;
+                this.Enabled = true;
             }
         }
 
@@ -5230,8 +5311,8 @@ namespace MyPDF
                         ProgressBar.Value = 0;
                         ProgressBar.Style = ProgressBarStyle.Continuous;
 
-
                         this.Enabled = false;
+
                         await Task.Run(() =>
                         {
 
@@ -5442,8 +5523,12 @@ namespace MyPDF
                             CleanupWorkingFile();
 
                             // 作業ファイル作成
+                            // 作業用ファイルパス
+                            string workingPath = PdfFileUtil.CreateTempPdfCopy(originalPath);
                             // C:\Users\<ユーザー名>\AppData\Local\Temp\ に作業用ファイルを置く
-                            workingPath = IOPath.Combine(IOPath.GetTempPath(), $"MyPDFwork_{Guid.NewGuid()}.pdf");
+                            //workingPath = IOPath.Combine(IOPath.GetTempPath(), $"MyPDFwork_{Guid.NewGuid()}.pdf");
+
+
                             // 元ファイルを作業用ファイルにコピー true:同じ名前は上書き
                             File.Copy(originalPath, workingPath, true);
 
@@ -5630,7 +5715,7 @@ namespace MyPDF
                 MessageBox.Show("PDF設定情報の取得に失敗しました。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            
+
             // 保存先
             string saveFolder = saveFolderPath;
 
@@ -5754,7 +5839,7 @@ namespace MyPDF
                 // ユーザーキャンセル専用
                 catch (OperationCanceledException)
                 {
-                    MessageBox.Show("処理をキャンセルしました。","処理中断", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("処理をキャンセルしました。", "処理中断", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
 
