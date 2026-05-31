@@ -190,8 +190,8 @@ namespace MyPDF
             treeView1.ShowLines = false;
 
             // エラー表示用
-            Extxt.Visible = true;
-            Extxt.Dock = DockStyle.Bottom;
+            //Extxt.Visible = true;
+            //Extxt.Dock = DockStyle.Bottom;
 
             // しおりドラッグ中のちらつき防止(普通は触れないので呪文を唱える感じ)
             // TreeView の「ダブルバッファ」を強制ONにして、描画ちらつきを減らす
@@ -5896,8 +5896,56 @@ namespace MyPDF
         }
 
         // ==============================
+        // PDFを画像に変換処理 グレースケール変換ロジック
+        // ==============================
+        private Bitmap ToGrayScaleFast(Bitmap src)
+        {
+            // 出力用のBitmapを作成（元の解像度を維持）
+            Bitmap bmp = new Bitmap(src.Width, src.Height, PixelFormat.Format24bppRgb);
+            bmp.SetResolution(src.HorizontalResolution, src.VerticalResolution);
+
+            using (Graphics g = Graphics.FromImage(bmp))
+            {
+                // グレースケール変換用のカラーマトリックスを設定
+                // NTSC形式のウェイト（0.299, 0.587, 0.114）を反映
+                ColorMatrix colorMatrix = new ColorMatrix(new float[][]
+                {
+                    new float[] {0.299f, 0.587f, 0.114f, 0, 0},
+                    new float[] {0.299f, 0.587f, 0.114f, 0, 0},
+                    new float[] {0.299f, 0.587f, 0.114f, 0, 0},
+                    new float[] {0,      0,      0,      1, 0},
+                    new float[] {0,      0,      0,      0, 1}
+                    
+                    //new float[] {0.299f, 0.299f, 0.299f, 0, 0},
+                    //new float[] {0.587f, 0.587f, 0.587f, 0, 0},
+                    //new float[] {0.114f, 0.114f, 0.114f, 0, 0},
+                    //new float[] {0,      0,      0,      1, 0},
+                    //new float[] {0,      0,      0,      0, 1}
+                });
+
+                using (ImageAttributes attributes = new ImageAttributes())
+                {
+                    attributes.SetColorMatrix(colorMatrix);
+
+                    // 変換マトリックスを適用しながら一気に描画
+                    g.DrawImage(src,
+                        new SysRectangle(0, 0, src.Width, src.Height),
+                        0, 0, src.Width, src.Height,
+                        GraphicsUnit.Pixel,
+                        attributes);
+                }
+            }
+
+            return bmp;
+        }
+
+
+        /*
+         
+        // ==============================
         // PDFを画像に変換処理 グレースケール変換ロジック(LockBits方式)
         // ==============================
+
         private Bitmap ToGrayScaleFast(Bitmap src)
         {
             // 24bitへ変換
@@ -5961,6 +6009,8 @@ namespace MyPDF
 
             return bmp;
         }
+
+        */
 
         // ==============================
         // PDFを画像に変換処理 ヘルパー関数(上書き確認)1
