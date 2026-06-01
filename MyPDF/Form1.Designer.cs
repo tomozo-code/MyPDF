@@ -45,6 +45,14 @@
             toolStripMenuItem2 = new ToolStripSeparator();
             ConvImgSetting = new ToolStripMenuItem();
             PageEditMenu = new ToolStripDropDownButton();
+            PageMove2 = new ToolStripMenuItem();
+            PageInsert2 = new ToolStripMenuItem();
+            ReplacementMenu2 = new ToolStripMenuItem();
+            PageExtractSetting2 = new ToolStripMenuItem();
+            RotatePagesSetting2 = new ToolStripMenuItem();
+            PageDeleteSetting2 = new ToolStripMenuItem();
+            toolStripMenuItem18 = new ToolStripSeparator();
+            ConvImgSetting2 = new ToolStripMenuItem();
             treeView1 = new TreeView();
             contextMenuStrip1 = new ContextMenuStrip(components);
             AddShioriToolStripMenuItem = new ToolStripMenuItem();
@@ -65,6 +73,23 @@
             toolStripMenuItem7 = new ToolStripSeparator();
             ShioriProToolStripMenuItem = new ToolStripMenuItem();
             ShioriMenu = new ToolStripDropDownButton();
+            AddShioriMenu = new ToolStripMenuItem();
+            DelShioriMenu = new ToolStripMenuItem();
+            toolStripMenuItem3 = new ToolStripSeparator();
+            AllDelMenu = new ToolStripMenuItem();
+            toolStripMenuItem12 = new ToolStripSeparator();
+            SetShioriMenu = new ToolStripMenuItem();
+            toolStripMenuItem13 = new ToolStripSeparator();
+            AllShioriTenkaiMenu = new ToolStripMenuItem();
+            AllShioriSyukusyouMenu = new ToolStripMenuItem();
+            toolStripMenuItem14 = new ToolStripSeparator();
+            ShioriTenkaiMenu = new ToolStripMenuItem();
+            ShioriSyukusyouMenu = new ToolStripMenuItem();
+            toolStripMenuItem16 = new ToolStripSeparator();
+            ImportShioriMenu = new ToolStripMenuItem();
+            ExportShioriMenu = new ToolStripMenuItem();
+            toolStripMenuItem17 = new ToolStripSeparator();
+            ShioriProMenu = new ToolStripMenuItem();
             imageList1 = new ImageList(components);
             panel1 = new Panel();
             panel3 = new Panel();
@@ -158,13 +183,13 @@
             contextMenuStrip2.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             contextMenuStrip2.Items.AddRange(new ToolStripItem[] { PageMove, PageInsert, ReplacementMenu, PageExtractSetting, RotatePagesSetting, PageDeleteSetting, toolStripMenuItem2, ConvImgSetting });
             contextMenuStrip2.Name = "contextMenuStrip2";
-            contextMenuStrip2.Size = new Size(181, 214);
+            contextMenuStrip2.Size = new Size(175, 192);
             // 
             // PageMove
             // 
             PageMove.Enabled = false;
             PageMove.Name = "PageMove";
-            PageMove.Size = new Size(180, 26);
+            PageMove.Size = new Size(174, 26);
             PageMove.Text = "移動(&M)...";
             PageMove.ToolTipText = "ページを指定して移動します";
             PageMove.Click += PageMove_Click;
@@ -175,7 +200,7 @@
             // 
             PageInsert.Enabled = false;
             PageInsert.Name = "PageInsert";
-            PageInsert.Size = new Size(180, 26);
+            PageInsert.Size = new Size(174, 26);
             PageInsert.Text = "挿入(&I)...";
             PageInsert.ToolTipText = "ファイルからページを挿入します";
             PageInsert.Click += PageInsert_Click;
@@ -186,7 +211,7 @@
             // 
             ReplacementMenu.Enabled = false;
             ReplacementMenu.Name = "ReplacementMenu";
-            ReplacementMenu.Size = new Size(180, 26);
+            ReplacementMenu.Size = new Size(174, 26);
             ReplacementMenu.Text = "置換(&K)...";
             ReplacementMenu.ToolTipText = "ファイルからページを置換します";
             ReplacementMenu.Click += ReplacementMenu_Click;
@@ -197,7 +222,7 @@
             // 
             PageExtractSetting.Enabled = false;
             PageExtractSetting.Name = "PageExtractSetting";
-            PageExtractSetting.Size = new Size(180, 26);
+            PageExtractSetting.Size = new Size(174, 26);
             PageExtractSetting.Text = "抽出(&X)...";
             PageExtractSetting.ToolTipText = "ページを指定して抽出します";
             PageExtractSetting.Click += PageExtractSetting_Click;
@@ -208,7 +233,7 @@
             // 
             RotatePagesSetting.Enabled = false;
             RotatePagesSetting.Name = "RotatePagesSetting";
-            RotatePagesSetting.Size = new Size(180, 26);
+            RotatePagesSetting.Size = new Size(174, 26);
             RotatePagesSetting.Text = "回転(&R)...";
             RotatePagesSetting.ToolTipText = "ページを指定して回転します";
             RotatePagesSetting.Click += RotatePagesSetting_Click;
@@ -219,7 +244,7 @@
             // 
             PageDeleteSetting.Enabled = false;
             PageDeleteSetting.Name = "PageDeleteSetting";
-            PageDeleteSetting.Size = new Size(180, 26);
+            PageDeleteSetting.Size = new Size(174, 26);
             PageDeleteSetting.Text = "削除(&D)...";
             PageDeleteSetting.ToolTipText = "ページを指定して削除します";
             PageDeleteSetting.Click += PageDeleteSetting_Click;
@@ -229,13 +254,13 @@
             // toolStripMenuItem2
             // 
             toolStripMenuItem2.Name = "toolStripMenuItem2";
-            toolStripMenuItem2.Size = new Size(177, 6);
+            toolStripMenuItem2.Size = new Size(171, 6);
             // 
             // ConvImgSetting
             // 
             ConvImgSetting.Enabled = false;
             ConvImgSetting.Name = "ConvImgSetting";
-            ConvImgSetting.Size = new Size(180, 26);
+            ConvImgSetting.Size = new Size(174, 26);
             ConvImgSetting.Tag = "";
             ConvImgSetting.Text = "画像変換(&G)...";
             ConvImgSetting.ToolTipText = "ページを指定して画像ファイル(jpg/png/bmp/tif)に変換します";
@@ -246,7 +271,7 @@
             // PageEditMenu
             // 
             PageEditMenu.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            PageEditMenu.DropDown = contextMenuStrip2;
+            PageEditMenu.DropDownItems.AddRange(new ToolStripItem[] { PageMove2, PageInsert2, ReplacementMenu2, PageExtractSetting2, RotatePagesSetting2, PageDeleteSetting2, toolStripMenuItem18, ConvImgSetting2 });
             PageEditMenu.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             PageEditMenu.Image = (Image)resources.GetObject("PageEditMenu.Image");
             PageEditMenu.ImageTransparentColor = Color.Magenta;
@@ -256,6 +281,88 @@
             PageEditMenu.ToolTipText = "ページ編集メニュー";
             PageEditMenu.MouseEnter += menuStrip1_MouseEnter;
             PageEditMenu.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // PageMove2
+            // 
+            PageMove2.Enabled = false;
+            PageMove2.Name = "PageMove2";
+            PageMove2.Size = new Size(180, 26);
+            PageMove2.Text = "移動(&M)...";
+            PageMove2.ToolTipText = "ページを指定して移動します";
+            PageMove2.Click += PageMove_Click;
+            PageMove2.MouseEnter += menuStrip1_MouseEnter;
+            PageMove2.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // PageInsert2
+            // 
+            PageInsert2.Enabled = false;
+            PageInsert2.Name = "PageInsert2";
+            PageInsert2.Size = new Size(180, 26);
+            PageInsert2.Text = "挿入(&I)...";
+            PageInsert2.ToolTipText = "ファイルからページを挿入します";
+            PageInsert2.Click += PageInsert_Click;
+            PageInsert2.MouseEnter += menuStrip1_MouseEnter;
+            PageInsert2.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // ReplacementMenu2
+            // 
+            ReplacementMenu2.Enabled = false;
+            ReplacementMenu2.Name = "ReplacementMenu2";
+            ReplacementMenu2.Size = new Size(180, 26);
+            ReplacementMenu2.Text = "置換(&K)...";
+            ReplacementMenu2.ToolTipText = "ファイルからページを置換します";
+            ReplacementMenu2.Click += ReplacementMenu_Click;
+            ReplacementMenu2.MouseEnter += menuStrip1_MouseEnter;
+            ReplacementMenu2.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // PageExtractSetting2
+            // 
+            PageExtractSetting2.Enabled = false;
+            PageExtractSetting2.Name = "PageExtractSetting2";
+            PageExtractSetting2.Size = new Size(180, 26);
+            PageExtractSetting2.Text = "抽出(&X)...";
+            PageExtractSetting2.ToolTipText = "ページを指定して抽出します";
+            PageExtractSetting2.Click += PageExtractSetting_Click;
+            PageExtractSetting2.MouseEnter += menuStrip1_MouseEnter;
+            PageExtractSetting2.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // RotatePagesSetting2
+            // 
+            RotatePagesSetting2.Enabled = false;
+            RotatePagesSetting2.Name = "RotatePagesSetting2";
+            RotatePagesSetting2.Size = new Size(180, 26);
+            RotatePagesSetting2.Text = "回転(&R)...";
+            RotatePagesSetting2.ToolTipText = "ページを指定して回転します";
+            RotatePagesSetting2.Click += RotatePagesSetting_Click;
+            RotatePagesSetting2.MouseEnter += menuStrip1_MouseEnter;
+            RotatePagesSetting2.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // PageDeleteSetting2
+            // 
+            PageDeleteSetting2.Enabled = false;
+            PageDeleteSetting2.Name = "PageDeleteSetting2";
+            PageDeleteSetting2.Size = new Size(180, 26);
+            PageDeleteSetting2.Text = "削除(&D)...";
+            PageDeleteSetting2.ToolTipText = "ページを指定して削除します";
+            PageDeleteSetting2.Click += PageDeleteSetting_Click;
+            PageDeleteSetting2.MouseEnter += menuStrip1_MouseEnter;
+            PageDeleteSetting2.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // toolStripMenuItem18
+            // 
+            toolStripMenuItem18.Name = "toolStripMenuItem18";
+            toolStripMenuItem18.Size = new Size(177, 6);
+            // 
+            // ConvImgSetting2
+            // 
+            ConvImgSetting2.Enabled = false;
+            ConvImgSetting2.Name = "ConvImgSetting2";
+            ConvImgSetting2.Size = new Size(180, 26);
+            ConvImgSetting2.Text = "画像変換(&G)...";
+            ConvImgSetting2.ToolTipText = "ページを指定して画像ファイル(jpg/png/bmp/tif)に変換します";
+            ConvImgSetting2.Click += ConvImgSetting_Click;
+            ConvImgSetting2.MouseEnter += menuStrip1_MouseEnter;
+            ConvImgSetting2.MouseLeave += menuStrip1_MouseLeave;
             // 
             // treeView1
             // 
@@ -344,7 +451,7 @@
             SetShioriToolStripMenuItem.Enabled = false;
             SetShioriToolStripMenuItem.Name = "SetShioriToolStripMenuItem";
             SetShioriToolStripMenuItem.Size = new Size(302, 26);
-            SetShioriToolStripMenuItem.Text = "現在のページ番号をしおりに設定(L)";
+            SetShioriToolStripMenuItem.Text = "現在のページ番号をしおりに設定(&L)";
             SetShioriToolStripMenuItem.ToolTipText = "表示しているページ番号を選択しているしおりに設定します";
             SetShioriToolStripMenuItem.Click += SetShioriToolStripMenuItem_Click;
             SetShioriToolStripMenuItem.MouseEnter += menuStrip1_MouseEnter;
@@ -371,7 +478,7 @@
             AllShioriSyukusyouToolStripMenuItem.Enabled = false;
             AllShioriSyukusyouToolStripMenuItem.Name = "AllShioriSyukusyouToolStripMenuItem";
             AllShioriSyukusyouToolStripMenuItem.Size = new Size(302, 26);
-            AllShioriSyukusyouToolStripMenuItem.Text = "全てのしおりを縮小(2)";
+            AllShioriSyukusyouToolStripMenuItem.Text = "全てのしおりを縮小(&2)";
             AllShioriSyukusyouToolStripMenuItem.ToolTipText = "全てのしおりを縮小します(全て畳みます)";
             AllShioriSyukusyouToolStripMenuItem.Click += AllShioriSyukusyouToolStripMenuItem_Click;
             AllShioriSyukusyouToolStripMenuItem.MouseEnter += menuStrip1_MouseEnter;
@@ -450,7 +557,7 @@
             // ShioriMenu
             // 
             ShioriMenu.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            ShioriMenu.DropDown = contextMenuStrip1;
+            ShioriMenu.DropDownItems.AddRange(new ToolStripItem[] { AddShioriMenu, DelShioriMenu, toolStripMenuItem3, AllDelMenu, toolStripMenuItem12, SetShioriMenu, toolStripMenuItem13, AllShioriTenkaiMenu, AllShioriSyukusyouMenu, toolStripMenuItem14, ShioriTenkaiMenu, ShioriSyukusyouMenu, toolStripMenuItem16, ImportShioriMenu, ExportShioriMenu, toolStripMenuItem17, ShioriProMenu });
             ShioriMenu.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             ShioriMenu.Image = (Image)resources.GetObject("ShioriMenu.Image");
             ShioriMenu.ImageTransparentColor = Color.Magenta;
@@ -458,6 +565,157 @@
             ShioriMenu.Size = new Size(109, 32);
             ShioriMenu.Text = "しおり編集(&B)";
             ShioriMenu.ToolTipText = "しおり編集メニュー";
+            // 
+            // AddShioriMenu
+            // 
+            AddShioriMenu.Enabled = false;
+            AddShioriMenu.Name = "AddShioriMenu";
+            AddShioriMenu.Size = new Size(302, 26);
+            AddShioriMenu.Text = "しおり作成(&B)";
+            AddShioriMenu.ToolTipText = "しおりを作成します";
+            AddShioriMenu.Click += AddShioriToolStripMenuItem_Click;
+            AddShioriMenu.MouseEnter += menuStrip1_MouseEnter;
+            AddShioriMenu.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // DelShioriMenu
+            // 
+            DelShioriMenu.Enabled = false;
+            DelShioriMenu.Name = "DelShioriMenu";
+            DelShioriMenu.Size = new Size(302, 26);
+            DelShioriMenu.Text = "しおり削除";
+            DelShioriMenu.ToolTipText = "しおりを削除します";
+            DelShioriMenu.Click += DelShioriToolStripMenuItem_Click;
+            DelShioriMenu.MouseEnter += menuStrip1_MouseEnter;
+            DelShioriMenu.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // toolStripMenuItem3
+            // 
+            toolStripMenuItem3.Name = "toolStripMenuItem3";
+            toolStripMenuItem3.Size = new Size(299, 6);
+            // 
+            // AllDelMenu
+            // 
+            AllDelMenu.Enabled = false;
+            AllDelMenu.Name = "AllDelMenu";
+            AllDelMenu.Size = new Size(302, 26);
+            AllDelMenu.Text = "全てのしおり削除";
+            AllDelMenu.ToolTipText = "全てのしおりを削除します";
+            AllDelMenu.Click += AllDelToolStripMenuItem_Click;
+            AllDelMenu.MouseEnter += menuStrip1_MouseEnter;
+            AllDelMenu.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // toolStripMenuItem12
+            // 
+            toolStripMenuItem12.Name = "toolStripMenuItem12";
+            toolStripMenuItem12.Size = new Size(299, 6);
+            // 
+            // SetShioriMenu
+            // 
+            SetShioriMenu.Enabled = false;
+            SetShioriMenu.Name = "SetShioriMenu";
+            SetShioriMenu.Size = new Size(302, 26);
+            SetShioriMenu.Text = "現在のページ番号をしおりに設定(&L)";
+            SetShioriMenu.ToolTipText = "表示しているページ番号を選択しているしおりに設定します";
+            SetShioriMenu.Click += SetShioriToolStripMenuItem_Click;
+            SetShioriMenu.MouseEnter += menuStrip1_MouseEnter;
+            SetShioriMenu.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // toolStripMenuItem13
+            // 
+            toolStripMenuItem13.Name = "toolStripMenuItem13";
+            toolStripMenuItem13.Size = new Size(299, 6);
+            // 
+            // AllShioriTenkaiMenu
+            // 
+            AllShioriTenkaiMenu.Enabled = false;
+            AllShioriTenkaiMenu.Name = "AllShioriTenkaiMenu";
+            AllShioriTenkaiMenu.Size = new Size(302, 26);
+            AllShioriTenkaiMenu.Text = "全てのしおりを展開(&1)";
+            AllShioriTenkaiMenu.ToolTipText = "全てのしおりを展開します";
+            AllShioriTenkaiMenu.Click += AllShioriTenkaiToolStripMenuItem_Click;
+            AllShioriTenkaiMenu.MouseEnter += menuStrip1_MouseEnter;
+            AllShioriTenkaiMenu.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // AllShioriSyukusyouMenu
+            // 
+            AllShioriSyukusyouMenu.Enabled = false;
+            AllShioriSyukusyouMenu.Name = "AllShioriSyukusyouMenu";
+            AllShioriSyukusyouMenu.Size = new Size(302, 26);
+            AllShioriSyukusyouMenu.Text = "全てのしおりを縮小(&2)";
+            AllShioriSyukusyouMenu.ToolTipText = "全てのしおりを縮小します(全て畳みます)";
+            AllShioriSyukusyouMenu.Click += AllShioriSyukusyouToolStripMenuItem_Click;
+            AllShioriSyukusyouMenu.MouseEnter += menuStrip1_MouseEnter;
+            AllShioriSyukusyouMenu.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // toolStripMenuItem14
+            // 
+            toolStripMenuItem14.Name = "toolStripMenuItem14";
+            toolStripMenuItem14.Size = new Size(299, 6);
+            // 
+            // ShioriTenkaiMenu
+            // 
+            ShioriTenkaiMenu.Enabled = false;
+            ShioriTenkaiMenu.Name = "ShioriTenkaiMenu";
+            ShioriTenkaiMenu.Size = new Size(302, 26);
+            ShioriTenkaiMenu.Text = "選択中のしおりを展開(&3)";
+            ShioriTenkaiMenu.ToolTipText = "選択中のしおりを展開します";
+            ShioriTenkaiMenu.Click += ShioriTenkaiToolStripMenuItem_Click;
+            ShioriTenkaiMenu.MouseEnter += menuStrip1_MouseEnter;
+            ShioriTenkaiMenu.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // ShioriSyukusyouMenu
+            // 
+            ShioriSyukusyouMenu.Enabled = false;
+            ShioriSyukusyouMenu.Name = "ShioriSyukusyouMenu";
+            ShioriSyukusyouMenu.Size = new Size(302, 26);
+            ShioriSyukusyouMenu.Text = "選択中のしおりを縮小(&4)";
+            ShioriSyukusyouMenu.ToolTipText = "選択中のしおりを縮小します(畳みます)";
+            ShioriSyukusyouMenu.Click += ShioriSyukusyouToolStripMenuItem_Click;
+            ShioriSyukusyouMenu.MouseEnter += menuStrip1_MouseEnter;
+            ShioriSyukusyouMenu.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // toolStripMenuItem16
+            // 
+            toolStripMenuItem16.Name = "toolStripMenuItem16";
+            toolStripMenuItem16.Size = new Size(299, 6);
+            // 
+            // ImportShioriMenu
+            // 
+            ImportShioriMenu.Enabled = false;
+            ImportShioriMenu.Name = "ImportShioriMenu";
+            ImportShioriMenu.Size = new Size(302, 26);
+            ImportShioriMenu.Text = "しおりインポート(&I)...";
+            ImportShioriMenu.ToolTipText = "CSV形式のしおりデータをインポート(読み込み)";
+            ImportShioriMenu.Click += ImportShioriToolStripMenuItem_Click;
+            ImportShioriMenu.MouseEnter += menuStrip1_MouseEnter;
+            ImportShioriMenu.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // ExportShioriMenu
+            // 
+            ExportShioriMenu.Enabled = false;
+            ExportShioriMenu.Name = "ExportShioriMenu";
+            ExportShioriMenu.Size = new Size(302, 26);
+            ExportShioriMenu.Text = "しおりエクスポート(&E)...";
+            ExportShioriMenu.ToolTipText = "しおりデータをCSV形式でエクスポート(書き出し)";
+            ExportShioriMenu.Click += ExportShioriToolStripMenuItem_Click;
+            ExportShioriMenu.MouseEnter += menuStrip1_MouseEnter;
+            ExportShioriMenu.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // toolStripMenuItem17
+            // 
+            toolStripMenuItem17.Name = "toolStripMenuItem17";
+            toolStripMenuItem17.Size = new Size(299, 6);
+            // 
+            // ShioriProMenu
+            // 
+            ShioriProMenu.Enabled = false;
+            ShioriProMenu.Name = "ShioriProMenu";
+            ShioriProMenu.Size = new Size(302, 26);
+            ShioriProMenu.Text = "しおりのプロパティ(&A)...";
+            ShioriProMenu.ToolTipText = "しおりのスタイル／色を設定します";
+            ShioriProMenu.Click += ShioriProToolStripMenuItem_Click;
+            ShioriProMenu.MouseEnter += menuStrip1_MouseEnter;
+            ShioriProMenu.MouseLeave += menuStrip1_MouseLeave;
             // 
             // imageList1
             // 
@@ -870,5 +1128,30 @@
         private ToolStripSeparator toolStripMenuItem2;
         private ToolStripMenuItem ConvImgSetting;
         private ToolStripProgressBar ProgressBar;
+        private ToolStripMenuItem AddShioriMenu;
+        private ToolStripMenuItem DelShioriMenu;
+        private ToolStripSeparator toolStripMenuItem3;
+        private ToolStripMenuItem AllDelMenu;
+        private ToolStripSeparator toolStripMenuItem12;
+        private ToolStripMenuItem SetShioriMenu;
+        private ToolStripSeparator toolStripMenuItem13;
+        private ToolStripMenuItem AllShioriTenkaiMenu;
+        private ToolStripMenuItem AllShioriSyukusyouMenu;
+        private ToolStripSeparator toolStripMenuItem14;
+        private ToolStripMenuItem ShioriTenkaiMenu;
+        private ToolStripMenuItem ShioriSyukusyouMenu;
+        private ToolStripSeparator toolStripMenuItem16;
+        private ToolStripMenuItem ImportShioriMenu;
+        private ToolStripMenuItem ExportShioriMenu;
+        private ToolStripSeparator toolStripMenuItem17;
+        private ToolStripMenuItem ShioriProMenu;
+        private ToolStripMenuItem PageMove2;
+        private ToolStripMenuItem PageInsert2;
+        private ToolStripMenuItem ReplacementMenu2;
+        private ToolStripMenuItem PageExtractSetting2;
+        private ToolStripMenuItem RotatePagesSetting2;
+        private ToolStripMenuItem PageDeleteSetting2;
+        private ToolStripSeparator toolStripMenuItem18;
+        private ToolStripMenuItem ConvImgSetting2;
     }
 }

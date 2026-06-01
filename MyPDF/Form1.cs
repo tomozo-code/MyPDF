@@ -223,40 +223,56 @@ namespace MyPDF
             SaveMenu.ShortcutKeys = Keys.Control | Keys.S;
             // Ctrl+B(しおり作成)
             AddShioriToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.B;
+            AddShioriMenu.ShortcutKeys = Keys.Control | Keys.B;
             // Ctrl+D(PDFのプロパティ)
             PdfPropertyMenu.ShortcutKeys = Keys.Control | Keys.D;
             // Ctrl+T(セキュリティ設定)
             SecurityMenu.ShortcutKeys = Keys.Control | Keys.T;
             // Ctrl+A(しおりのプロパティ)
             ShioriProToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.A;
+            ShioriProMenu.ShortcutKeys = Keys.Control | Keys.A;
             // Ctrl+L(ページ割り当て)数値キーを上段(テンキーではない)
             SetShioriToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.L;
+            SetShioriMenu.ShortcutKeys = Keys.Control | Keys.L;
             // 全てのしおりを展開
             AllShioriTenkaiToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.D1;
+            AllShioriTenkaiMenu.ShortcutKeys = Keys.Control | Keys.D1;
             // 全てのしおりを縮小
             AllShioriSyukusyouToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.D2;
+            AllShioriSyukusyouMenu.ShortcutKeys = Keys.Control | Keys.D2;
             // 選択中のしおりを展開
             ShioriTenkaiToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.D3;
+            ShioriTenkaiMenu.ShortcutKeys = Keys.Control | Keys.D3;
             // 選択中のしおりを縮小
             ShioriSyukusyouToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.D4;
+            ShioriSyukusyouMenu.ShortcutKeys = Keys.Control | Keys.D4;
             // しおりインポート
             ImportShioriToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.I;
+            ImportShioriMenu.ShortcutKeys = Keys.Control | Keys.I;
             // しおりエクスポート
             ExportShioriToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.E;
+            ExportShioriMenu.ShortcutKeys = Keys.Control | Keys.E;
             // 指定して回転
             RotatePagesSetting.ShortcutKeys = Keys.Shift | Keys.Control | Keys.R;
+            RotatePagesSetting2.ShortcutKeys = Keys.Shift | Keys.Control | Keys.R;
             // 移動
             PageMove.ShortcutKeys = Keys.Shift | Keys.Control | Keys.M;
+            PageMove2.ShortcutKeys = Keys.Shift | Keys.Control | Keys.M;
             // 挿入
             PageInsert.ShortcutKeys = Keys.Shift | Keys.Control | Keys.I;
+            PageInsert2.ShortcutKeys = Keys.Shift | Keys.Control | Keys.I;
             // 置換
             ReplacementMenu.ShortcutKeys = Keys.Shift | Keys.Control | Keys.K;
+            ReplacementMenu2.ShortcutKeys = Keys.Shift | Keys.Control | Keys.K;
             // 指定して抽出
             PageExtractSetting.ShortcutKeys = Keys.Shift | Keys.Control | Keys.X;
+            PageExtractSetting2.ShortcutKeys = Keys.Shift | Keys.Control | Keys.X;
             // 指定して削除
             PageDeleteSetting.ShortcutKeys = Keys.Shift | Keys.Control | Keys.D;
+            PageDeleteSetting2.ShortcutKeys = Keys.Shift | Keys.Control | Keys.D;
             // PDFを画像に変換
             ConvImgSetting.ShortcutKeys = Keys.Shift | Keys.Control | Keys.G;
+            ConvImgSetting2.ShortcutKeys = Keys.Shift | Keys.Control | Keys.G;
 
             // 0.1秒ごとにページを監視
             pageTimer.Interval = 100; // 0.1秒ごと
@@ -1613,12 +1629,16 @@ namespace MyPDF
         {
             // しおり作成
             AddShioriToolStripMenuItem.Enabled = false;
+            AddShioriMenu.Enabled = false;
             // しおり削除
             DelShioriToolStripMenuItem.Enabled = false;
+            DelShioriMenu.Enabled = false;
             // 全てのしおり削除
             AllDelToolStripMenuItem.Enabled = false;
+            AllDelMenu.Enabled = false;
             // 現在のページ番号をしおりに設定
             SetShioriToolStripMenuItem.Enabled = false;
+            SetShioriMenu.Enabled = false;
 
             // 上書き保存
             SaveMenu.Enabled = false;
@@ -1632,34 +1652,48 @@ namespace MyPDF
             SecurityMenu.Enabled = false;
             // しおりのプロパティ
             ShioriProToolStripMenuItem.Enabled = false;
+            ShioriProMenu.Enabled = false;
             // しおりインポート
             ImportShioriToolStripMenuItem.Enabled = false;
+            ImportShioriMenu.Enabled = false;
             // しおりエクスポート
             ExportShioriToolStripMenuItem.Enabled = false;
+            ExportShioriMenu.Enabled = false;
 
             // 移動
             PageMove.Enabled = false;
+            PageMove2.Enabled = false;
             // 挿入
             PageInsert.Enabled = false;
+            PageInsert2.Enabled = false;
             // 置換
             ReplacementMenu.Enabled = false;
+            ReplacementMenu2.Enabled = false;
             // 抽出
             PageExtractSetting.Enabled = false;
+            PageExtractSetting2.Enabled = false;
             // ページ削除
             PageDeleteSetting.Enabled = false;
+            PageDeleteSetting2.Enabled = false;
             // 回転
             RotatePagesSetting.Enabled = false;
+            RotatePagesSetting2.Enabled = false;
             // 画像変換
             ConvImgSetting.Enabled = false;
+            ConvImgSetting2.Enabled = false;
 
             // 全てのしおりを展開
             AllShioriTenkaiToolStripMenuItem.Enabled = false;
+            AllShioriTenkaiMenu.Enabled = false;
             // 全てのしおりを縮小
             AllShioriSyukusyouToolStripMenuItem.Enabled = false;
+            AllShioriSyukusyouMenu.Enabled = false;
             // 選択中のしおりを展開
             ShioriTenkaiToolStripMenuItem.Enabled = false;
+            ShioriTenkaiMenu.Enabled = false;
             // 選択中のしおりを縮小
             ShioriSyukusyouToolStripMenuItem.Enabled = false;
+            ShioriSyukusyouMenu.Enabled = false;
 
             // ページ番号
             NewPagetoolStripTextBox.Enabled = false;
@@ -1688,12 +1722,16 @@ namespace MyPDF
                 // セキュリティありの場合
                 // しおり作成
                 AddShioriToolStripMenuItem.Enabled = false;
+                AddShioriMenu.Enabled = false;
                 // しおり削除
                 DelShioriToolStripMenuItem.Enabled = false;
+                DelShioriMenu.Enabled = false;
                 // 全てのしおり削除
                 AllDelToolStripMenuItem.Enabled = false;
+                AllDelMenu.Enabled = false;
                 // 現在のページ番号をしおりに設定
                 SetShioriToolStripMenuItem.Enabled = false;
+                SetShioriMenu.Enabled = false;
 
                 // 上書き保存
                 SaveMenu.Enabled = false;
@@ -1707,25 +1745,35 @@ namespace MyPDF
                 SecurityMenu.Enabled = false;
                 // しおりのプロパティ
                 ShioriProToolStripMenuItem.Enabled = false;
+                ShioriProMenu.Enabled = false;
                 // しおりインポート
                 ImportShioriToolStripMenuItem.Enabled = false;
+                ImportShioriMenu.Enabled = false;
                 // しおりエクスポート
                 ExportShioriToolStripMenuItem.Enabled = false;
+                ExportShioriMenu.Enabled = false;
 
                 // 移動
                 PageMove.Enabled = false;
+                PageMove2.Enabled = false;
                 // 挿入
                 PageInsert.Enabled = false;
+                PageInsert2.Enabled = false;
                 // 置換
                 ReplacementMenu.Enabled = false;
+                ReplacementMenu2.Enabled = false;
                 // 抽出
-                PageExtractSetting.Enabled = false;
+                ReplacementMenu.Enabled = false;
+                ReplacementMenu2.Enabled = false;
                 // ページ削除
-                PageDeleteSetting.Enabled = false;
+                ReplacementMenu.Enabled = false;
+                ReplacementMenu2.Enabled = false;
                 // 回転
                 RotatePagesSetting.Enabled = false;
+                RotatePagesSetting2.Enabled = false;
                 // 画像変換
                 ConvImgSetting.Enabled = false;
+                ConvImgSetting2.Enabled = false;
 
             }
             else
@@ -1733,12 +1781,16 @@ namespace MyPDF
                 // セキュリティなしの場合
                 // しおり作成
                 AddShioriToolStripMenuItem.Enabled = true;     // 常にOK
+                AddShioriMenu.Enabled = true;     // 常にOK
                 // しおり削除
                 DelShioriToolStripMenuItem.Enabled = hasNodes; // ノードある時だけ
+                DelShioriMenu.Enabled = hasNodes; // ノードある時だけ
                 // 全てのしおり削除
                 AllDelToolStripMenuItem.Enabled = hasNodes; // ノードある時だけ
+                AllDelMenu.Enabled = hasNodes; // ノードある時だけ
                 // 現在のページ番号をしおりに設定
                 SetShioriToolStripMenuItem.Enabled = hasNodes; // ノードある時だけ
+                SetShioriMenu.Enabled = hasNodes; // ノードある時だけ
 
                 // 上書き保存
                 SaveMenu.Enabled = true;
@@ -1752,44 +1804,58 @@ namespace MyPDF
                 SecurityMenu.Enabled = true;
                 // しおりのプロパティ
                 ShioriProToolStripMenuItem.Enabled = hasNodes; // ノードある時だけ
+                ShioriProMenu.Enabled = hasNodes; // ノードある時だけ
                 // しおりインポート                               
                 ImportShioriToolStripMenuItem.Enabled = true;     // 常にOK
+                ImportShioriMenu.Enabled = true;     // 常にOK
                 // しおりエクスポート
                 ExportShioriToolStripMenuItem.Enabled = hasNodes; // ノードある時だけ
+                ExportShioriMenu.Enabled = hasNodes; // ノードある時だけ
 
                 // 移動
                 PageMove.Enabled = true;
+                PageMove2.Enabled = true;
                 // 挿入
                 PageInsert.Enabled = true;
+                PageInsert2.Enabled = true;
                 // 置換
                 ReplacementMenu.Enabled = true;
+                ReplacementMenu2.Enabled = true;
                 // 抽出
                 PageExtractSetting.Enabled = true;
+                PageExtractSetting2.Enabled = true;
                 // ページ削除
                 if (pageCount <= 1)
                 {
                     PageDeleteSetting.Enabled = false;
+                    PageDeleteSetting2.Enabled = false;
                 }
                 else
                 {
                     PageDeleteSetting.Enabled = true;
-
+                    PageDeleteSetting2.Enabled = true;
                 }
                 // 回転
                 RotatePagesSetting.Enabled = true;
+                RotatePagesSetting2.Enabled = true;
                 // 画像変換
                 ConvImgSetting.Enabled = true;
+                ConvImgSetting2.Enabled = true;
 
             }
 
             // 全てのしおりを展開
             AllShioriTenkaiToolStripMenuItem.Enabled = hasNodes;
+            AllShioriTenkaiMenu.Enabled = hasNodes;
             // 全てのしおりを縮小
             AllShioriSyukusyouToolStripMenuItem.Enabled = hasNodes;
+            AllShioriSyukusyouMenu.Enabled = hasNodes;
             // 選択中のしおりを展開
             ShioriTenkaiToolStripMenuItem.Enabled = hasNodes;
+            ShioriTenkaiMenu.Enabled = hasNodes;
             // 選択中のしおりを縮小
             ShioriSyukusyouToolStripMenuItem.Enabled = hasNodes;
+            ShioriSyukusyouMenu.Enabled = hasNodes;
 
             // ページ番号
             NewPagetoolStripTextBox.Enabled = true;
@@ -5437,6 +5503,7 @@ namespace MyPDF
                                         // pdf.GetNumberOfPages()はページ番号、xyは左下が原点(0,0)で、xは右へ、yは上へ
                                         image.SetFixedPosition(pdf.GetNumberOfPages(), x, y);
 
+                                        /*
                                         Debug.WriteLine("--- 画像PDF変換 --------------");
                                         Debug.WriteLine("pageWidth: " + pageWidth.ToString());
                                         Debug.WriteLine("PdfMarginLeft: " + PdfMarginLeft.ToString());
@@ -5453,6 +5520,7 @@ namespace MyPDF
 
                                         Debug.WriteLine("x: " + x.ToString());
                                         Debug.WriteLine("y: " + y.ToString());
+                                        */
 
                                         // 追加
                                         document.Add(image);
@@ -5516,7 +5584,7 @@ namespace MyPDF
 
                             // 作業ファイル作成
                             // 作業用ファイルパス
-                            string workingPath = PdfFileUtil.CreateTempPdfCopy(originalPath);
+                            workingPath = PdfFileUtil.CreateTempPdfCopy(originalPath);
                             // C:\Users\<ユーザー名>\AppData\Local\Temp\ に作業用ファイルを置く
                             //workingPath = IOPath.Combine(IOPath.GetTempPath(), $"MyPDFwork_{Guid.NewGuid()}.pdf");
 
@@ -5564,6 +5632,11 @@ namespace MyPDF
 
                             // 右クリックメニュー更新
                             UpdateContextMenuState();
+
+                            Debug.WriteLine("member=" + this.workingPath);
+                            Debug.WriteLine("local =" + workingPath);
+                            Debug.WriteLine("member workingPath=" + this.workingPath);
+                            Debug.WriteLine("member originalPath=" + this.originalPath);
 
                             // 未保存フラグOFF
                             isDirty = false;
@@ -5902,17 +5975,11 @@ namespace MyPDF
                 // NTSC形式のウェイト（0.299, 0.587, 0.114）を反映
                 ColorMatrix colorMatrix = new ColorMatrix(new float[][]
                 {
-                    new float[] {0.299f, 0.587f, 0.114f, 0, 0},
-                    new float[] {0.299f, 0.587f, 0.114f, 0, 0},
-                    new float[] {0.299f, 0.587f, 0.114f, 0, 0},
+                    new float[] {0.299f, 0.299f, 0.299f, 0, 0},
+                    new float[] {0.587f, 0.587f, 0.587f, 0, 0},
+                    new float[] {0.114f, 0.114f, 0.114f, 0, 0},
                     new float[] {0,      0,      0,      1, 0},
                     new float[] {0,      0,      0,      0, 1}
-                    
-                    //new float[] {0.299f, 0.299f, 0.299f, 0, 0},
-                    //new float[] {0.587f, 0.587f, 0.587f, 0, 0},
-                    //new float[] {0.114f, 0.114f, 0.114f, 0, 0},
-                    //new float[] {0,      0,      0,      1, 0},
-                    //new float[] {0,      0,      0,      0, 1}
                 });
 
                 using (ImageAttributes attributes = new ImageAttributes())

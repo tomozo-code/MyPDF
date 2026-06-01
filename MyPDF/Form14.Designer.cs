@@ -34,6 +34,7 @@
             toolStripStatusLabel1 = new ToolStripStatusLabel();
             toolTip1 = new ToolTip(components);
             panel1 = new Panel();
+            label7 = new Label();
             groupBox1 = new GroupBox();
             radioColor = new RadioButton();
             radioButton2 = new RadioButton();
@@ -51,7 +52,6 @@
             panel2 = new Panel();
             OkBtn = new Button();
             CancelBtn = new Button();
-            label7 = new Label();
             statusStrip1.SuspendLayout();
             panel1.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -95,6 +95,15 @@
             panel1.Size = new Size(373, 434);
             panel1.TabIndex = 1;
             // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(18, 302);
+            label7.Name = "label7";
+            label7.Size = new Size(315, 63);
+            label7.TabIndex = 90;
+            label7.Text = "変換するページ数、解像度、PCの性能等により、\r\n変換にかなり時間がかかる場合があります。\r\n10～20ページ程度を目安に変換して下さい。";
+            // 
             // groupBox1
             // 
             groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -113,21 +122,21 @@
             radioColor.Checked = true;
             radioColor.Location = new Point(18, 28);
             radioColor.Name = "radioColor";
-            radioColor.Size = new Size(61, 25);
+            radioColor.Size = new Size(81, 25);
             radioColor.TabIndex = 87;
             radioColor.TabStop = true;
-            radioColor.Tag = "カラーに設定します";
-            radioColor.Text = "カラー";
+            radioColor.Tag = "元のまま画像に変換します";
+            radioColor.Text = "元のまま";
             radioColor.UseVisualStyleBackColor = true;
             // 
             // radioButton2
             // 
             radioButton2.AutoSize = true;
-            radioButton2.Location = new Point(98, 28);
+            radioButton2.Location = new Point(118, 28);
             radioButton2.Name = "radioButton2";
             radioButton2.Size = new Size(108, 25);
             radioButton2.TabIndex = 88;
-            radioButton2.Tag = "グレースケールに設定します";
+            radioButton2.Tag = "グレースケールの画像に変換します";
             radioButton2.Text = "グレースケール";
             radioButton2.UseVisualStyleBackColor = true;
             // 
@@ -262,15 +271,6 @@
             CancelBtn.Text = "Cancel";
             CancelBtn.UseVisualStyleBackColor = true;
             CancelBtn.Click += CancelBtn_Click;
-            // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.Location = new Point(18, 302);
-            label7.Name = "label7";
-            label7.Size = new Size(315, 63);
-            label7.TabIndex = 90;
-            label7.Text = "変換するページ数、解像度、PCの性能等により、\r\n変換にかなり時間がかかる場合があります。\r\n10～20ページ程度を目安に変換して下さい。";
             // 
             // Form14
             // 
