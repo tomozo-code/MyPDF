@@ -58,20 +58,11 @@ namespace MyPDF
             // 総ページ数をセット
             this.maxPage = maxPage;
 
-            // コンボボックス初期化
-            InsertPlace.Items.AddRange(new string[]
-            {
-                "前",  "後"
-            });
-            InsertPlace.SelectedIndex = 1;
-
             // 総ページ
             TotalPage.Text = "/ " + maxPage.ToString();
 
             // ページ指定の初期値
             setPage.Text = InsertPage.ToString();
-
-
 
             toolHintTxt = "ファイルからページを挿入します";
 
@@ -93,7 +84,7 @@ namespace MyPDF
         {
             // ツールチップ設定(通常コントロール用:Tagに表示させたい内容を書く)
             SetTooltipAll(this);
-
+            ActiveControl = ExtractTxt;
         }
 
         // ==============================
@@ -139,8 +130,8 @@ namespace MyPDF
                 // ターゲットページ番号
                 TargetPage = page;
 
-                // 前 or 後
-                InsertBefore = (InsertPlace.SelectedIndex == 0);
+                // 前 or 後(Prev=0(true)、Next=1(false))
+                InsertBefore = Prev.Checked;
 
                 this.DialogResult = DialogResult.OK;
                 this.Close();

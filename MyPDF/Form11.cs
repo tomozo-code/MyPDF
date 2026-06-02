@@ -45,14 +45,7 @@ namespace MyPDF
 
             // 総ページ
             TotalPage.Text = "/ " + maxPage.ToString();
-
-            // コンボボックス初期化
-            MovePlace.Items.AddRange(new string[]
-            {
-                "前",  "後"
-            });
-            MovePlace.SelectedIndex = 1;
-
+            TotalPage2.Text = "/ " + maxPage.ToString();
 
             toolHintTxt = "指定したページを移動します";
 
@@ -74,6 +67,7 @@ namespace MyPDF
         {
             // ツールチップ設定(通常コントロール用:Tagに表示させたい内容を書く)
             SetTooltipAll(this);
+            ActiveControl = ExtractTxt;
 
         }
 
@@ -119,8 +113,8 @@ namespace MyPDF
 
                 TargetPage = target;
 
-                // 前 or 後
-                MoveBefore = (MovePlace.SelectedIndex == 0);
+                // 前 or 後(Prev=0(true)、Next=1(false))
+                MoveBefore = Prev.Checked;
 
                 this.DialogResult = DialogResult.OK;
                 this.Close();

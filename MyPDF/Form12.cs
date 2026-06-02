@@ -101,7 +101,7 @@ namespace MyPDF
         {
             // ツールチップ設定(通常コントロール用:Tagに表示させたい内容を書く)
             SetTooltipAll(this);
-
+            ActiveControl = ExtractTxt;
         }
 
         // ==============================

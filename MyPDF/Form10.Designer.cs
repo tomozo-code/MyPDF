@@ -38,9 +38,10 @@
             panel1 = new Panel();
             panel2 = new Panel();
             groupBox2 = new GroupBox();
+            Next = new RadioButton();
+            Prev = new RadioButton();
             label2 = new Label();
             TotalPage = new Label();
-            InsertPlace = new ComboBox();
             setPage = new TextBox();
             label3 = new Label();
             groupBox1 = new GroupBox();
@@ -61,7 +62,7 @@
             // 
             statusStrip1.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
-            statusStrip1.Location = new Point(0, 355);
+            statusStrip1.Location = new Point(0, 344);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(384, 26);
             statusStrip1.TabIndex = 71;
@@ -100,7 +101,7 @@
             panel1.Controls.Add(OkBtn);
             panel1.Controls.Add(CancelBtn);
             panel1.Dock = DockStyle.Bottom;
-            panel1.Location = new Point(0, 305);
+            panel1.Location = new Point(0, 294);
             panel1.Name = "panel1";
             panel1.Size = new Size(384, 50);
             panel1.TabIndex = 78;
@@ -113,23 +114,48 @@
             panel2.Dock = DockStyle.Fill;
             panel2.Location = new Point(0, 0);
             panel2.Name = "panel2";
-            panel2.Size = new Size(384, 305);
+            panel2.Size = new Size(384, 294);
             panel2.TabIndex = 79;
             // 
             // groupBox2
             // 
             groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox2.Controls.Add(Next);
+            groupBox2.Controls.Add(Prev);
             groupBox2.Controls.Add(label2);
             groupBox2.Controls.Add(TotalPage);
-            groupBox2.Controls.Add(InsertPlace);
             groupBox2.Controls.Add(setPage);
             groupBox2.Controls.Add(label3);
             groupBox2.Location = new Point(9, 157);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(363, 118);
+            groupBox2.Size = new Size(363, 111);
             groupBox2.TabIndex = 3;
             groupBox2.TabStop = false;
             groupBox2.Text = "挿入先";
+            // 
+            // Next
+            // 
+            Next.AutoSize = true;
+            Next.Checked = true;
+            Next.Location = new Point(192, 76);
+            Next.Name = "Next";
+            Next.Size = new Size(44, 25);
+            Next.TabIndex = 84;
+            Next.TabStop = true;
+            Next.Tag = "挿入先ページの後へ移動します";
+            Next.Text = "後";
+            Next.UseVisualStyleBackColor = true;
+            // 
+            // Prev
+            // 
+            Prev.AutoSize = true;
+            Prev.Location = new Point(136, 76);
+            Prev.Name = "Prev";
+            Prev.Size = new Size(44, 25);
+            Prev.TabIndex = 83;
+            Prev.Tag = "挿入先ページの前へ移動します";
+            Prev.Text = "前";
+            Prev.UseVisualStyleBackColor = true;
             // 
             // label2
             // 
@@ -148,16 +174,6 @@
             TotalPage.Size = new Size(72, 21);
             TotalPage.TabIndex = 82;
             TotalPage.Text = "/ 総ページ";
-            // 
-            // InsertPlace
-            // 
-            InsertPlace.DropDownStyle = ComboBoxStyle.DropDownList;
-            InsertPlace.FormattingEnabled = true;
-            InsertPlace.Location = new Point(136, 73);
-            InsertPlace.Name = "InsertPlace";
-            InsertPlace.Size = new Size(121, 29);
-            InsertPlace.TabIndex = 5;
-            InsertPlace.Tag = "挿入する場所を指定します";
             // 
             // setPage
             // 
@@ -249,7 +265,7 @@
             // 
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
-            ClientSize = new Size(384, 381);
+            ClientSize = new Size(384, 370);
             Controls.Add(panel2);
             Controls.Add(panel1);
             Controls.Add(statusStrip1);
@@ -291,8 +307,9 @@
         private GroupBox groupBox2;
         private Label label2;
         private Label TotalPage;
-        private ComboBox InsertPlace;
         private TextBox setPage;
         private Label label3;
+        private RadioButton Next;
+        private RadioButton Prev;
     }
 }

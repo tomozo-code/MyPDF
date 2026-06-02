@@ -48,15 +48,13 @@ namespace MyPDF
         // 総ページ数
         private int maxPage;
 
-
-
         public Form6(String currentBmTitle, int currentPage, DrawingColor currentColor, FontStyle currentStyle, int maxPage)
         {
             InitializeComponent();
 
             // フォームサイズ
             this.Width = 400;
-            this.Height = 350;
+            this.Height = 450;
             this.MinimumSize = new Size(300, 300);
             //this.AutoScaleDimensions = new SizeF(96F, 96F);
 
@@ -72,13 +70,25 @@ namespace MyPDF
             BmTitleTxtBox.Text = SelectedBmTitle;
             // ページ番号
             PageNoTxtBox.Text = SelectedPage.ToString();
-            // コンボボックス初期化
-            comboBox1.Items.AddRange(new string[]
+            // 文字スタイル
+            switch (currentStyle)
             {
-                "標準", "ボールド", "イタリック", "ボールドイタリック"
-            });
+                case FontStyle.Bold:
+                    radioBold.Checked = true;
+                    break;
 
-            comboBox1.SelectedIndex = StyleToIndex(currentStyle);
+                case FontStyle.Italic:
+                    radioItalic.Checked = true;
+                    break;
+
+                case FontStyle.Bold | FontStyle.Italic:
+                    radioBoldItalic.Checked = true;
+                    break;
+
+                default:
+                    radioRegular.Checked = true;
+                    break;
+            }
 
             // 初期表示
             btnColor.BackColor = SelectedColor;
@@ -106,7 +116,6 @@ namespace MyPDF
             // 色RGB
             ColorTxtBox2.Text = $"{SelectedColor.R},{SelectedColor.G},{SelectedColor.B}";
 
-
             toolHintTxt = "しおりのプロパティを設定します";
 
             toolTip1.InitialDelay = 500;   // 表示までの時間(ms)
@@ -118,7 +127,6 @@ namespace MyPDF
             //  EscキーをCancelボタンに割り当て
             this.CancelButton = CancelBtn;
 
-
         }
 
         // ==============================
@@ -128,7 +136,7 @@ namespace MyPDF
         {
             // ツールチップ設定(通常コントロール用:Tagに表示させたい内容を書く)
             SetTooltipAll(this);
-
+            ActiveControl = BmTitleTxtBox;
         }
 
         // ==============================
@@ -154,32 +162,20 @@ namespace MyPDF
         }
 
         // ==============================
-        // スタイルインデックスをセット
+        // 文字スタイルをセット
         // ==============================
-        private int StyleToIndex(FontStyle style)
+        private FontStyle GetSelectedStyle()
         {
-            if (style.HasFlag(FontStyle.Bold) && style.HasFlag(FontStyle.Italic))
-                return 3;
-            if (style.HasFlag(FontStyle.Bold))
-                return 1;
-            if (style.HasFlag(FontStyle.Italic))
-                return 2;
+            if (radioBold.Checked)
+                return FontStyle.Bold;
 
-            return 0;
-        }
+            if (radioItalic.Checked)
+                return FontStyle.Italic;
 
-        // ==============================
-        // フォントスタイルをセット
-        // ==============================
-        private FontStyle IndexToStyle(int index)
-        {
-            switch (index)
-            {
-                case 1: return FontStyle.Bold;
-                case 2: return FontStyle.Italic;
-                case 3: return FontStyle.Bold | FontStyle.Italic;
-                default: return FontStyle.Regular;
-            }
+            if (radioBoldItalic.Checked)
+                return FontStyle.Bold | FontStyle.Italic;
+
+            return FontStyle.Regular;
         }
 
         // ==============================
@@ -221,7 +217,7 @@ namespace MyPDF
 
             SelectedPage = page;
 
-            SelectedStyle = IndexToStyle(comboBox1.SelectedIndex);
+            SelectedStyle = GetSelectedStyle();
 
             this.DialogResult = DialogResult.OK;
             this.Close();

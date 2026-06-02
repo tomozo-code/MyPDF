@@ -38,7 +38,7 @@ namespace MyPDF
             InitializeComponent();
 
             // フォームサイズ
-            this.Width = 400;
+            this.Width = 450;
             this.Height = 300;
             this.MinimumSize = new Size(300, 200);
             //this.AutoScaleDimensions = new SizeF(96F, 96F);
@@ -53,12 +53,15 @@ namespace MyPDF
             // 総ページ
             TotalPage.Text = "/ " + maxPage.ToString();
 
+            /*
             // コンボボックス初期化
             RollSelect.Items.AddRange(new string[]
             {
                 "左へ90°回転",  "右へ90°回転", "180°回転"
             });
             RollSelect.SelectedIndex = 0;
+            */
+
 
             toolHintTxt = "ページを指定して回転します";
 
@@ -80,7 +83,7 @@ namespace MyPDF
         {
             // ツールチップ設定(通常コントロール用:Tagに表示させたい内容を書く)
             SetTooltipAll(this);
-
+            ActiveControl = ExtractTxt;
         }
 
         // ==============================
@@ -88,53 +91,6 @@ namespace MyPDF
         // ==============================
         private void OkBtn_Click(object sender, EventArgs e)
         {
-
-            /*
-            
-            int start, end;
-
-            if (!int.TryParse(StartRollTxt.Text, out start) || !int.TryParse(EndRollTxt.Text, out end))
-            {
-                MessageBox.Show("数値を入力してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            if (start < 1 || end < 1)
-            {
-                MessageBox.Show("1以上の値を入力してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            if (start > end)
-            {
-                MessageBox.Show("開始ページは終了ページ以下にしてください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            if (start > maxPage || end > maxPage)
-            {
-                MessageBox.Show("総ページ数以下の値を入力してください。", "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-
-            }
-
-            // 回転角
-            switch (RollSelect.SelectedIndex)
-            {
-                case 0: RotationAngle = 270; break; // 左90°
-                case 1: RotationAngle = 90; break;  // 右90°
-                case 2: RotationAngle = 180; break; // 180°
-            }
-
-            StartPage = start;
-            EndPage = end;
-
-            this.DialogResult = DialogResult.OK;
-            this.Close();
-
-
-            */
-
 
             string text = ExtractTxt.Text.Trim();
 
@@ -151,13 +107,23 @@ namespace MyPDF
                 ExtractText = text;
 
                 // 回転角
+                if (radioLeft90.Checked)
+                    RotationAngle = 270; // 左90°
+
+                else if (radioRight90.Checked)
+                    RotationAngle = 90; // 右90
+
+                else
+                    RotationAngle = 180; // 180°
+
+                /*
                 switch (RollSelect.SelectedIndex)
                 {
                     case 0: RotationAngle = 270; break; // 左90°
                     case 1: RotationAngle = 90; break;  // 右90°
                     case 2: RotationAngle = 180; break; // 180°
                 }
-
+                */
 
                 this.DialogResult = DialogResult.OK;
                 this.Close();

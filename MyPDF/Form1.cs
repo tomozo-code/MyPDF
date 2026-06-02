@@ -1738,7 +1738,7 @@ namespace MyPDF
                 // 名前を付けて保存
                 SaveAsMenu.Enabled = false;
                 // 既定のPDFアプリで開く
-                AcrobatOpenMenu.Enabled = false;
+                AcrobatOpenMenu.Enabled = true;
                 // PDFのプロパティ
                 PdfPropertyMenu.Enabled = false;
                 // セキュリティ設定

@@ -61,7 +61,7 @@
             // 
             statusStrip1.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
-            statusStrip1.Location = new Point(0, 360);
+            statusStrip1.Location = new Point(0, 516);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Padding = new Padding(1, 0, 16, 0);
             statusStrip1.Size = new Size(535, 26);
@@ -170,7 +170,7 @@
             panel1.Controls.Add(OkBtn);
             panel1.Controls.Add(CancelBtn);
             panel1.Dock = DockStyle.Bottom;
-            panel1.Location = new Point(0, 310);
+            panel1.Location = new Point(0, 466);
             panel1.Name = "panel1";
             panel1.Size = new Size(535, 50);
             panel1.TabIndex = 76;
@@ -183,7 +183,7 @@
             panel2.Dock = DockStyle.Fill;
             panel2.Location = new Point(0, 0);
             panel2.Name = "panel2";
-            panel2.Size = new Size(535, 310);
+            panel2.Size = new Size(535, 466);
             panel2.TabIndex = 77;
             // 
             // groupBox2
@@ -249,7 +249,7 @@
             // 
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
-            ClientSize = new Size(535, 386);
+            ClientSize = new Size(535, 542);
             Controls.Add(panel2);
             Controls.Add(panel1);
             Controls.Add(statusStrip1);
