@@ -4329,9 +4329,11 @@ namespace MyPDF
                 // ステータスバーにファイル名(元ファイル)と総ページ数
                 UpdateStatus(originalPath, currentSettings.TotalPage);
 
-
                 // 右クリックメニュー更新
                 UpdateContextMenuState();
+
+                // 挿入先のページを表示
+                pdfViewer1.Renderer.Page = targetPage - 1;
 
                 // 未保存フラグON
                 isDirty = true;
@@ -4772,6 +4774,9 @@ namespace MyPDF
 
             Dictionary<int, int> pageMap = new Dictionary<int, int>();
 
+            // 移動先決定
+            int insertIndex = target;
+
             try
             {
                 // Viewer解放
@@ -4798,7 +4803,7 @@ namespace MyPDF
                     HashSet<int> moveSet = new HashSet<int>(movePages);
 
                     // 移動先決定
-                    int insertIndex = before ? target : target + 1;
+                    insertIndex = before ? target : target + 1;
 
                     // 移動対象の直前補正
                     int beforeCount = movePages.Count(p => p < insertIndex);
@@ -4867,6 +4872,9 @@ namespace MyPDF
                 currentSettings = PdfSettingsLoader.LoadPdfSettings(workingPath, originalPath, currentPassword);
                 // ステータスバーにファイル名(元ファイル)と総ページ数
                 UpdateStatus(originalPath, currentSettings.TotalPage);
+
+                // 移動先を表示
+                pdfViewer1.Renderer.Page = insertIndex - 1;
 
                 // 未保存フラグON
                 isDirty = true;
@@ -4977,12 +4985,7 @@ namespace MyPDF
                     {
                         if (f.ShowDialog() == DialogResult.OK)
                         {
-                            //var range = PageRangeHelper.ParseReplaceRange(f.ReplaceText, currentSettings.TotalPage);
-                            //OkikaePdfPage(replacementPath, f.ExtractText, range.Start, range.End, insertProps, insertPassword);
-                            //OkikaePdfPage(replacementPath, f.ExtractText, f.StartPage, f.EndPage, insertProps, insertPassword);
-                            //OkikaePdfPage(replacementPath, f.ExtractText, f.TargetStartPage, f.TargetEndPage, insertProps, insertPassword);
                             await ReplacementPdfAsync(replacementPath, f.ExtractText, f.TargetStartPage, f.TargetEndPage, insertProps, insertPassword);
-
 
                         }
                     }
@@ -5150,6 +5153,10 @@ namespace MyPDF
 
                 // 右クリックメニュー更新
                 UpdateContextMenuState();
+
+                // 置換ページの先頭を表示
+                pdfViewer1.Renderer.Page = start - 1;
+
                 // 未保存フラグON
                 isDirty = true;
             }

@@ -38,14 +38,16 @@ namespace MyPDF
 
             // フォームサイズ
             this.Width = 380;
-            this.Height = 380;
-            this.MinimumSize = new Size(250, 280);
+            this.Height = 480;
+            this.MinimumSize = new Size(250, 250);
 
+            /*
             // 変換サイズ初期化
             PdfImageSize.Items.AddRange(new string[]
             {
                 "A4縦",  "A4横", "元サイズ"
             });
+
             PdfImageSize.SelectedIndex = 2;
 
             // 配置初期化
@@ -54,6 +56,8 @@ namespace MyPDF
                 "中央",  "上詰め", "下詰め", "左詰め", "右詰め"
             });
             Place.SelectedIndex = 0;
+
+            */
 
             PdfMarginTop = 0;
             PdfMarginBottom = 0;
@@ -116,10 +120,28 @@ namespace MyPDF
             PdfMarginRight = right;
 
             // 変換サイズ
-            PdfImageMode = PdfImageSize.SelectedIndex;
+            if (radioA4Portrait.Checked)
+                PdfImageMode = 0; // A4縦
+            else if(radioA4Landscape.Checked)
+                PdfImageMode = 1; // A4横
+            else
+                PdfImageMode = 2; // 元サイズ
+
+            //PdfImageMode = PdfImageSize.SelectedIndex;
 
             // 配置
-            PdfPlace = Place.SelectedIndex;
+            if (radioCenter.Checked)
+                PdfPlace = 0; // 中央
+            else if (radioTop.Checked)
+                PdfPlace = 1; // 上詰め
+            else if (radioBottom.Checked)
+                PdfPlace = 2; // 下詰め
+            else if (radioLeft.Checked)
+                PdfPlace = 3; //左詰め
+            else
+                PdfPlace = 4; // 右詰め
+
+            //PdfPlace = Place.SelectedIndex;
 
             this.DialogResult = DialogResult.OK;
             this.Close();

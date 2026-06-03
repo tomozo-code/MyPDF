@@ -44,7 +44,7 @@ namespace MyPDF
 
             // フォームサイズ
             this.Width = 400;
-            this.Height = 500;
+            this.Height = 550;
             this.MinimumSize = new Size(300, 200);
 
             // ファイル名
@@ -69,13 +69,14 @@ namespace MyPDF
             });
             DpiComboBox.SelectedIndex = 4;
 
+            /*
             // コンボボックス初期化
             ImageTypeComboBox.Items.AddRange(new string[]
             {
                 "jpg",  "png", "bmp", "tif"
             });
             ImageTypeComboBox.SelectedIndex = 1;
-
+            */
 
             toolHintTxt = "PDFを画像に変換します";
 
@@ -144,7 +145,16 @@ namespace MyPDF
                 ImgDpi = int.Parse(DpiComboBox.Text);
 
                 // 画像形式
-                ImgType = ImageTypeComboBox.Text;
+                if (radioJpg.Checked)
+                        ImgType = "jpg";
+                else if (radioPng.Checked)
+                    ImgType = "png";
+                else if (radioBmp.Checked)
+                    ImgType = "bmp";
+                else
+                    ImgType = "tif";
+
+                //ImgType = ImageTypeComboBox.Text;
 
                 // 色(true:カラー or false:グレースケール)
                 IsColor = radioColor.Checked;

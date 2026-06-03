@@ -34,12 +34,15 @@
             toolStripStatusLabel1 = new ToolStripStatusLabel();
             toolTip1 = new ToolTip(components);
             panel1 = new Panel();
+            groupBox2 = new GroupBox();
+            radioTif = new RadioButton();
+            radioBmp = new RadioButton();
+            radioPng = new RadioButton();
+            radioJpg = new RadioButton();
             label7 = new Label();
             groupBox1 = new GroupBox();
             radioColor = new RadioButton();
-            radioButton2 = new RadioButton();
-            ImageTypeComboBox = new ComboBox();
-            label4 = new Label();
+            radioGlay = new RadioButton();
             label3 = new Label();
             DpiComboBox = new ComboBox();
             label1 = new Label();
@@ -54,6 +57,7 @@
             CancelBtn = new Button();
             statusStrip1.SuspendLayout();
             panel1.SuspendLayout();
+            groupBox2.SuspendLayout();
             groupBox1.SuspendLayout();
             panel2.SuspendLayout();
             SuspendLayout();
@@ -62,9 +66,9 @@
             // 
             statusStrip1.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
-            statusStrip1.Location = new Point(0, 434);
+            statusStrip1.Location = new Point(0, 579);
             statusStrip1.Name = "statusStrip1";
-            statusStrip1.Size = new Size(373, 26);
+            statusStrip1.Size = new Size(517, 26);
             statusStrip1.TabIndex = 0;
             statusStrip1.Text = "statusStrip1";
             // 
@@ -76,10 +80,9 @@
             // 
             // panel1
             // 
+            panel1.Controls.Add(groupBox2);
             panel1.Controls.Add(label7);
             panel1.Controls.Add(groupBox1);
-            panel1.Controls.Add(ImageTypeComboBox);
-            panel1.Controls.Add(label4);
             panel1.Controls.Add(label3);
             panel1.Controls.Add(DpiComboBox);
             panel1.Controls.Add(label1);
@@ -92,13 +95,68 @@
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(373, 434);
+            panel1.Size = new Size(517, 579);
             panel1.TabIndex = 1;
+            // 
+            // groupBox2
+            // 
+            groupBox2.Controls.Add(radioTif);
+            groupBox2.Controls.Add(radioBmp);
+            groupBox2.Controls.Add(radioPng);
+            groupBox2.Controls.Add(radioJpg);
+            groupBox2.Location = new Point(12, 165);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new Size(493, 69);
+            groupBox2.TabIndex = 4;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "画像形式";
+            // 
+            // radioTif
+            // 
+            radioTif.AutoSize = true;
+            radioTif.Location = new Point(245, 28);
+            radioTif.Name = "radioTif";
+            radioTif.Size = new Size(42, 25);
+            radioTif.TabIndex = 3;
+            radioTif.Text = "tif";
+            radioTif.UseVisualStyleBackColor = true;
+            // 
+            // radioBmp
+            // 
+            radioBmp.AutoSize = true;
+            radioBmp.Location = new Point(166, 28);
+            radioBmp.Name = "radioBmp";
+            radioBmp.Size = new Size(60, 25);
+            radioBmp.TabIndex = 2;
+            radioBmp.Text = "bmp";
+            radioBmp.UseVisualStyleBackColor = true;
+            // 
+            // radioPng
+            // 
+            radioPng.AutoSize = true;
+            radioPng.Checked = true;
+            radioPng.Location = new Point(88, 28);
+            radioPng.Name = "radioPng";
+            radioPng.Size = new Size(55, 25);
+            radioPng.TabIndex = 1;
+            radioPng.TabStop = true;
+            radioPng.Text = "png";
+            radioPng.UseVisualStyleBackColor = true;
+            // 
+            // radioJpg
+            // 
+            radioJpg.AutoSize = true;
+            radioJpg.Location = new Point(18, 28);
+            radioJpg.Name = "radioJpg";
+            radioJpg.Size = new Size(50, 25);
+            radioJpg.TabIndex = 0;
+            radioJpg.Text = "jpg";
+            radioJpg.UseVisualStyleBackColor = true;
             // 
             // label7
             // 
             label7.AutoSize = true;
-            label7.Location = new Point(18, 302);
+            label7.Location = new Point(18, 325);
             label7.Name = "label7";
             label7.Size = new Size(315, 63);
             label7.TabIndex = 90;
@@ -108,11 +166,11 @@
             // 
             groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             groupBox1.Controls.Add(radioColor);
-            groupBox1.Controls.Add(radioButton2);
-            groupBox1.Location = new Point(12, 218);
+            groupBox1.Controls.Add(radioGlay);
+            groupBox1.Location = new Point(12, 241);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(349, 72);
-            groupBox1.TabIndex = 89;
+            groupBox1.Size = new Size(493, 72);
+            groupBox1.TabIndex = 5;
             groupBox1.TabStop = false;
             groupBox1.Text = "色";
             // 
@@ -123,41 +181,22 @@
             radioColor.Location = new Point(18, 28);
             radioColor.Name = "radioColor";
             radioColor.Size = new Size(81, 25);
-            radioColor.TabIndex = 87;
+            radioColor.TabIndex = 0;
             radioColor.TabStop = true;
             radioColor.Tag = "元のまま画像に変換します";
             radioColor.Text = "元のまま";
             radioColor.UseVisualStyleBackColor = true;
             // 
-            // radioButton2
+            // radioGlay
             // 
-            radioButton2.AutoSize = true;
-            radioButton2.Location = new Point(118, 28);
-            radioButton2.Name = "radioButton2";
-            radioButton2.Size = new Size(108, 25);
-            radioButton2.TabIndex = 88;
-            radioButton2.Tag = "グレースケールの画像に変換します";
-            radioButton2.Text = "グレースケール";
-            radioButton2.UseVisualStyleBackColor = true;
-            // 
-            // ImageTypeComboBox
-            // 
-            ImageTypeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            ImageTypeComboBox.FormattingEnabled = true;
-            ImageTypeComboBox.Location = new Point(111, 171);
-            ImageTypeComboBox.Name = "ImageTypeComboBox";
-            ImageTypeComboBox.Size = new Size(121, 29);
-            ImageTypeComboBox.TabIndex = 86;
-            ImageTypeComboBox.Tag = "画像形式を選択します";
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Location = new Point(15, 174);
-            label4.Name = "label4";
-            label4.Size = new Size(90, 21);
-            label4.TabIndex = 85;
-            label4.Text = "画像形式：";
+            radioGlay.AutoSize = true;
+            radioGlay.Location = new Point(118, 28);
+            radioGlay.Name = "radioGlay";
+            radioGlay.Size = new Size(108, 25);
+            radioGlay.TabIndex = 1;
+            radioGlay.Tag = "グレースケールの画像に変換します";
+            radioGlay.Text = "グレースケール";
+            radioGlay.UseVisualStyleBackColor = true;
             // 
             // label3
             // 
@@ -175,7 +214,7 @@
             DpiComboBox.Location = new Point(111, 127);
             DpiComboBox.Name = "DpiComboBox";
             DpiComboBox.Size = new Size(121, 29);
-            DpiComboBox.TabIndex = 83;
+            DpiComboBox.TabIndex = 2;
             DpiComboBox.Tag = "解像度を選択します";
             // 
             // label1
@@ -201,8 +240,8 @@
             FileNameTxtBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             FileNameTxtBox.Location = new Point(111, 84);
             FileNameTxtBox.Name = "FileNameTxtBox";
-            FileNameTxtBox.Size = new Size(250, 29);
-            FileNameTxtBox.TabIndex = 3;
+            FileNameTxtBox.Size = new Size(394, 29);
+            FileNameTxtBox.TabIndex = 1;
             FileNameTxtBox.Tag = "ファイル名を指定します(ファイル名の後にページ番号が付与されます)";
             // 
             // label5
@@ -228,7 +267,7 @@
             ExtractTxt.Location = new Point(111, 15);
             ExtractTxt.Name = "ExtractTxt";
             ExtractTxt.Size = new Size(100, 29);
-            ExtractTxt.TabIndex = 2;
+            ExtractTxt.TabIndex = 0;
             ExtractTxt.Tag = "画像変換するページを指定します(入力方法：1,2,3,5-9)";
             // 
             // label6
@@ -245,9 +284,9 @@
             panel2.Controls.Add(OkBtn);
             panel2.Controls.Add(CancelBtn);
             panel2.Dock = DockStyle.Bottom;
-            panel2.Location = new Point(0, 384);
+            panel2.Location = new Point(0, 529);
             panel2.Name = "panel2";
-            panel2.Size = new Size(373, 50);
+            panel2.Size = new Size(517, 50);
             panel2.TabIndex = 2;
             // 
             // OkBtn
@@ -255,7 +294,7 @@
             OkBtn.Location = new Point(11, 8);
             OkBtn.Name = "OkBtn";
             OkBtn.Size = new Size(112, 35);
-            OkBtn.TabIndex = 41;
+            OkBtn.TabIndex = 0;
             OkBtn.Tag = "ページ指定を確定し画像変換を実行します";
             OkBtn.Text = "OK";
             OkBtn.UseVisualStyleBackColor = true;
@@ -266,7 +305,7 @@
             CancelBtn.Location = new Point(130, 8);
             CancelBtn.Name = "CancelBtn";
             CancelBtn.Size = new Size(112, 35);
-            CancelBtn.TabIndex = 42;
+            CancelBtn.TabIndex = 1;
             CancelBtn.Tag = "中止してウィンドウを閉じます";
             CancelBtn.Text = "Cancel";
             CancelBtn.UseVisualStyleBackColor = true;
@@ -276,7 +315,7 @@
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(373, 460);
+            ClientSize = new Size(517, 605);
             Controls.Add(panel2);
             Controls.Add(panel1);
             Controls.Add(statusStrip1);
@@ -292,6 +331,8 @@
             statusStrip1.PerformLayout();
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
+            groupBox2.ResumeLayout(false);
+            groupBox2.PerformLayout();
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             panel2.ResumeLayout(false);
@@ -316,12 +357,15 @@
         private Label label2;
         private ComboBox DpiComboBox;
         private Label label1;
-        private ComboBox ImageTypeComboBox;
-        private Label label4;
         private Label label3;
-        private RadioButton radioButton2;
+        private RadioButton radioGlay;
         private RadioButton radioColor;
         private GroupBox groupBox1;
         private Label label7;
+        private GroupBox groupBox2;
+        private RadioButton radioTif;
+        private RadioButton radioBmp;
+        private RadioButton radioPng;
+        private RadioButton radioJpg;
     }
 }
