@@ -100,6 +100,7 @@
             // 
             // groupBox2
             // 
+            groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             groupBox2.Controls.Add(radioTif);
             groupBox2.Controls.Add(radioBmp);
             groupBox2.Controls.Add(radioPng);

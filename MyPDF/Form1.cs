@@ -5771,7 +5771,6 @@ namespace MyPDF
         // ImgDpi：解像度(DPI)、ImgType：png/jpg/bmpなど、isColor：true=カラー、false=グレースケール
         // ==============================
         private async Task PdfConvImage(string pageText, string ImgFileName, string saveFolderPath, int ImgDpi, string ImgType, bool isColor)
-        //private void PdfConvImage(string pageText, string ImgFileName, string PdfPath, string saveFolderPath, int ImgDpi, string ImgType, bool isColor)
         {
 
             // PDFが開かれていないなら処理しない
@@ -5795,6 +5794,7 @@ namespace MyPDF
             {
                 // 「全部に適用」の状態初期化
                 _applyToAll = false;
+                // 重複時は毎回確認
                 _conflictMode = SaveConflictMode.Ask;
 
                 // PDF総ページ数取得
@@ -5802,7 +5802,7 @@ namespace MyPDF
 
                 // ページ解析
                 var pages = PageRangeHelper.ParsePageRanges(pageText, total).Distinct().OrderBy(x => x).ToList();
-
+                // プログレスバー初期化
                 try
                 {
                     StatusLabel.Text = "画像変換中...";
@@ -5816,6 +5816,7 @@ namespace MyPDF
                     // ボタンの連打防止などのためにUIを一時的に無効化
                     this.Enabled = false;
 
+                    // 非同期処理開始
                     await Task.Run(() =>
                     {
                         int current = 0;
@@ -5838,7 +5839,6 @@ namespace MyPDF
 
                             // DPIからピクセル計算
                             int width = (int)(size.Width / 72f * ImgDpi);
-
                             int height = (int)(size.Height / 72f * ImgDpi);
 
                             // PDF → Bitmap
@@ -5854,6 +5854,7 @@ namespace MyPDF
                             // 保存用Bitmap
                             Bitmap saveBmp = bmp;
 
+                            // 元のままでない場合中に入る
                             if (!isColor)
                             {
                                 // グレースケール変換(LockBits方式)
@@ -5866,7 +5867,6 @@ namespace MyPDF
                             // 保存パス
                             string savePath = IOPath.Combine(saveFolder, $"{ImgFileName}_{p}.{ext}");
                             // 同名ファイルがある場合の処理
-                            //savePath = GetSafeSavePath(savePath);
                             savePath = (string)this.Invoke(new Func<string>(() =>
                             {
                                 return GetSafeSavePath(savePath);
@@ -5960,6 +5960,7 @@ namespace MyPDF
             }
             finally
             {
+                // 元の表示に戻す
                 StatusLabel.Text = toolHintTxt;
                 ProgressBar.Value = 0;
                 ProgressBar.Visible = false;
@@ -5974,23 +5975,25 @@ namespace MyPDF
         {
             // 出力用のBitmapを作成（元の解像度を維持）
             Bitmap bmp = new Bitmap(src.Width, src.Height, PixelFormat.Format24bppRgb);
+            // 元画像のDPIをコピー
             bmp.SetResolution(src.HorizontalResolution, src.VerticalResolution);
-
+            // Graphics生成
             using (Graphics g = Graphics.FromImage(bmp))
             {
                 // グレースケール変換用のカラーマトリックスを設定
                 // NTSC形式のウェイト（0.299, 0.587, 0.114）を反映
                 ColorMatrix colorMatrix = new ColorMatrix(new float[][]
                 {
-                    new float[] {0.299f, 0.299f, 0.299f, 0, 0},
-                    new float[] {0.587f, 0.587f, 0.587f, 0, 0},
-                    new float[] {0.114f, 0.114f, 0.114f, 0, 0},
-                    new float[] {0,      0,      0,      1, 0},
-                    new float[] {0,      0,      0,      0, 1}
+                    new float[] {0.299f, 0.299f, 0.299f, 0, 0}, // 出力Rの計算
+                    new float[] {0.587f, 0.587f, 0.587f, 0, 0}, // 出力Gの計算
+                    new float[] {0.114f, 0.114f, 0.114f, 0, 0}, // 出力Bの計算
+                    new float[] {0,      0,      0,      1, 0}, // Alpha値(透明度はそのまま使う)
+                    new float[] {0,      0,      0,      0, 1}  // 固定値(触らない)
                 });
-
+                // ImageAttributes作成
                 using (ImageAttributes attributes = new ImageAttributes())
                 {
+                    // カラーマトリックス登録
                     attributes.SetColorMatrix(colorMatrix);
 
                     // 変換マトリックスを適用しながら一気に描画
@@ -6080,76 +6083,93 @@ namespace MyPDF
 
         // ==============================
         // PDFを画像に変換処理 ヘルパー関数(上書き確認)1
+        // そのまま保存する or 別名に変更する を決定する
         // ==============================
         private string GetSafeSavePath(string path)
         {
+            // 保存先に同名ファイルが存在しないならそのまま返す
             if (!File.Exists(path))
                 return path;
-
+            // 「この選択をすべてに適用」を選んだとき
+            // _conflictMode = Rename なら ResolvePath()を呼ぶ
             if (_applyToAll)
                 return ResolvePath(path, _conflictMode);
-
+            // 確認ダイアログ表示
             DialogResult result = MessageBox.Show(
                 $"同名ファイルがあります:\n{IOPath.GetFileName(path)}\n\n上書きしますか？",
                 "確認",
                 MessageBoxButtons.YesNoCancel,
                 MessageBoxIcon.Question);
-
+            // キャンセルなら OperationCanceledExceptionを投げる
             if (result == DialogResult.Cancel)
                 throw new OperationCanceledException();
-
+            // 上書きを選択した場合
             if (result == DialogResult.Yes)
             {
+                // 「この選択をすべてに適用しますか？」を聞く
                 if (AskApplyAll())
                 {
+                    // 以後確認しない
                     _applyToAll = true;
+                    // 上書き
                     _conflictMode = SaveConflictMode.Overwrite;
                 }
-
+                // 元のファイル名で保存
                 return path;
             }
-
+            // 別名保存を選択した場合
             if (result == DialogResult.No)
             {
+                // 全部適用確認
                 if (AskApplyAll())
                 {
+                    // 今後確認しない
                     _applyToAll = true;
+                    // 今後は自動で別名作成
                     _conflictMode = SaveConflictMode.Rename;
                 }
-
+                // 別名を生成して返す
                 return ResolvePath(path, SaveConflictMode.Rename);
             }
-
+            // 念のため(通常ここには来ない)
             return path;
         }
 
         // ==============================
         // PDFを画像に変換処理 ヘルパー関数(上書き確認)2
+        // 実際に別名を作る関数
         // ==============================
         private string ResolvePath(string path, SaveConflictMode mode)
         {
+            // 上書きなら何もしない
             if (mode == SaveConflictMode.Overwrite)
                 return path;
-
+            // フォルダ取得
             string? dir = IOPath.GetDirectoryName(path);
+            // 拡張子なし名前
             string name = IOPath.GetFileNameWithoutExtension(path);
+            // 拡張子
             string ext = IOPath.GetExtension(path);
 
             int i = 1;
+            // 生成用
             string newPath;
-
+            // 必ず1回実行
             do
             {
+                // sample_1.png、sample_2.pngのように名前を付ける
                 newPath = IOPath.Combine(dir ?? "", $"{name}_{i}{ext}");
                 i++;
             }
+            // 存在する限り繰り返す
             while (File.Exists(newPath));
-
+            // 決定した保存名を返す
             return newPath;
         }
 
         // ==============================
         // PDFを画像に変換処理 ヘルパー関数(上書き確認)3
+        // 「全部に適用」を聞くだけの関数
         // ==============================
         private bool AskApplyAll()
         {
