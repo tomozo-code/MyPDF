@@ -454,6 +454,7 @@
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
             tabControl1.Size = new Size(584, 465);
+            tabControl1.SizeMode = TabSizeMode.Fixed;
             tabControl1.TabIndex = 71;
             // 
             // tabPage1
@@ -526,10 +527,10 @@
             tabPage2.Controls.Add(label9);
             tabPage2.Controls.Add(PdfConvertLabel);
             tabPage2.Controls.Add(label10);
-            tabPage2.Location = new Point(4, 28);
+            tabPage2.Location = new Point(4, 30);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(576, 433);
+            tabPage2.Size = new Size(576, 431);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "詳細情報";
             // 

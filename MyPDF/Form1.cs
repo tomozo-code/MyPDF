@@ -21,6 +21,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+//using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using DrawingColor = System.Drawing.Color;
 using IOPath = System.IO.Path;
 using ITextDoc = iText.Kernel.Pdf.PdfDocument;
@@ -124,6 +125,15 @@ namespace MyPDF
         private float PdfMarginLeft = 0;
         private float PdfMarginRight = 0;
 
+        // サムネイル用
+        // サムネイルキャッシュ
+        private readonly Dictionary<int, Bitmap> thumbnailCache = new();
+        private readonly Dictionary<int, int> imageIndexes = new();
+        // 生成中管理
+        private readonly HashSet<int> thumbnailLoading = new();
+        // 仮想サムネイル用
+        private int thumbnailPageCount = 0;
+
         // PDF画像変換用
         public enum SaveConflictMode
         {
@@ -171,13 +181,22 @@ namespace MyPDF
             this.Text = myName;
 
             pdfViewer1.Dock = DockStyle.Fill;
+            //tabControl1.Dock = DockStyle.Fill;
+            listView1.Dock = DockStyle.Fill;
 
             // pdfViewerのしおり表示を無効
             pdfViewer1.ShowBookmarks = false;
             // pdfViewerのツールバー表示を無効
             pdfViewer1.ShowToolbar = false;
 
-            panel1.Width = 300;
+            panel1.Visible = false;
+            panel2.Visible = false;
+            panel3.Visible = false;
+            panel4.Visible = false;
+
+            //panel1.Width = 300;
+            tabControl1.Width = 300;
+
             treeView1.Dock = DockStyle.Fill;
             treeView1.ShowNodeToolTips = false;
 
@@ -188,6 +207,9 @@ namespace MyPDF
             // しおり列選択 代わりに線なし
             treeView1.FullRowSelect = true;
             treeView1.ShowLines = false;
+
+            // サムネイル初期化
+            InitThumbnailView();
 
             // エラー表示用
             //Extxt.Visible = true;
@@ -278,10 +300,6 @@ namespace MyPDF
             pageTimer.Interval = 100; // 0.1秒ごと
             pageTimer.Tick += PageTimer_Tick;
             pageTimer.Start();
-
-            // サムネイル用 0.05秒ごと
-            //thumbnailTimer.Interval = 50; // 0.05秒ごと（調整OK）
-            //thumbnailTimer.Tick += ThumbnailTimer_Tick;
 
             // ZoomModeの選択
             ZoomtoolStripComboBox.Items.AddRange(new object[] { "自動調整", "高さに合わせる", "幅に合わせる" });
@@ -386,6 +404,7 @@ namespace MyPDF
 
                             // 開く処理へ awaitを付けて非同期メソッドを呼び出す
                             await OpenPdfAsync(ofd.FileName);
+
                         }
                         finally
                         {
@@ -512,6 +531,19 @@ namespace MyPDF
 
                 // 未保存フラグOFF
                 isDirty = false;
+
+                // サムネイル生成
+                //await BuildThumbnailsAsync();
+
+                // サムネイル初期化
+                thumbnailCache.Clear();
+                thumbnailLoading.Clear();
+                imageIndexes.Clear();
+
+                thumbnailPageCount = currentSettings?.TotalPage ?? 0;
+
+                listView1.VirtualListSize = thumbnailPageCount;
+
 #if DEBUG
                 // パスワード確認用
                 Extxt.Text = currentPassword;
@@ -3751,6 +3783,9 @@ namespace MyPDF
             // キャンセルの場合は閉じない
             //    return;
 
+            // サムネイル初期化
+            ClearThumbnails();
+
             // Viewer完全リセット
             ResetPdfViewer();
 
@@ -3784,7 +3819,7 @@ namespace MyPDF
         private void ResetPdfViewer()
         {
             // Panel2から外す
-            panel2.Controls.Remove(pdfViewer1);
+            //panel2.Controls.Remove(pdfViewer1);
 
             // 念のため破棄
             try
@@ -3807,12 +3842,36 @@ namespace MyPDF
             pdfViewer1.ContextMenuStrip = contextMenuStrip2;
 
             // 再追加
-            panel2.Controls.Add(pdfViewer1);
+            this.Controls.Add(pdfViewer1);
+            //panel2.Controls.Add(pdfViewer1);
             pdfViewer1.BringToFront();
 
             // メニューリセット
             MenuReset();
 
+        }
+
+        // ==============================
+        // サムネイル全消去
+        // ==============================
+        private void ClearThumbnails()
+        {
+            // メモリ解放
+            foreach (var bmp in thumbnailCache.Values)
+            {
+                bmp.Dispose();
+            }
+
+            thumbnailCache.Clear();
+            thumbnailLoading.Clear();
+            imageIndexes.Clear();
+
+            imageList2.Images.Clear();
+
+            thumbnailPageCount = 0;
+            listView1.VirtualListSize = 0;
+
+            listView1.Invalidate();
         }
 
         // ==============================
@@ -5953,7 +6012,7 @@ namespace MyPDF
                 Extxt.Text = ex.ToString();
                 MessageBox.Show("画像変換エラー:\n" + ex.ToString());
 #else
-                MessageBox.Show("画像変換中にエラーが発生しました。",  "変換失敗",  MessageBoxButtons.OK, MessageBoxIcon.Warning );
+                MessageBox.Show("画像変換中にエラーが発生しました。", "変換失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
                 System.Diagnostics.Debug.WriteLine(ex.ToString());
 #endif
@@ -6178,6 +6237,171 @@ namespace MyPDF
                 "確認",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question) == DialogResult.Yes;
+        }
+
+        // ==============================
+        // サムネイル表示用ListViewの初期設定を行うメソッド
+        // ==============================
+        private void InitThumbnailView()
+        {
+            // ImageListを空にする
+            imageList2.Images.Clear();
+            // ListViewにImageListを関連付ける
+            listView1.LargeImageList = imageList2;
+            // サムネイルサイズ設定(幅,高さ)
+            // 小:(100,140)、標準：(120,160)、大：(180,240)、特大：(240,320)
+            imageList2.ImageSize = new Size(180, 240);
+            // 表示モード設定
+            listView1.View = View.LargeIcon;
+            // イベント解除
+            listView1.RetrieveVirtualItem -= ListView1_RetrieveVirtualItem;
+            // イベント登録
+            listView1.RetrieveVirtualItem += ListView1_RetrieveVirtualItem;
+            // 仮想モードON
+            listView1.VirtualMode = true;
+
+        }
+
+        // ==============================
+        // PDF → サムネイル生成
+        // 縦横比維持版
+        // ==============================
+        private Bitmap? RenderThumbnail(int pageIndex, int maxWidth, int maxHeight)
+        {
+            // PDFが開かれていないなら処理しない
+            if (pdfViewer1.Document == null)
+                return null;
+
+            // PDFページサイズ取得（ポイント単位）
+            var pageSize = pdfViewer1.Document.PageSizes[pageIndex];
+
+            float pageW = pageSize.Width;
+            float pageH = pageSize.Height;
+
+            // 枠に収まる倍率を計算
+            float scaleX = (float)maxWidth / pageW;
+            float scaleY = (float)maxHeight / pageH;
+            float scale = Math.Min(scaleX, scaleY);
+
+            // サムネイルサイズ
+            int thumbW = Math.Max(1, (int)(pageW * scale));
+            int thumbH = Math.Max(1, (int)(pageH * scale));
+            // サムネイルサイズを2倍にする
+            int renderW = thumbW * 2;
+            int renderH = thumbH * 2;
+
+            using Bitmap raw = (Bitmap)pdfViewer1.Document.Render(
+                pageIndex,
+                renderW,
+                renderH,
+                192,
+                192,
+                PdfRenderFlags.Annotations);
+
+
+            // キャンバス
+            Bitmap canvas = new Bitmap(maxWidth, maxHeight);
+
+            using (Graphics g = Graphics.FromImage(canvas))
+            {
+                // 背景色
+                //g.Clear(DrawingColor.LightGray);
+                g.Clear(listView1.BackColor);
+                // グラフィックスの品質設定
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                g.CompositingQuality = CompositingQuality.HighQuality;
+                g.SmoothingMode = SmoothingMode.HighQuality;
+                g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                // 中央配置
+                int x = (maxWidth - thumbW) / 2;
+                int y = (maxHeight - thumbH) / 2;
+
+                g.DrawImage(raw, x, y, thumbW, thumbH);
+
+                // 枠線（見やすくする）
+                g.DrawRectangle(
+                    Pens.DarkGray,
+                    x,
+                    y,
+                    thumbW - 1,
+                    thumbH - 1);
+            }
+
+            return canvas;
+
+        }
+
+        // ==============================
+        // クリックでページ移動
+        // ==============================
+        private void listView1_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (listView1.SelectedIndices.Count == 0)
+                return;
+
+            int pageIndex = listView1.SelectedIndices[0];
+
+            pdfViewer1.Renderer.Page = pageIndex;
+
+        }
+
+        // ==============================
+        // サムネイル生成
+        // ==============================
+        private void ListView1_RetrieveVirtualItem(object? sender, RetrieveVirtualItemEventArgs e)
+        {
+            var item = new ListViewItem(
+                (e.ItemIndex + 1).ToString());
+
+            if (imageIndexes.TryGetValue(e.ItemIndex, out int imageIndex))
+            {
+                item.ImageIndex = imageIndex;
+            }
+            else
+            {
+                StartThumbnailGeneration(e.ItemIndex);
+            }
+
+            e.Item = item;
+        }
+
+        // ==============================
+        // サムネイル生成
+        // ==============================
+        private void StartThumbnailGeneration(int pageIndex)
+        {
+            lock (thumbnailLoading)
+            {
+                if (thumbnailLoading.Contains(pageIndex))
+                    return;
+
+                thumbnailLoading.Add(pageIndex);
+            }
+
+            Task.Run(() =>
+            {
+                Bitmap? bmp = RenderThumbnail(pageIndex, 180, 240);
+
+                if (bmp == null)
+                    return;
+
+                this.Invoke(() =>
+                {
+                    thumbnailCache[pageIndex] = bmp;
+
+                    int imageIndex = imageList2.Images.Count;
+
+                    imageList2.Images.Add(bmp);
+
+                    imageIndexes[pageIndex] = imageIndex;
+
+                    listView1.RedrawItems(
+                        pageIndex,
+                        pageIndex,
+                        false);
+                });
+            });
         }
     }
 }

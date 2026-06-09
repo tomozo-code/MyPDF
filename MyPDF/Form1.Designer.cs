@@ -94,6 +94,11 @@
             panel1 = new Panel();
             panel3 = new Panel();
             label1 = new Label();
+            tabControl1 = new TabControl();
+            tabPage1 = new TabPage();
+            tabPage2 = new TabPage();
+            listView1 = new ListView();
+            imageList2 = new ImageList(components);
             treeToolTip = new ToolTip(components);
             panel4 = new Panel();
             label2 = new Label();
@@ -128,6 +133,9 @@
             contextMenuStrip1.SuspendLayout();
             panel1.SuspendLayout();
             panel3.SuspendLayout();
+            tabControl1.SuspendLayout();
+            tabPage1.SuspendLayout();
+            tabPage2.SuspendLayout();
             panel4.SuspendLayout();
             toolStrip1.SuspendLayout();
             panel2.SuspendLayout();
@@ -137,10 +145,10 @@
             // 
             statusStrip1.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             statusStrip1.Items.AddRange(new ToolStripItem[] { StatusLabel, ProgressBar });
-            statusStrip1.Location = new Point(0, 388);
+            statusStrip1.Location = new Point(0, 618);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Padding = new Padding(1, 0, 16, 0);
-            statusStrip1.Size = new Size(964, 26);
+            statusStrip1.Size = new Size(1035, 26);
             statusStrip1.TabIndex = 1;
             statusStrip1.Text = "statusStrip1";
             // 
@@ -160,9 +168,9 @@
             // splitter1
             // 
             splitter1.Cursor = Cursors.SizeWE;
-            splitter1.Location = new Point(200, 35);
+            splitter1.Location = new Point(278, 35);
             splitter1.Name = "splitter1";
-            splitter1.Size = new Size(8, 353);
+            splitter1.Size = new Size(8, 583);
             splitter1.TabIndex = 3;
             splitter1.TabStop = false;
             // 
@@ -170,7 +178,7 @@
             // 
             pdfViewer1.BorderStyle = BorderStyle.FixedSingle;
             pdfViewer1.ContextMenuStrip = contextMenuStrip2;
-            pdfViewer1.Location = new Point(339, 100);
+            pdfViewer1.Location = new Point(329, 91);
             pdfViewer1.Margin = new Padding(4, 4, 4, 4);
             pdfViewer1.Name = "pdfViewer1";
             pdfViewer1.Size = new Size(180, 129);
@@ -286,7 +294,7 @@
             // 
             PageMove2.Enabled = false;
             PageMove2.Name = "PageMove2";
-            PageMove2.Size = new Size(180, 26);
+            PageMove2.Size = new Size(174, 26);
             PageMove2.Text = "移動(&M)...";
             PageMove2.ToolTipText = "ページを指定して移動します";
             PageMove2.Click += PageMove_Click;
@@ -297,7 +305,7 @@
             // 
             PageInsert2.Enabled = false;
             PageInsert2.Name = "PageInsert2";
-            PageInsert2.Size = new Size(180, 26);
+            PageInsert2.Size = new Size(174, 26);
             PageInsert2.Text = "挿入(&I)...";
             PageInsert2.ToolTipText = "ファイルからページを挿入します";
             PageInsert2.Click += PageInsert_Click;
@@ -308,7 +316,7 @@
             // 
             ReplacementMenu2.Enabled = false;
             ReplacementMenu2.Name = "ReplacementMenu2";
-            ReplacementMenu2.Size = new Size(180, 26);
+            ReplacementMenu2.Size = new Size(174, 26);
             ReplacementMenu2.Text = "置換(&K)...";
             ReplacementMenu2.ToolTipText = "ファイルからページを置換します";
             ReplacementMenu2.Click += ReplacementMenu_Click;
@@ -319,7 +327,7 @@
             // 
             PageExtractSetting2.Enabled = false;
             PageExtractSetting2.Name = "PageExtractSetting2";
-            PageExtractSetting2.Size = new Size(180, 26);
+            PageExtractSetting2.Size = new Size(174, 26);
             PageExtractSetting2.Text = "抽出(&X)...";
             PageExtractSetting2.ToolTipText = "ページを指定して抽出します";
             PageExtractSetting2.Click += PageExtractSetting_Click;
@@ -330,7 +338,7 @@
             // 
             RotatePagesSetting2.Enabled = false;
             RotatePagesSetting2.Name = "RotatePagesSetting2";
-            RotatePagesSetting2.Size = new Size(180, 26);
+            RotatePagesSetting2.Size = new Size(174, 26);
             RotatePagesSetting2.Text = "回転(&R)...";
             RotatePagesSetting2.ToolTipText = "ページを指定して回転します";
             RotatePagesSetting2.Click += RotatePagesSetting_Click;
@@ -341,7 +349,7 @@
             // 
             PageDeleteSetting2.Enabled = false;
             PageDeleteSetting2.Name = "PageDeleteSetting2";
-            PageDeleteSetting2.Size = new Size(180, 26);
+            PageDeleteSetting2.Size = new Size(174, 26);
             PageDeleteSetting2.Text = "削除(&D)...";
             PageDeleteSetting2.ToolTipText = "ページを指定して削除します";
             PageDeleteSetting2.Click += PageDeleteSetting_Click;
@@ -351,13 +359,13 @@
             // toolStripMenuItem18
             // 
             toolStripMenuItem18.Name = "toolStripMenuItem18";
-            toolStripMenuItem18.Size = new Size(177, 6);
+            toolStripMenuItem18.Size = new Size(171, 6);
             // 
             // ConvImgSetting2
             // 
             ConvImgSetting2.Enabled = false;
             ConvImgSetting2.Name = "ConvImgSetting2";
-            ConvImgSetting2.Size = new Size(180, 26);
+            ConvImgSetting2.Size = new Size(174, 26);
             ConvImgSetting2.Text = "画像変換(&G)...";
             ConvImgSetting2.ToolTipText = "ページを指定して画像ファイル(jpg/png/bmp/tif)に変換します";
             ConvImgSetting2.Click += ConvImgSetting_Click;
@@ -368,13 +376,13 @@
             // 
             treeView1.AllowDrop = true;
             treeView1.BackColor = SystemColors.Control;
-            treeView1.BorderStyle = BorderStyle.FixedSingle;
+            treeView1.BorderStyle = BorderStyle.None;
             treeView1.ContextMenuStrip = contextMenuStrip1;
             treeView1.DrawMode = TreeViewDrawMode.OwnerDrawText;
             treeView1.Indent = 16;
             treeView1.ItemHeight = 26;
             treeView1.LabelEdit = true;
-            treeView1.Location = new Point(33, 132);
+            treeView1.Location = new Point(26, 62);
             treeView1.Name = "treeView1";
             treeView1.Size = new Size(121, 97);
             treeView1.TabIndex = 0;
@@ -728,13 +736,11 @@
             // panel1
             // 
             panel1.BackColor = SystemColors.Control;
-            panel1.Controls.Add(treeView1);
             panel1.Controls.Add(panel3);
-            panel1.Dock = DockStyle.Left;
-            panel1.Location = new Point(0, 35);
+            panel1.Location = new Point(307, 330);
             panel1.MinimumSize = new Size(50, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(200, 353);
+            panel1.Size = new Size(202, 203);
             panel1.TabIndex = 2;
             // 
             // panel3
@@ -744,19 +750,73 @@
             panel3.Dock = DockStyle.Top;
             panel3.Location = new Point(0, 0);
             panel3.Name = "panel3";
-            panel3.Size = new Size(200, 30);
-            panel3.TabIndex = 7;
-            panel3.Tag = "しおりの表示、追加、削除等を行うことができます";
+            panel3.Size = new Size(202, 30);
+            panel3.TabIndex = 9;
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(4, 4);
+            label1.Location = new Point(3, 4);
             label1.Name = "label1";
-            label1.Size = new Size(84, 21);
-            label1.TabIndex = 0;
-            label1.Tag = "しおりの表示、追加、削除等を行うことができます";
-            label1.Text = "しおりパネル";
+            label1.Size = new Size(161, 21);
+            label1.TabIndex = 9;
+            label1.Tag = "しおりとサムネイルを表示します";
+            label1.Text = "しおり／サムネイルパネル";
+            // 
+            // tabControl1
+            // 
+            tabControl1.Controls.Add(tabPage1);
+            tabControl1.Controls.Add(tabPage2);
+            tabControl1.Dock = DockStyle.Left;
+            tabControl1.Location = new Point(0, 35);
+            tabControl1.Multiline = true;
+            tabControl1.Name = "tabControl1";
+            tabControl1.SelectedIndex = 0;
+            tabControl1.Size = new Size(278, 583);
+            tabControl1.SizeMode = TabSizeMode.Fixed;
+            tabControl1.TabIndex = 8;
+            // 
+            // tabPage1
+            // 
+            tabPage1.BorderStyle = BorderStyle.FixedSingle;
+            tabPage1.Controls.Add(treeView1);
+            tabPage1.Location = new Point(4, 30);
+            tabPage1.Name = "tabPage1";
+            tabPage1.Padding = new Padding(3);
+            tabPage1.Size = new Size(270, 549);
+            tabPage1.TabIndex = 0;
+            tabPage1.Text = "しおり";
+            tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            tabPage2.BorderStyle = BorderStyle.FixedSingle;
+            tabPage2.Controls.Add(listView1);
+            tabPage2.Location = new Point(4, 30);
+            tabPage2.Name = "tabPage2";
+            tabPage2.Padding = new Padding(3);
+            tabPage2.Size = new Size(270, 549);
+            tabPage2.TabIndex = 1;
+            tabPage2.Text = "サムネイル";
+            tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // listView1
+            // 
+            listView1.BackColor = SystemColors.Control;
+            listView1.BorderStyle = BorderStyle.None;
+            listView1.LargeImageList = imageList2;
+            listView1.Location = new Point(42, 62);
+            listView1.Name = "listView1";
+            listView1.Size = new Size(121, 97);
+            listView1.TabIndex = 0;
+            listView1.UseCompatibleStateImageBehavior = false;
+            listView1.MouseClick += listView1_MouseClick;
+            // 
+            // imageList2
+            // 
+            imageList2.ColorDepth = ColorDepth.Depth32Bit;
+            imageList2.ImageSize = new Size(16, 16);
+            imageList2.TransparentColor = Color.Transparent;
             // 
             // panel4
             // 
@@ -765,14 +825,14 @@
             panel4.Dock = DockStyle.Top;
             panel4.Location = new Point(0, 0);
             panel4.Name = "panel4";
-            panel4.Size = new Size(756, 30);
+            panel4.Size = new Size(301, 30);
             panel4.TabIndex = 7;
             panel4.Tag = "PDFファイルを表示します";
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(3, 5);
+            label2.Location = new Point(3, 4);
             label2.Name = "label2";
             label2.Size = new Size(79, 21);
             label2.TabIndex = 8;
@@ -781,7 +841,7 @@
             // 
             // Extxt
             // 
-            Extxt.Location = new Point(47, 132);
+            Extxt.Location = new Point(339, 271);
             Extxt.Multiline = true;
             Extxt.Name = "Extxt";
             Extxt.ReadOnly = true;
@@ -1010,29 +1070,29 @@
             toolStrip1.Items.AddRange(new ToolStripItem[] { FileMenu, ShioriMenu, PageEditMenu, HelpMenu, toolStripSeparator1, NewPagetoolStripTextBox, TotalPagetoolStripLabel, toolStripSeparator2, ZoomtoolStripComboBox, toolStripSeparator3 });
             toolStrip1.Location = new Point(0, 0);
             toolStrip1.Name = "toolStrip1";
-            toolStrip1.Size = new Size(964, 35);
+            toolStrip1.Size = new Size(1035, 35);
             toolStrip1.TabIndex = 6;
             toolStrip1.Text = "toolStrip1";
             // 
             // panel2
             // 
-            panel2.Controls.Add(pdfViewer1);
             panel2.Controls.Add(panel4);
             panel2.Controls.Add(Extxt);
-            panel2.Dock = DockStyle.Fill;
-            panel2.Location = new Point(208, 35);
+            panel2.Location = new Point(629, 257);
             panel2.Name = "panel2";
-            panel2.Size = new Size(756, 353);
+            panel2.Size = new Size(301, 214);
             panel2.TabIndex = 9;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
-            ClientSize = new Size(964, 414);
+            ClientSize = new Size(1035, 644);
+            Controls.Add(pdfViewer1);
             Controls.Add(panel2);
-            Controls.Add(splitter1);
             Controls.Add(panel1);
+            Controls.Add(splitter1);
+            Controls.Add(tabControl1);
             Controls.Add(statusStrip1);
             Controls.Add(toolStrip1);
             Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
@@ -1049,6 +1109,9 @@
             panel1.ResumeLayout(false);
             panel3.ResumeLayout(false);
             panel3.PerformLayout();
+            tabControl1.ResumeLayout(false);
+            tabPage1.ResumeLayout(false);
+            tabPage2.ResumeLayout(false);
             panel4.ResumeLayout(false);
             panel4.PerformLayout();
             toolStrip1.ResumeLayout(false);
@@ -1085,8 +1148,6 @@
         private ToolStripSeparator toolStripMenuItem7;
         private ToolStripMenuItem AllDelToolStripMenuItem;
         private ToolStripSeparator toolStripMenuItem8;
-        private Panel panel3;
-        private Label label1;
         private Panel panel4;
         private Label label2;
         private TextBox Extxt;
@@ -1153,5 +1214,12 @@
         private ToolStripMenuItem PageDeleteSetting2;
         private ToolStripSeparator toolStripMenuItem18;
         private ToolStripMenuItem ConvImgSetting2;
+        private TabControl tabControl1;
+        private TabPage tabPage1;
+        private TabPage tabPage2;
+        private ListView listView1;
+        private ImageList imageList2;
+        private Panel panel3;
+        private Label label1;
     }
 }
