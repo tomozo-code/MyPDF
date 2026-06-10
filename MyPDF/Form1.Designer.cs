@@ -98,6 +98,15 @@
             tabPage1 = new TabPage();
             tabPage2 = new TabPage();
             listView1 = new ListView();
+            contextMenuStrip3 = new ContextMenuStrip(components);
+            PageInsert3 = new ToolStripMenuItem();
+            ReplacementMenu3 = new ToolStripMenuItem();
+            PageExtractSetting3 = new ToolStripMenuItem();
+            RotatePagesSettingLeft90 = new ToolStripMenuItem();
+            RotatePagesSettingRight90 = new ToolStripMenuItem();
+            RotatePagesSetting180 = new ToolStripMenuItem();
+            PageDeleteSetting3 = new ToolStripMenuItem();
+            ConvImgSetting3 = new ToolStripMenuItem();
             imageList2 = new ImageList(components);
             treeToolTip = new ToolTip(components);
             panel4 = new Panel();
@@ -136,6 +145,7 @@
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
+            contextMenuStrip3.SuspendLayout();
             panel4.SuspendLayout();
             toolStrip1.SuspendLayout();
             panel2.SuspendLayout();
@@ -792,10 +802,10 @@
             // 
             tabPage2.BorderStyle = BorderStyle.FixedSingle;
             tabPage2.Controls.Add(listView1);
-            tabPage2.Location = new Point(4, 30);
+            tabPage2.Location = new Point(4, 28);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(270, 549);
+            tabPage2.Size = new Size(270, 551);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "サムネイル";
             tabPage2.UseVisualStyleBackColor = true;
@@ -804,13 +814,109 @@
             // 
             listView1.BackColor = SystemColors.Control;
             listView1.BorderStyle = BorderStyle.None;
+            listView1.ContextMenuStrip = contextMenuStrip3;
             listView1.LargeImageList = imageList2;
             listView1.Location = new Point(42, 62);
             listView1.Name = "listView1";
+            listView1.OwnerDraw = true;
             listView1.Size = new Size(121, 97);
             listView1.TabIndex = 0;
             listView1.UseCompatibleStateImageBehavior = false;
+            listView1.DrawItem += listView1_DrawItem;
             listView1.MouseClick += listView1_MouseClick;
+            // 
+            // contextMenuStrip3
+            // 
+            contextMenuStrip3.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
+            contextMenuStrip3.Items.AddRange(new ToolStripItem[] { PageInsert3, ReplacementMenu3, PageExtractSetting3, RotatePagesSettingLeft90, RotatePagesSettingRight90, RotatePagesSetting180, PageDeleteSetting3, ConvImgSetting3 });
+            contextMenuStrip3.Name = "contextMenuStrip3";
+            contextMenuStrip3.Size = new Size(175, 212);
+            // 
+            // PageInsert3
+            // 
+            PageInsert3.Enabled = false;
+            PageInsert3.Name = "PageInsert3";
+            PageInsert3.Size = new Size(174, 26);
+            PageInsert3.Text = "挿入(&I)...";
+            PageInsert3.ToolTipText = "ファイルからページを挿入します";
+            PageInsert3.Click += PageMove_Click;
+            // 
+            // ReplacementMenu3
+            // 
+            ReplacementMenu3.Enabled = false;
+            ReplacementMenu3.Name = "ReplacementMenu3";
+            ReplacementMenu3.Size = new Size(174, 26);
+            ReplacementMenu3.Text = "置換(&K)...";
+            ReplacementMenu3.ToolTipText = "選択したページを置換します";
+            ReplacementMenu3.Click += ReplacementMenu_Click;
+            ReplacementMenu3.MouseEnter += menuStrip1_MouseEnter;
+            ReplacementMenu3.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // PageExtractSetting3
+            // 
+            PageExtractSetting3.Enabled = false;
+            PageExtractSetting3.Name = "PageExtractSetting3";
+            PageExtractSetting3.Size = new Size(174, 26);
+            PageExtractSetting3.Text = "抽出(&X)";
+            PageExtractSetting3.ToolTipText = "選択したページを抽出します";
+            PageExtractSetting3.Click += PageExtractSetting3_Click;
+            PageExtractSetting3.MouseEnter += menuStrip1_MouseEnter;
+            PageExtractSetting3.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // RotatePagesSettingLeft90
+            // 
+            RotatePagesSettingLeft90.Enabled = false;
+            RotatePagesSettingLeft90.Name = "RotatePagesSettingLeft90";
+            RotatePagesSettingLeft90.Size = new Size(174, 26);
+            RotatePagesSettingLeft90.Text = "左90°回転(&R)";
+            RotatePagesSettingLeft90.ToolTipText = "選択したページを左に90°回転します";
+            RotatePagesSettingLeft90.Click += RotatePagesSettingLeft90_Click;
+            RotatePagesSettingLeft90.MouseEnter += menuStrip1_MouseEnter;
+            RotatePagesSettingLeft90.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // RotatePagesSettingRight90
+            // 
+            RotatePagesSettingRight90.Enabled = false;
+            RotatePagesSettingRight90.Name = "RotatePagesSettingRight90";
+            RotatePagesSettingRight90.Size = new Size(174, 26);
+            RotatePagesSettingRight90.Text = "右90°回転(&R)";
+            RotatePagesSettingRight90.ToolTipText = "選択したページを右に90°回転します";
+            RotatePagesSettingRight90.Click += RotatePagesSettingRight90_Click;
+            RotatePagesSettingRight90.MouseEnter += menuStrip1_MouseEnter;
+            RotatePagesSettingRight90.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // RotatePagesSetting180
+            // 
+            RotatePagesSetting180.Enabled = false;
+            RotatePagesSetting180.Name = "RotatePagesSetting180";
+            RotatePagesSetting180.Size = new Size(174, 26);
+            RotatePagesSetting180.Text = "180°回転(&R)";
+            RotatePagesSetting180.ToolTipText = "選択したページを180°回転します";
+            RotatePagesSetting180.Click += RotatePagesSetting180_Click;
+            RotatePagesSetting180.MouseEnter += menuStrip1_MouseEnter;
+            RotatePagesSetting180.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // PageDeleteSetting3
+            // 
+            PageDeleteSetting3.Enabled = false;
+            PageDeleteSetting3.Name = "PageDeleteSetting3";
+            PageDeleteSetting3.Size = new Size(174, 26);
+            PageDeleteSetting3.Text = "削除(&D)";
+            PageDeleteSetting3.ToolTipText = "選択したページを削除します";
+            PageDeleteSetting3.Click += PageDeleteSetting3_Click;
+            PageDeleteSetting3.MouseEnter += menuStrip1_MouseEnter;
+            PageDeleteSetting3.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // ConvImgSetting3
+            // 
+            ConvImgSetting3.Enabled = false;
+            ConvImgSetting3.Name = "ConvImgSetting3";
+            ConvImgSetting3.Size = new Size(174, 26);
+            ConvImgSetting3.Text = "画像変換(&G)...";
+            ConvImgSetting3.ToolTipText = "選択したページを画像ファイル(jpg/png/bmp/tif)に変換します";
+            ConvImgSetting3.Click += ConvImgSetting_Click;
+            ConvImgSetting3.MouseEnter += menuStrip1_MouseEnter;
+            ConvImgSetting3.MouseLeave += menuStrip1_MouseLeave;
             // 
             // imageList2
             // 
@@ -1112,6 +1218,7 @@
             tabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
             tabPage2.ResumeLayout(false);
+            contextMenuStrip3.ResumeLayout(false);
             panel4.ResumeLayout(false);
             panel4.PerformLayout();
             toolStrip1.ResumeLayout(false);
@@ -1221,5 +1328,14 @@
         private ImageList imageList2;
         private Panel panel3;
         private Label label1;
+        private ContextMenuStrip contextMenuStrip3;
+        private ToolStripMenuItem PageDeleteSetting3;
+        private ToolStripMenuItem RotatePagesSettingLeft90;
+        private ToolStripMenuItem RotatePagesSettingRight90;
+        private ToolStripMenuItem RotatePagesSetting180;
+        private ToolStripMenuItem PageExtractSetting3;
+        private ToolStripMenuItem PageInsert3;
+        private ToolStripMenuItem ReplacementMenu3;
+        private ToolStripMenuItem ConvImgSetting3;
     }
 }

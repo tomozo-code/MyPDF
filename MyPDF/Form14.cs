@@ -38,7 +38,7 @@ namespace MyPDF
         private int maxPage;
 
 
-        public Form14(int nowPage, string fileName, int maxPage)
+        public Form14(string PageText, string fileName, int maxPage)
         {
             InitializeComponent();
 
@@ -54,7 +54,7 @@ namespace MyPDF
             this.maxPage = maxPage;
 
             // 今のページをセット
-            ExtractTxt.Text = nowPage.ToString();
+            ExtractTxt.Text = PageText;
 
             // 総ページ
             TotalPage.Text = "/ " + maxPage.ToString();

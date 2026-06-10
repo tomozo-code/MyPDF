@@ -21,7 +21,7 @@ namespace MyPDF
         // 削除設定（外から取得用）
         public string ExtractText { get; private set; } = "";
 
-        // 今のページ
+        // 削除対象ページ()表示している
         private int nowPage;
         // 総ページ数
         private int maxPage;
@@ -105,8 +105,6 @@ namespace MyPDF
             {
                 MessageBox.Show(ex.Message, "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
-
         }
 
         // ==============================
