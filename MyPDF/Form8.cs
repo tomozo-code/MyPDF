@@ -27,7 +27,7 @@ namespace MyPDF
         private int maxPage;
 
 
-        public Form8(int nowPage, int maxPage)
+        public Form8(String nowPage, int maxPage)
         {
             InitializeComponent();
 
@@ -38,7 +38,7 @@ namespace MyPDF
             //this.AutoScaleDimensions = new SizeF(96F, 96F);
 
             // 今のページセット
-            this.nowPage = nowPage;
+            //this.nowPage = nowPage;
             // 総ページ数をセット
             this.maxPage = maxPage;
             // 今のページをセット

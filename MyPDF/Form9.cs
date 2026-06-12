@@ -24,7 +24,7 @@ namespace MyPDF
         // 総ページ数
         private int maxPage;
 
-        public Form9(int nowPage, int maxPage)
+        public Form9(string nowPage, int maxPage)
         {
             InitializeComponent();
 
@@ -35,7 +35,7 @@ namespace MyPDF
             //this.AutoScaleDimensions = new SizeF(96F, 96F);
 
             // 今のページ
-            this.nowPage = nowPage;
+            //this.nowPage = nowPage;
             // 総ページ数をセット
             this.maxPage = maxPage;
             // 今のページをセット

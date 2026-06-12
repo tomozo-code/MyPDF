@@ -37,7 +37,7 @@ namespace MyPDF
         public string ReplaceText => ExtractTxt.Text;
 
 
-        public Form12(string NowFileName, string ReplacementFile, int nowPage, int maxPage, int InsTotalPage)
+        public Form12(string NowFileName, string ReplacementFile, string nowPage, int maxPage, int InsTotalPage)
         {
             InitializeComponent();
 
@@ -75,7 +75,7 @@ namespace MyPDF
 
             // 総ページ数をセット
             this.maxPage = maxPage;
-            ExtractTxt.Text = "1-" + maxPage.ToString();
+            ExtractTxt.Text = nowPage;
             // 総ページ
             TotalPage.Text = "/ " + maxPage.ToString();
 

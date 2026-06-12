@@ -53,7 +53,6 @@
             PageDeleteSetting2 = new ToolStripMenuItem();
             toolStripMenuItem18 = new ToolStripSeparator();
             ConvImgSetting2 = new ToolStripMenuItem();
-            treeView1 = new TreeView();
             contextMenuStrip1 = new ContextMenuStrip(components);
             AddShioriToolStripMenuItem = new ToolStripMenuItem();
             DelShioriToolStripMenuItem = new ToolStripMenuItem();
@@ -96,9 +95,11 @@
             label1 = new Label();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
+            treeView1 = new TreeView();
             tabPage2 = new TabPage();
             listView1 = new ListView();
             contextMenuStrip3 = new ContextMenuStrip(components);
+            PageMove3 = new ToolStripMenuItem();
             PageInsert3 = new ToolStripMenuItem();
             ReplacementMenu3 = new ToolStripMenuItem();
             PageExtractSetting3 = new ToolStripMenuItem();
@@ -381,38 +382,6 @@
             ConvImgSetting2.Click += ConvImgSetting_Click;
             ConvImgSetting2.MouseEnter += menuStrip1_MouseEnter;
             ConvImgSetting2.MouseLeave += menuStrip1_MouseLeave;
-            // 
-            // treeView1
-            // 
-            treeView1.AllowDrop = true;
-            treeView1.BackColor = SystemColors.Control;
-            treeView1.BorderStyle = BorderStyle.None;
-            treeView1.ContextMenuStrip = contextMenuStrip1;
-            treeView1.DrawMode = TreeViewDrawMode.OwnerDrawText;
-            treeView1.Indent = 16;
-            treeView1.ItemHeight = 26;
-            treeView1.LabelEdit = true;
-            treeView1.Location = new Point(26, 62);
-            treeView1.Name = "treeView1";
-            treeView1.Size = new Size(121, 97);
-            treeView1.TabIndex = 0;
-            treeView1.AfterLabelEdit += treeView1_AfterLabelEdit;
-            treeView1.AfterCollapse += treeView1_AfterCollapse;
-            treeView1.AfterExpand += treeView1_AfterExpand;
-            treeView1.DrawNode += treeView1_DrawNode;
-            treeView1.ItemDrag += treeView1_ItemDrag;
-            treeView1.AfterSelect += treeView1_AfterSelect;
-            treeView1.NodeMouseClick += treeView1_NodeMouseClick;
-            treeView1.DragDrop += treeView1_DragDrop;
-            treeView1.DragEnter += treeView1_DragEnter;
-            treeView1.DragOver += treeView1_DragOver;
-            treeView1.DragLeave += treeView1_DragLeave;
-            treeView1.KeyDown += treeView1_KeyDown;
-            treeView1.MouseDown += treeView1_MouseDown;
-            treeView1.MouseLeave += treeView1_MouseLeave;
-            treeView1.MouseMove += treeView1_MouseMove;
-            treeView1.MouseUp += treeView1_MouseUp;
-            treeView1.Resize += treeView1_Resize;
             // 
             // contextMenuStrip1
             // 
@@ -785,6 +754,7 @@
             tabControl1.Size = new Size(278, 583);
             tabControl1.SizeMode = TabSizeMode.Fixed;
             tabControl1.TabIndex = 8;
+            tabControl1.SelectedIndexChanged += tabControl1_SelectedIndexChanged;
             // 
             // tabPage1
             // 
@@ -797,6 +767,38 @@
             tabPage1.TabIndex = 0;
             tabPage1.Text = "しおり";
             tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // treeView1
+            // 
+            treeView1.AllowDrop = true;
+            treeView1.BackColor = SystemColors.Control;
+            treeView1.BorderStyle = BorderStyle.None;
+            treeView1.ContextMenuStrip = contextMenuStrip1;
+            treeView1.DrawMode = TreeViewDrawMode.OwnerDrawText;
+            treeView1.Indent = 16;
+            treeView1.ItemHeight = 26;
+            treeView1.LabelEdit = true;
+            treeView1.Location = new Point(26, 62);
+            treeView1.Name = "treeView1";
+            treeView1.Size = new Size(121, 97);
+            treeView1.TabIndex = 0;
+            treeView1.AfterLabelEdit += treeView1_AfterLabelEdit;
+            treeView1.AfterCollapse += treeView1_AfterCollapse;
+            treeView1.AfterExpand += treeView1_AfterExpand;
+            treeView1.DrawNode += treeView1_DrawNode;
+            treeView1.ItemDrag += treeView1_ItemDrag;
+            treeView1.AfterSelect += treeView1_AfterSelect;
+            treeView1.NodeMouseClick += treeView1_NodeMouseClick;
+            treeView1.DragDrop += treeView1_DragDrop;
+            treeView1.DragEnter += treeView1_DragEnter;
+            treeView1.DragOver += treeView1_DragOver;
+            treeView1.DragLeave += treeView1_DragLeave;
+            treeView1.KeyDown += treeView1_KeyDown;
+            treeView1.MouseDown += treeView1_MouseDown;
+            treeView1.MouseLeave += treeView1_MouseLeave;
+            treeView1.MouseMove += treeView1_MouseMove;
+            treeView1.MouseUp += treeView1_MouseUp;
+            treeView1.Resize += treeView1_Resize;
             // 
             // tabPage2
             // 
@@ -812,40 +814,56 @@
             // 
             // listView1
             // 
+            listView1.AllowDrop = true;
             listView1.BackColor = SystemColors.Control;
-            listView1.BorderStyle = BorderStyle.None;
+            listView1.BorderStyle = BorderStyle.FixedSingle;
             listView1.ContextMenuStrip = contextMenuStrip3;
             listView1.LargeImageList = imageList2;
-            listView1.Location = new Point(42, 62);
+            listView1.Location = new Point(36, 136);
             listView1.Name = "listView1";
             listView1.OwnerDraw = true;
             listView1.Size = new Size(121, 97);
             listView1.TabIndex = 0;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.DrawItem += listView1_DrawItem;
+            listView1.SelectedIndexChanged += listView1_SelectedIndexChanged;
             listView1.MouseClick += listView1_MouseClick;
+            listView1.MouseUp += listView1_MouseUp;
             // 
             // contextMenuStrip3
             // 
             contextMenuStrip3.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
-            contextMenuStrip3.Items.AddRange(new ToolStripItem[] { PageInsert3, ReplacementMenu3, PageExtractSetting3, RotatePagesSettingLeft90, RotatePagesSettingRight90, RotatePagesSetting180, PageDeleteSetting3, ConvImgSetting3 });
+            contextMenuStrip3.Items.AddRange(new ToolStripItem[] { PageMove3, PageInsert3, ReplacementMenu3, PageExtractSetting3, RotatePagesSettingLeft90, RotatePagesSettingRight90, RotatePagesSetting180, PageDeleteSetting3, ConvImgSetting3 });
             contextMenuStrip3.Name = "contextMenuStrip3";
-            contextMenuStrip3.Size = new Size(175, 212);
+            contextMenuStrip3.Size = new Size(181, 260);
+            // 
+            // PageMove3
+            // 
+            PageMove3.Enabled = false;
+            PageMove3.Name = "PageMove3";
+            PageMove3.Size = new Size(180, 26);
+            PageMove3.Text = "移動(&M)...";
+            PageMove3.ToolTipText = "ページを指定して移動します";
+            PageMove3.Click += PageMove_Click;
+            PageMove3.MouseEnter += menuStrip1_MouseEnter;
+            PageMove3.MouseLeave += menuStrip1_MouseLeave;
             // 
             // PageInsert3
             // 
             PageInsert3.Enabled = false;
             PageInsert3.Name = "PageInsert3";
-            PageInsert3.Size = new Size(174, 26);
+            PageInsert3.Size = new Size(180, 26);
             PageInsert3.Text = "挿入(&I)...";
             PageInsert3.ToolTipText = "ファイルからページを挿入します";
-            PageInsert3.Click += PageMove_Click;
+            PageInsert3.Click += PageInsert_Click;
+            PageInsert3.MouseEnter += menuStrip1_MouseEnter;
+            PageInsert3.MouseLeave += menuStrip1_MouseLeave;
             // 
             // ReplacementMenu3
             // 
             ReplacementMenu3.Enabled = false;
             ReplacementMenu3.Name = "ReplacementMenu3";
-            ReplacementMenu3.Size = new Size(174, 26);
+            ReplacementMenu3.Size = new Size(180, 26);
             ReplacementMenu3.Text = "置換(&K)...";
             ReplacementMenu3.ToolTipText = "選択したページを置換します";
             ReplacementMenu3.Click += ReplacementMenu_Click;
@@ -856,10 +874,10 @@
             // 
             PageExtractSetting3.Enabled = false;
             PageExtractSetting3.Name = "PageExtractSetting3";
-            PageExtractSetting3.Size = new Size(174, 26);
+            PageExtractSetting3.Size = new Size(180, 26);
             PageExtractSetting3.Text = "抽出(&X)";
             PageExtractSetting3.ToolTipText = "選択したページを抽出します";
-            PageExtractSetting3.Click += PageExtractSetting3_Click;
+            PageExtractSetting3.Click += PageExtractSetting_Click;
             PageExtractSetting3.MouseEnter += menuStrip1_MouseEnter;
             PageExtractSetting3.MouseLeave += menuStrip1_MouseLeave;
             // 
@@ -867,7 +885,7 @@
             // 
             RotatePagesSettingLeft90.Enabled = false;
             RotatePagesSettingLeft90.Name = "RotatePagesSettingLeft90";
-            RotatePagesSettingLeft90.Size = new Size(174, 26);
+            RotatePagesSettingLeft90.Size = new Size(180, 26);
             RotatePagesSettingLeft90.Text = "左90°回転(&R)";
             RotatePagesSettingLeft90.ToolTipText = "選択したページを左に90°回転します";
             RotatePagesSettingLeft90.Click += RotatePagesSettingLeft90_Click;
@@ -878,7 +896,7 @@
             // 
             RotatePagesSettingRight90.Enabled = false;
             RotatePagesSettingRight90.Name = "RotatePagesSettingRight90";
-            RotatePagesSettingRight90.Size = new Size(174, 26);
+            RotatePagesSettingRight90.Size = new Size(180, 26);
             RotatePagesSettingRight90.Text = "右90°回転(&R)";
             RotatePagesSettingRight90.ToolTipText = "選択したページを右に90°回転します";
             RotatePagesSettingRight90.Click += RotatePagesSettingRight90_Click;
@@ -889,7 +907,7 @@
             // 
             RotatePagesSetting180.Enabled = false;
             RotatePagesSetting180.Name = "RotatePagesSetting180";
-            RotatePagesSetting180.Size = new Size(174, 26);
+            RotatePagesSetting180.Size = new Size(180, 26);
             RotatePagesSetting180.Text = "180°回転(&R)";
             RotatePagesSetting180.ToolTipText = "選択したページを180°回転します";
             RotatePagesSetting180.Click += RotatePagesSetting180_Click;
@@ -900,10 +918,10 @@
             // 
             PageDeleteSetting3.Enabled = false;
             PageDeleteSetting3.Name = "PageDeleteSetting3";
-            PageDeleteSetting3.Size = new Size(174, 26);
+            PageDeleteSetting3.Size = new Size(180, 26);
             PageDeleteSetting3.Text = "削除(&D)";
             PageDeleteSetting3.ToolTipText = "選択したページを削除します";
-            PageDeleteSetting3.Click += PageDeleteSetting3_Click;
+            PageDeleteSetting3.Click += PageDeleteSetting_Click;
             PageDeleteSetting3.MouseEnter += menuStrip1_MouseEnter;
             PageDeleteSetting3.MouseLeave += menuStrip1_MouseLeave;
             // 
@@ -911,7 +929,7 @@
             // 
             ConvImgSetting3.Enabled = false;
             ConvImgSetting3.Name = "ConvImgSetting3";
-            ConvImgSetting3.Size = new Size(174, 26);
+            ConvImgSetting3.Size = new Size(180, 26);
             ConvImgSetting3.Text = "画像変換(&G)...";
             ConvImgSetting3.ToolTipText = "選択したページを画像ファイル(jpg/png/bmp/tif)に変換します";
             ConvImgSetting3.Click += ConvImgSetting_Click;
@@ -1234,7 +1252,6 @@
         private Splitter splitter1;
         private Panel panel1;
         private ToolStripStatusLabel StatusLabel;
-        private TreeView treeView1;
         private PdfiumViewer.PdfViewer pdfViewer1;
         private ContextMenuStrip contextMenuStrip1;
         private ToolStripMenuItem AddShioriToolStripMenuItem;
@@ -1324,8 +1341,6 @@
         private TabControl tabControl1;
         private TabPage tabPage1;
         private TabPage tabPage2;
-        private ListView listView1;
-        private ImageList imageList2;
         private Panel panel3;
         private Label label1;
         private ContextMenuStrip contextMenuStrip3;
@@ -1337,5 +1352,9 @@
         private ToolStripMenuItem PageInsert3;
         private ToolStripMenuItem ReplacementMenu3;
         private ToolStripMenuItem ConvImgSetting3;
+        private ToolStripMenuItem PageMove3;
+        private TreeView treeView1;
+        private ListView listView1;
+        private ImageList imageList2;
     }
 }

@@ -126,16 +126,20 @@ namespace MyPDF
         private float PdfMarginLeft = 0;
         private float PdfMarginRight = 0;
 
-        // サムネイル用
-        // サムネイルキャッシュ
+        // サムネキャッシュ
         private readonly Dictionary<int, Bitmap> thumbnailCache = new();
         private readonly Dictionary<int, int> imageIndexes = new();
         // 生成中管理
         private readonly HashSet<int> thumbnailLoading = new();
-        // 仮想サムネイル用
+
+        // 仮想サムネ用
         private int thumbnailPageCount = 0;
-        // サムネイルの現在ページ用
+
         private int currentThumbnailPage = -1;
+        // サムネイルを右クリしたときのページ番号
+        private int thumbnailRightClickPage = -1;
+
+
 
         // PDF画像変換用
         public enum SaveConflictMode
@@ -184,8 +188,6 @@ namespace MyPDF
             this.Text = myName;
 
             pdfViewer1.Dock = DockStyle.Fill;
-            //tabControl1.Dock = DockStyle.Fill;
-            listView1.Dock = DockStyle.Fill;
 
             // pdfViewerのしおり表示を無効
             pdfViewer1.ShowBookmarks = false;
@@ -203,6 +205,10 @@ namespace MyPDF
             treeView1.Dock = DockStyle.Fill;
             treeView1.ShowNodeToolTips = false;
 
+            listView1.Dock = DockStyle.Fill;
+
+            InitThumbnailView();
+
             StatusLabel.Text = "ファイル: PDF未選択";
             TotalPagetoolStripLabel.Text = "/ 1 ";
             toolHintTxt = "ファイル: PDF未選択";
@@ -211,8 +217,6 @@ namespace MyPDF
             treeView1.FullRowSelect = true;
             treeView1.ShowLines = false;
 
-            // サムネイル初期化
-            InitThumbnailView();
 
             // エラー表示用
             //Extxt.Visible = true;
@@ -278,25 +282,25 @@ namespace MyPDF
             ExportShioriToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.E;
             ExportShioriMenu.ShortcutKeys = Keys.Control | Keys.E;
             // 指定して回転
-            RotatePagesSetting.ShortcutKeys = Keys.Shift | Keys.Control | Keys.R;
+            //RotatePagesSetting.ShortcutKeys = Keys.Shift | Keys.Control | Keys.R;
             RotatePagesSetting2.ShortcutKeys = Keys.Shift | Keys.Control | Keys.R;
             // 移動
-            PageMove.ShortcutKeys = Keys.Shift | Keys.Control | Keys.M;
+            //PageMove.ShortcutKeys = Keys.Shift | Keys.Control | Keys.M;
             PageMove2.ShortcutKeys = Keys.Shift | Keys.Control | Keys.M;
             // 挿入
-            PageInsert.ShortcutKeys = Keys.Shift | Keys.Control | Keys.I;
+            //PageInsert.ShortcutKeys = Keys.Shift | Keys.Control | Keys.I;
             PageInsert2.ShortcutKeys = Keys.Shift | Keys.Control | Keys.I;
             // 置換
-            ReplacementMenu.ShortcutKeys = Keys.Shift | Keys.Control | Keys.K;
+            //ReplacementMenu.ShortcutKeys = Keys.Shift | Keys.Control | Keys.K;
             ReplacementMenu2.ShortcutKeys = Keys.Shift | Keys.Control | Keys.K;
             // 指定して抽出
-            PageExtractSetting.ShortcutKeys = Keys.Shift | Keys.Control | Keys.X;
+            //PageExtractSetting.ShortcutKeys = Keys.Shift | Keys.Control | Keys.X;
             PageExtractSetting2.ShortcutKeys = Keys.Shift | Keys.Control | Keys.X;
             // 指定して削除
-            PageDeleteSetting.ShortcutKeys = Keys.Shift | Keys.Control | Keys.D;
+            //PageDeleteSetting.ShortcutKeys = Keys.Shift | Keys.Control | Keys.D;
             PageDeleteSetting2.ShortcutKeys = Keys.Shift | Keys.Control | Keys.D;
             // PDFを画像に変換
-            ConvImgSetting.ShortcutKeys = Keys.Shift | Keys.Control | Keys.G;
+            //ConvImgSetting.ShortcutKeys = Keys.Shift | Keys.Control | Keys.G;
             ConvImgSetting2.ShortcutKeys = Keys.Shift | Keys.Control | Keys.G;
 
             // 0.1秒ごとにページを監視
@@ -341,9 +345,8 @@ namespace MyPDF
             if (current != lastPage)
             {
                 lastPage = current;
+
                 currentThumbnailPage = current;
-                // NewPagetoolStripTextBoxにページ番号を表示
-                NewPagetoolStripTextBox.Text = (current + 1).ToString();
 
                 listView1.Invalidate();
 
@@ -351,6 +354,10 @@ namespace MyPDF
                 {
                     EnsureThumbnailVisible(current);
                 }
+
+                // NewPagetoolStripTextBoxにページ番号を表示
+                NewPagetoolStripTextBox.Text = (current + 1).ToString();
+
             }
 
         }
@@ -537,15 +544,13 @@ namespace MyPDF
                     UpdateWindowTitle(path, canEdit);
                     // 閲覧モードメッセージ表示
                     ShowReadOnlyMessage(path);
+
                 });
 
                 // 未保存フラグOFF
                 isDirty = false;
 
-                // サムネイル生成
-                //await BuildThumbnailsAsync();
-
-                // サムネイル初期化
+                // サムネ初期化
                 thumbnailCache.Clear();
                 thumbnailLoading.Clear();
                 imageIndexes.Clear();
@@ -553,6 +558,9 @@ namespace MyPDF
                 thumbnailPageCount = currentSettings?.TotalPage ?? 0;
 
                 listView1.VirtualListSize = thumbnailPageCount;
+
+                // サムネイル更新(リセット)
+                RefreshThumbnailAll();
 
 #if DEBUG
                 // パスワード確認用
@@ -1588,8 +1596,6 @@ namespace MyPDF
             return true;
         }
 
-
-
         // ==============================
         // ツリービューをPDFへ の処理
         // TreeViewのノードを、PDFの「しおり(PdfOutline)」へ変換するメソッド
@@ -1705,6 +1711,7 @@ namespace MyPDF
             // 移動
             PageMove.Enabled = false;
             PageMove2.Enabled = false;
+            PageMove3.Enabled = false;
             // 挿入
             PageInsert.Enabled = false;
             PageInsert2.Enabled = false;
@@ -1806,6 +1813,7 @@ namespace MyPDF
                 // 移動
                 PageMove.Enabled = false;
                 PageMove2.Enabled = false;
+                PageMove3.Enabled = false;
                 // 挿入
                 PageInsert.Enabled = false;
                 PageInsert2.Enabled = false;
@@ -1873,6 +1881,7 @@ namespace MyPDF
                 // 移動
                 PageMove.Enabled = true;
                 PageMove2.Enabled = true;
+                PageMove3.Enabled = true;
                 // 挿入
                 PageInsert.Enabled = true;
                 PageInsert2.Enabled = true;
@@ -3494,7 +3503,7 @@ namespace MyPDF
                 if (currentPage < doc.PageCount)
                     pdfViewer1.Renderer.Page = currentPage;
 
-                // サムネイル更新
+                // サムネイル更新(リセット)
                 RefreshThumbnailAll();
 
                 // 未保存フラグON
@@ -3641,7 +3650,7 @@ namespace MyPDF
                 // ステータスバーにファイル名(元ファイル)と総ページ数
                 UpdateStatus(originalPath, currentSettings.TotalPage);
 
-                // サムネイル更新
+                // サムネイル更新(リセット)
                 RefreshThumbnailAll();
 
                 // 未保存フラグON
@@ -3783,10 +3792,24 @@ namespace MyPDF
                 return;
             }
 
-            int page = pdfViewer1.Renderer.Page + 1;
+            // どこから呼ばれたか
+            string pageText;
+
+            if (sender == PageDeleteSetting || sender == PageDeleteSetting2)
+            {
+                // メニュー or pdfViewer
+                pageText = (pdfViewer1.Renderer.Page + 1).ToString();
+            }
+            else
+            {
+                // サムネイル
+                pageText = GetSelectedPagesText();
+            }
+
+            //int page = pdfViewer1.Renderer.Page + 1;
 
             // Form8起動
-            using (var f = new Form8(page, currentSettings.TotalPage))
+            using (var f = new Form8(pageText, currentSettings.TotalPage))
             {
                 if (f.ShowDialog() == DialogResult.OK)
                 {
@@ -3823,11 +3846,11 @@ namespace MyPDF
             // キャンセルの場合は閉じない
             //    return;
 
-            // サムネイル初期化
-            ClearThumbnails();
-
             // Viewer完全リセット
             ResetPdfViewer();
+
+            // サムネイル全消去
+            ClearThumbnails();
 
             // 作業用ファイルを破棄(前回PDFの tempファイル削除)
             CleanupWorkingFile();
@@ -3850,7 +3873,6 @@ namespace MyPDF
             TotalPagetoolStripLabel.Text = "/ 1 ";
             toolHintTxt = "ファイル: PDF未選択";
 
-            currentThumbnailPage = -1;
             // 未保存フラグOFF
             isDirty = false;
         }
@@ -3891,30 +3913,6 @@ namespace MyPDF
             // メニューリセット
             MenuReset();
 
-        }
-
-        // ==============================
-        // サムネイル全消去
-        // ==============================
-        private void ClearThumbnails()
-        {
-            // キャッシュ破棄(メモリ解放)
-            foreach (var bmp in thumbnailCache.Values)
-                bmp.Dispose();
-            // キャッシュ削除
-            thumbnailCache.Clear();
-            // 生成中管理リセット
-            thumbnailLoading.Clear();
-            // ページ番号対応表削除
-            imageIndexes.Clear();
-            // ImageList空に
-            imageList2.Images.Clear();
-            // ページ数再取得0に
-            thumbnailPageCount = 0;
-            // 仮想リストサイズ0に
-            listView1.VirtualListSize = 0;
-            // 再描画
-            listView1.Invalidate();
         }
 
         // ==============================
@@ -4185,10 +4183,24 @@ namespace MyPDF
                 return;
             }
 
-            int page = pdfViewer1.Renderer.Page + 1;
+            // どこから呼ばれたか
+            string pageText;
+
+            if (sender == PageExtractSetting || sender == PageExtractSetting2)
+            {
+                // メニュー or pdfViewer
+                pageText = (pdfViewer1.Renderer.Page + 1).ToString();
+            }
+            else
+            {
+                // サムネイル
+                pageText = GetSelectedPagesText();
+            }
+
+            //int page = pdfViewer1.Renderer.Page + 1;
 
             // Form9起動
-            using (var f = new Form9(page, currentSettings.TotalPage))
+            using (var f = new Form9(pageText, currentSettings.TotalPage))
             {
                 if (f.ShowDialog() == DialogResult.OK)
                 {
@@ -4228,6 +4240,18 @@ namespace MyPDF
                 {
                     // 表示しているページを取得
                     int nowPage = pdfViewer1.Renderer.Page + 1;
+
+
+                    if (sender == PageInsert || sender == PageInsert2)
+                    {
+                        // メニュー or pdfViewer
+                        nowPage = pdfViewer1.Renderer.Page + 1;
+                    }
+                    else
+                    {
+                        // サムネイル
+                        nowPage = thumbnailRightClickPage;
+                    }
 
                     ofd.Title = "挿入するPDFを選択";
                     ofd.Filter = "PDFファイル (*.pdf)|*.pdf";
@@ -4437,7 +4461,7 @@ namespace MyPDF
                 // 挿入先のページを表示
                 pdfViewer1.Renderer.Page = targetPage - 1;
 
-                // サムネイル更新
+                // サムネイル更新(リセット)
                 RefreshThumbnailAll();
 
                 // 未保存フラグON
@@ -4855,11 +4879,25 @@ namespace MyPDF
                 return;
             }
 
+            // どこから呼ばれたか
+            string pageText;
+
+            if (sender == PageMove || sender == PageMove2)
+            {
+                // メニュー or pdfViewer
+                pageText = (pdfViewer1.Renderer.Page + 1).ToString();
+            }
+            else
+            {
+                // サムネイル
+                pageText = GetSelectedPagesText();
+            }
+
             // 表示しているページを取得
-            int nowPage = pdfViewer1.Renderer.Page + 1;
+            //int nowPage = pdfViewer1.Renderer.Page + 1;
 
             // Form11起動
-            using (var f = new Form11(nowPage, currentSettings.TotalPage))
+            using (var f = new Form11(pageText, currentSettings.TotalPage))
             {
                 if (f.ShowDialog() == DialogResult.OK)
                 {
@@ -4981,7 +5019,7 @@ namespace MyPDF
                 // 移動先を表示
                 pdfViewer1.Renderer.Page = insertIndex - 1;
 
-                // サムネイル更新
+                // サムネイル更新(リセット)
                 RefreshThumbnailAll();
 
                 // 未保存フラグON
@@ -5084,12 +5122,25 @@ namespace MyPDF
                         InsTotalPages = pdfDoc.GetNumberOfPages();
                     }
 
+                    // どこから呼ばれたか
+                    string pageText;
+
+                    if (sender == ReplacementMenu || sender == ReplacementMenu2)
+                    {
+                        // メニュー or pdfViewer
+                        pageText = (pdfViewer1.Renderer.Page + 1).ToString();
+                    }
+                    else
+                    {
+                        // サムネイル
+                        pageText = GetSelectedPagesText();
+                    }
                     // 表示しているページを取得
-                    int nowPage = pdfViewer1.Renderer.Page + 1;
+                    //int nowPage = pdfViewer1.Renderer.Page + 1;
 
 
                     // Form12起動
-                    using (var f = new Form12(currentSettings.PdfFileName ?? "", replacementPath, nowPage, currentSettings.TotalPage, InsTotalPages))
+                    using (var f = new Form12(currentSettings.PdfFileName ?? "", replacementPath, pageText, currentSettings.TotalPage, InsTotalPages))
                     {
                         if (f.ShowDialog() == DialogResult.OK)
                         {
@@ -5265,7 +5316,7 @@ namespace MyPDF
                 // 置換ページの先頭を表示
                 pdfViewer1.Renderer.Page = start - 1;
 
-                // サムネイル更新
+                // サムネイル更新(リセット)
                 RefreshThumbnailAll();
 
                 // 未保存フラグON
@@ -5756,6 +5807,9 @@ namespace MyPDF
                             Debug.WriteLine("member workingPath=" + this.workingPath);
                             Debug.WriteLine("member originalPath=" + this.originalPath);
 
+                            // サムネイル更新(リセット)
+                            RefreshThumbnailAll();
+
                             // 未保存フラグOFF
                             isDirty = false;
 
@@ -5809,6 +5863,7 @@ namespace MyPDF
             }
         }
 
+
         // ==============================
         // TreeView(しおりパネル)がリサイズされたら
         // ==============================
@@ -5840,16 +5895,20 @@ namespace MyPDF
                 return;
             }
 
+            // どこから呼ばれたか
             string pageText;
 
             if (sender == ConvImgSetting || sender == ConvImgSetting2)
             {
-                pageText =(pdfViewer1.Renderer.Page + 1).ToString();
+                // メニュー or pdfViewer
+                pageText = (pdfViewer1.Renderer.Page + 1).ToString();
             }
             else
             {
+                // サムネイル
                 pageText = GetSelectedPagesText();
             }
+
             // 表示しているページを取得
             //int nowPage = pdfViewer1.Renderer.Page + 1;
 
@@ -6310,7 +6369,7 @@ namespace MyPDF
             listView1.LargeImageList = imageList2;
             // サムネイルサイズ設定(幅,高さ)
             // 小:(140,100)、標準：(160,120)、大：(240,180)、特大：(320,240)
-            imageList2.ImageSize = new Size(240, 180);
+            imageList2.ImageSize = new Size(160, 120);
             // 表示モード設定
             listView1.View = View.LargeIcon;
             // イベント解除
@@ -6368,6 +6427,8 @@ namespace MyPDF
                 // 背景色
                 //g.Clear(DrawingColor.LightGray);
                 g.Clear(listView1.BackColor);
+                //g.Clear(DrawingColor.DeepPink);
+
                 // グラフィックスの品質設定
                 // 縮小品質最高
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
@@ -6383,17 +6444,22 @@ namespace MyPDF
                 int x = (maxWidth - thumbW) / 2;
                 // 上下中央
                 int y = (maxHeight - thumbH) / 2;
+
                 // 2倍で描いた画像を高品質縮小
                 g.DrawImage(raw, x, y, thumbW, thumbH);
 
                 // 枠線（見やすくする）画像サイズに合わせて描く
+
+                using Pen pen = new Pen(DrawingColor.DeepPink, 1);
                 g.DrawRectangle(
                     //Pens.DarkGray, // 濃いグレー
-                    Pens.DeepPink, // ダークピンク
-                    x,
-                    y,
-                    thumbW - 1,
-                    thumbH - 1);
+                    pen, // ダークピンク
+                    x + 1,
+                    y + 1,
+                    thumbW - 2,
+                    thumbH - 2);
+
+
             }
             // 完成したサムネイルを返す
             return canvas;
@@ -6536,6 +6602,14 @@ namespace MyPDF
         // ==============================
         private void EnsureThumbnailVisible(int pageIndex)
         {
+            SysRectangle rect = listView1.GetItemRect(pageIndex);
+
+            if (listView1.ClientRectangle.IntersectsWith(rect))
+                return;
+
+            listView1.EnsureVisible(pageIndex);
+
+            /*
             if (pageIndex < 0)
                 return;
 
@@ -6543,6 +6617,7 @@ namespace MyPDF
                 return;
 
             listView1.EnsureVisible(pageIndex);
+            */
         }
 
         // ==============================
@@ -6664,7 +6739,7 @@ namespace MyPDF
         }
 
         // ==============================
-        // サムネイルを選択し抽出処理
+        // サムネイルを選択し抽出処理(頃合いを見て消す)
         // ==============================
         private async void PageExtractSetting3_Click(object sender, EventArgs e)
         {
@@ -6672,5 +6747,92 @@ namespace MyPDF
             await ExtractPagesAsync(pages);
         }
 
+        // ==============================
+        // サムネイル全消去
+        // ==============================
+        private void ClearThumbnails()
+        {
+            // キャッシュ破棄(メモリ解放)
+            foreach (var bmp in thumbnailCache.Values)
+                bmp.Dispose();
+            // キャッシュ削除
+            thumbnailCache.Clear();
+            // 生成中管理リセット
+            thumbnailLoading.Clear();
+            // ページ番号対応表削除
+            imageIndexes.Clear();
+            // ImageList空に
+            imageList2.Images.Clear();
+            // ページ数再取得0に
+            thumbnailPageCount = 0;
+            // 仮想リストサイズ0に
+            listView1.VirtualListSize = 0;
+            // 再描画
+            listView1.Invalidate();
+        }
+
+        // ==============================
+        // サムネイル右クリックでページ取得
+        // ==============================
+        private void listView1_MouseUp(object sender, MouseEventArgs e)
+        {
+            // PDFが開かれていないなら処理しない
+            if (pdfViewer1.Document == null)
+                return;
+
+            if (e.Button != MouseButtons.Right)
+                return;
+
+            ListViewItem? item = listView1.GetItemAt(e.X, e.Y);
+
+            if (item == null)
+                return;
+
+            thumbnailRightClickPage = item.Index + 1;
+
+            item.Selected = true;
+
+            contextMenuStrip1.Show(listView1, e.Location);
+        }
+
+        // ==============================
+        // サムネイル矢印でページ表示
+        // ==============================
+        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // PDFが開かれていないなら処理しない
+            if (pdfViewer1.Document == null)
+                return;
+
+            if (listView1.SelectedIndices.Count == 0)
+                return;
+
+            int pageIndex = listView1.SelectedIndices[0];
+
+            pdfViewer1.Renderer.Page = pageIndex;
+        }
+
+        // ==============================
+        // サムネイルタブをクリックした場合
+        // ==============================
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // PDFが開かれていないなら処理しない
+            if (pdfViewer1.Document == null)
+                return;
+
+            if (tabControl1.SelectedTab == tabPage2)
+            {
+                // サムネイルにフォーカス
+                listView1.Focus();
+
+                // 表示ページを取得
+                int page = pdfViewer1.Renderer.Page;
+                // サムネイルの該当ページを選択状態に
+                listView1.SelectedIndices.Clear();
+                listView1.SelectedIndices.Add(page);
+                listView1.EnsureVisible(page);
+            }
+        }
     }
 }

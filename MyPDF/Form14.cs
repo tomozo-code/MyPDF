@@ -54,7 +54,7 @@ namespace MyPDF
             this.maxPage = maxPage;
 
             // 今のページをセット
-            ExtractTxt.Text = PageText;
+            ExtractTxt.Text = PageText.ToString();
 
             // 総ページ
             TotalPage.Text = "/ " + maxPage.ToString();
