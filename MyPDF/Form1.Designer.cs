@@ -42,7 +42,6 @@
             PageExtractSetting = new ToolStripMenuItem();
             RotatePagesSetting = new ToolStripMenuItem();
             PageDeleteSetting = new ToolStripMenuItem();
-            toolStripMenuItem2 = new ToolStripSeparator();
             ConvImgSetting = new ToolStripMenuItem();
             PageEditMenu = new ToolStripDropDownButton();
             PageMove2 = new ToolStripMenuItem();
@@ -51,7 +50,6 @@
             PageExtractSetting2 = new ToolStripMenuItem();
             RotatePagesSetting2 = new ToolStripMenuItem();
             PageDeleteSetting2 = new ToolStripMenuItem();
-            toolStripMenuItem18 = new ToolStripSeparator();
             ConvImgSetting2 = new ToolStripMenuItem();
             contextMenuStrip1 = new ContextMenuStrip(components);
             AddShioriToolStripMenuItem = new ToolStripMenuItem();
@@ -98,6 +96,7 @@
             treeView1 = new TreeView();
             tabPage2 = new TabPage();
             listView1 = new ListView();
+            pdfThumbnailViewer1 = new PdfThumbnailViewer();
             contextMenuStrip3 = new ContextMenuStrip(components);
             PageMove3 = new ToolStripMenuItem();
             PageInsert3 = new ToolStripMenuItem();
@@ -108,7 +107,6 @@
             RotatePagesSetting180 = new ToolStripMenuItem();
             PageDeleteSetting3 = new ToolStripMenuItem();
             ConvImgSetting3 = new ToolStripMenuItem();
-            pdfThumbnailViewer1 = new PdfThumbnailViewer();
             imageList2 = new ImageList(components);
             treeToolTip = new ToolTip(components);
             panel4 = new Panel();
@@ -205,9 +203,9 @@
             // contextMenuStrip2
             // 
             contextMenuStrip2.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
-            contextMenuStrip2.Items.AddRange(new ToolStripItem[] { PageMove, PageInsert, ReplacementMenu, PageExtractSetting, RotatePagesSetting, PageDeleteSetting, toolStripMenuItem2, ConvImgSetting });
+            contextMenuStrip2.Items.AddRange(new ToolStripItem[] { PageMove, PageInsert, ReplacementMenu, PageExtractSetting, RotatePagesSetting, PageDeleteSetting, ConvImgSetting });
             contextMenuStrip2.Name = "contextMenuStrip2";
-            contextMenuStrip2.Size = new Size(175, 192);
+            contextMenuStrip2.Size = new Size(175, 186);
             // 
             // PageMove
             // 
@@ -275,11 +273,6 @@
             PageDeleteSetting.MouseEnter += menuStrip1_MouseEnter;
             PageDeleteSetting.MouseLeave += menuStrip1_MouseLeave;
             // 
-            // toolStripMenuItem2
-            // 
-            toolStripMenuItem2.Name = "toolStripMenuItem2";
-            toolStripMenuItem2.Size = new Size(171, 6);
-            // 
             // ConvImgSetting
             // 
             ConvImgSetting.Enabled = false;
@@ -295,7 +288,7 @@
             // PageEditMenu
             // 
             PageEditMenu.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            PageEditMenu.DropDownItems.AddRange(new ToolStripItem[] { PageMove2, PageInsert2, ReplacementMenu2, PageExtractSetting2, RotatePagesSetting2, PageDeleteSetting2, toolStripMenuItem18, ConvImgSetting2 });
+            PageEditMenu.DropDownItems.AddRange(new ToolStripItem[] { PageMove2, PageInsert2, ReplacementMenu2, PageExtractSetting2, RotatePagesSetting2, PageDeleteSetting2, ConvImgSetting2 });
             PageEditMenu.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             PageEditMenu.Image = (Image)resources.GetObject("PageEditMenu.Image");
             PageEditMenu.ImageTransparentColor = Color.Magenta;
@@ -310,7 +303,7 @@
             // 
             PageMove2.Enabled = false;
             PageMove2.Name = "PageMove2";
-            PageMove2.Size = new Size(174, 26);
+            PageMove2.Size = new Size(180, 26);
             PageMove2.Text = "移動(&M)...";
             PageMove2.ToolTipText = "ページを指定して移動します";
             PageMove2.Click += PageMove_Click;
@@ -321,7 +314,7 @@
             // 
             PageInsert2.Enabled = false;
             PageInsert2.Name = "PageInsert2";
-            PageInsert2.Size = new Size(174, 26);
+            PageInsert2.Size = new Size(180, 26);
             PageInsert2.Text = "挿入(&I)...";
             PageInsert2.ToolTipText = "ファイルからページを挿入します";
             PageInsert2.Click += PageInsert_Click;
@@ -332,7 +325,7 @@
             // 
             ReplacementMenu2.Enabled = false;
             ReplacementMenu2.Name = "ReplacementMenu2";
-            ReplacementMenu2.Size = new Size(174, 26);
+            ReplacementMenu2.Size = new Size(180, 26);
             ReplacementMenu2.Text = "置換(&K)...";
             ReplacementMenu2.ToolTipText = "ファイルからページを置換します";
             ReplacementMenu2.Click += ReplacementMenu_Click;
@@ -343,7 +336,7 @@
             // 
             PageExtractSetting2.Enabled = false;
             PageExtractSetting2.Name = "PageExtractSetting2";
-            PageExtractSetting2.Size = new Size(174, 26);
+            PageExtractSetting2.Size = new Size(180, 26);
             PageExtractSetting2.Text = "抽出(&X)...";
             PageExtractSetting2.ToolTipText = "ページを指定して抽出します";
             PageExtractSetting2.Click += PageExtractSetting_Click;
@@ -354,7 +347,7 @@
             // 
             RotatePagesSetting2.Enabled = false;
             RotatePagesSetting2.Name = "RotatePagesSetting2";
-            RotatePagesSetting2.Size = new Size(174, 26);
+            RotatePagesSetting2.Size = new Size(180, 26);
             RotatePagesSetting2.Text = "回転(&R)...";
             RotatePagesSetting2.ToolTipText = "ページを指定して回転します";
             RotatePagesSetting2.Click += RotatePagesSetting_Click;
@@ -365,23 +358,18 @@
             // 
             PageDeleteSetting2.Enabled = false;
             PageDeleteSetting2.Name = "PageDeleteSetting2";
-            PageDeleteSetting2.Size = new Size(174, 26);
+            PageDeleteSetting2.Size = new Size(180, 26);
             PageDeleteSetting2.Text = "削除(&D)...";
             PageDeleteSetting2.ToolTipText = "ページを指定して削除します";
             PageDeleteSetting2.Click += PageDeleteSetting_Click;
             PageDeleteSetting2.MouseEnter += menuStrip1_MouseEnter;
             PageDeleteSetting2.MouseLeave += menuStrip1_MouseLeave;
             // 
-            // toolStripMenuItem18
-            // 
-            toolStripMenuItem18.Name = "toolStripMenuItem18";
-            toolStripMenuItem18.Size = new Size(171, 6);
-            // 
             // ConvImgSetting2
             // 
             ConvImgSetting2.Enabled = false;
             ConvImgSetting2.Name = "ConvImgSetting2";
-            ConvImgSetting2.Size = new Size(174, 26);
+            ConvImgSetting2.Size = new Size(180, 26);
             ConvImgSetting2.Text = "画像変換(&G)...";
             ConvImgSetting2.ToolTipText = "ページを指定して画像ファイル(jpg/png/bmp/tif)に変換します";
             ConvImgSetting2.Click += ConvImgSetting_Click;
@@ -809,10 +797,10 @@
             tabPage2.BorderStyle = BorderStyle.FixedSingle;
             tabPage2.Controls.Add(listView1);
             tabPage2.Controls.Add(pdfThumbnailViewer1);
-            tabPage2.Location = new Point(4, 30);
+            tabPage2.Location = new Point(4, 28);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(207, 223);
+            tabPage2.Size = new Size(207, 225);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "サムネイル";
             tabPage2.UseVisualStyleBackColor = true;
@@ -828,6 +816,18 @@
             listView1.Size = new Size(87, 75);
             listView1.TabIndex = 0;
             listView1.UseCompatibleStateImageBehavior = false;
+            // 
+            // pdfThumbnailViewer1
+            // 
+            pdfThumbnailViewer1.AllowDrop = true;
+            pdfThumbnailViewer1.BackColor = SystemColors.Control;
+            pdfThumbnailViewer1.ContextMenuStrip = contextMenuStrip3;
+            pdfThumbnailViewer1.Location = new Point(55, 100);
+            pdfThumbnailViewer1.Name = "pdfThumbnailViewer1";
+            pdfThumbnailViewer1.Size = new Size(75, 70);
+            pdfThumbnailViewer1.TabIndex = 11;
+            pdfThumbnailViewer1.SelectionChanged += PdfThumbnailViewer1_SelectionChanged;
+            pdfThumbnailViewer1.ThumbnailRightClicked += pdfThumbnailViewer1_ThumbnailRightClicked;
             // 
             // contextMenuStrip3
             // 
@@ -934,18 +934,6 @@
             ConvImgSetting3.Click += ConvImgSetting_Click;
             ConvImgSetting3.MouseEnter += menuStrip1_MouseEnter;
             ConvImgSetting3.MouseLeave += menuStrip1_MouseLeave;
-            // 
-            // pdfThumbnailViewer1
-            // 
-            pdfThumbnailViewer1.AllowDrop = true;
-            pdfThumbnailViewer1.BackColor = SystemColors.Control;
-            pdfThumbnailViewer1.ContextMenuStrip = contextMenuStrip3;
-            pdfThumbnailViewer1.Location = new Point(55, 100);
-            pdfThumbnailViewer1.Name = "pdfThumbnailViewer1";
-            pdfThumbnailViewer1.Size = new Size(75, 70);
-            pdfThumbnailViewer1.TabIndex = 11;
-            pdfThumbnailViewer1.SelectionChanged += PdfThumbnailViewer1_SelectionChanged;
-            pdfThumbnailViewer1.ThumbnailRightClicked += pdfThumbnailViewer1_ThumbnailRightClicked;
             // 
             // imageList2
             // 
@@ -1344,7 +1332,6 @@
         private ToolStripMenuItem ConvPdf;
         private ToolStripSeparator toolStripMenuItem15;
         private ImageList imageList1;
-        private ToolStripSeparator toolStripMenuItem2;
         private ToolStripMenuItem ConvImgSetting;
         private ToolStripProgressBar ProgressBar;
         private ToolStripMenuItem AddShioriMenu;
@@ -1370,7 +1357,6 @@
         private ToolStripMenuItem PageExtractSetting2;
         private ToolStripMenuItem RotatePagesSetting2;
         private ToolStripMenuItem PageDeleteSetting2;
-        private ToolStripSeparator toolStripMenuItem18;
         private ToolStripMenuItem ConvImgSetting2;
         private TabControl tabControl1;
         private TabPage tabPage1;

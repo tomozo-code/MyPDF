@@ -363,8 +363,19 @@ namespace MyPDF
 
                 //if (tabControl1.SelectedTab == tabPage2)
                 //{
-                    //EnsureThumbnailVisible(current);
+                //EnsureThumbnailVisible(current);
                 //}
+
+                if (tabControl1.SelectedTab == tabPage2)
+                {
+                    // 無限ループ（チャタリング）防止ガード
+                    // サムネイル側がまだそのページを選択していない場合のみ、選択命令を送る
+                    if (!pdfThumbnailViewer1.SelectedIndices.Contains(current))
+                    {
+                        pdfThumbnailViewer1.SetSelection(current);
+                    }
+                }
+
 
                 // NewPagetoolStripTextBoxにページ番号を表示
                 NewPagetoolStripTextBox.Text = (current + 1).ToString();
@@ -1402,13 +1413,27 @@ namespace MyPDF
             // ステータスバーにファイル名(元ファイル)と総ページ数
             UpdateStatus(originalPath, currentSettings.TotalPage);
 
-
             // ページ範囲チェック(読み込んだときに1ページ目にもどるので、退避しておいたページをセット)
             if (currentPage >= 0 && currentPage < doc.PageCount)
             {
                 // 保存前のページへ戻す
                 pdfViewer1.Renderer.Page = currentPage;
             }
+
+            // サムネイル生成
+            pdfThumbnailViewer1.LoadDocument(doc);
+
+            // リロード完了後、計算しておいたターゲットページを強制選択＆スクロール追従させる
+            if (doc.PageCount > 0)
+            {
+                // 削除によって総ページ数が減り、ターゲットがはみ出る場合の安全ガード
+                int finalSelectIdx = Math.Min(currentPage, doc.PageCount - 1);
+
+                // サムネイル側の公開メソッドを呼び出して選択インデックスを上書き
+                pdfThumbnailViewer1.SetSelection(finalSelectIdx);
+
+            }
+
             // ファイル名だけ取得
             string fileName = IOPath.GetFileName(originalPath);
             // タイトルバー更新
@@ -5926,6 +5951,9 @@ namespace MyPDF
                             // 右クリックメニュー更新
                             UpdateContextMenuState();
 
+                            // タイトルバー更新
+                            UpdateWindowTitle(originalPath, canEdit);
+
                             Debug.WriteLine("member=" + this.workingPath);
                             Debug.WriteLine("local =" + workingPath);
                             Debug.WriteLine("member workingPath=" + this.workingPath);
@@ -5934,7 +5962,7 @@ namespace MyPDF
 
                             // サムネイル生成
                             pdfThumbnailViewer1.LoadDocument(document);
-
+                                                        
                             // サムネイル更新(リセット)
                             //RefreshThumbnailAll();
 
@@ -6743,6 +6771,7 @@ namespace MyPDF
         }
 
         */
+
 
         // ==============================
         // サムネイルの選択ページを取得(複数ページ可)
