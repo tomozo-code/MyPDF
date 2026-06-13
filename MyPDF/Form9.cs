@@ -20,7 +20,7 @@ namespace MyPDF
         public string ExtractText { get; private set; } = "";
 
         // 今のページ
-        private int nowPage;
+        //private int nowPage;
         // 総ページ数
         private int maxPage;
 

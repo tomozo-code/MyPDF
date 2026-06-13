@@ -108,6 +108,7 @@
             RotatePagesSetting180 = new ToolStripMenuItem();
             PageDeleteSetting3 = new ToolStripMenuItem();
             ConvImgSetting3 = new ToolStripMenuItem();
+            pdfThumbnailViewer1 = new PdfThumbnailViewer();
             imageList2 = new ImageList(components);
             treeToolTip = new ToolTip(components);
             panel4 = new Panel();
@@ -138,6 +139,7 @@
             toolStripSeparator3 = new ToolStripSeparator();
             toolStrip1 = new ToolStrip();
             panel2 = new Panel();
+            splitContainer1 = new SplitContainer();
             statusStrip1.SuspendLayout();
             contextMenuStrip2.SuspendLayout();
             contextMenuStrip1.SuspendLayout();
@@ -150,6 +152,10 @@
             panel4.SuspendLayout();
             toolStrip1.SuspendLayout();
             panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
+            splitContainer1.Panel1.SuspendLayout();
+            splitContainer1.Panel2.SuspendLayout();
+            splitContainer1.SuspendLayout();
             SuspendLayout();
             // 
             // statusStrip1
@@ -179,7 +185,7 @@
             // splitter1
             // 
             splitter1.Cursor = Cursors.SizeWE;
-            splitter1.Location = new Point(278, 35);
+            splitter1.Location = new Point(0, 35);
             splitter1.Name = "splitter1";
             splitter1.Size = new Size(8, 583);
             splitter1.TabIndex = 3;
@@ -187,12 +193,11 @@
             // 
             // pdfViewer1
             // 
-            pdfViewer1.BorderStyle = BorderStyle.FixedSingle;
             pdfViewer1.ContextMenuStrip = contextMenuStrip2;
-            pdfViewer1.Location = new Point(329, 91);
+            pdfViewer1.Location = new Point(69, 29);
             pdfViewer1.Margin = new Padding(4, 4, 4, 4);
             pdfViewer1.Name = "pdfViewer1";
-            pdfViewer1.Size = new Size(180, 129);
+            pdfViewer1.Size = new Size(114, 89);
             pdfViewer1.TabIndex = 0;
             pdfViewer1.ZoomMode = PdfiumViewer.PdfViewerZoomMode.FitBest;
             pdfViewer1.MouseUp += pdfViewer1_MouseUp;
@@ -716,10 +721,10 @@
             // 
             panel1.BackColor = SystemColors.Control;
             panel1.Controls.Add(panel3);
-            panel1.Location = new Point(307, 330);
+            panel1.Location = new Point(146, 270);
             panel1.MinimumSize = new Size(50, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(202, 203);
+            panel1.Size = new Size(118, 76);
             panel1.TabIndex = 2;
             // 
             // panel3
@@ -729,7 +734,7 @@
             panel3.Dock = DockStyle.Top;
             panel3.Location = new Point(0, 0);
             panel3.Name = "panel3";
-            panel3.Size = new Size(202, 30);
+            panel3.Size = new Size(118, 30);
             panel3.TabIndex = 9;
             // 
             // label1
@@ -746,12 +751,11 @@
             // 
             tabControl1.Controls.Add(tabPage1);
             tabControl1.Controls.Add(tabPage2);
-            tabControl1.Dock = DockStyle.Left;
-            tabControl1.Location = new Point(0, 35);
+            tabControl1.Location = new Point(55, 78);
             tabControl1.Multiline = true;
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(278, 583);
+            tabControl1.Size = new Size(215, 257);
             tabControl1.SizeMode = TabSizeMode.Fixed;
             tabControl1.TabIndex = 8;
             tabControl1.SelectedIndexChanged += tabControl1_SelectedIndexChanged;
@@ -763,7 +767,7 @@
             tabPage1.Location = new Point(4, 30);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(270, 549);
+            tabPage1.Size = new Size(207, 223);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "しおり";
             tabPage1.UseVisualStyleBackColor = true;
@@ -778,9 +782,9 @@
             treeView1.Indent = 16;
             treeView1.ItemHeight = 26;
             treeView1.LabelEdit = true;
-            treeView1.Location = new Point(26, 62);
+            treeView1.Location = new Point(6, 6);
             treeView1.Name = "treeView1";
-            treeView1.Size = new Size(121, 97);
+            treeView1.Size = new Size(86, 61);
             treeView1.TabIndex = 0;
             treeView1.AfterLabelEdit += treeView1_AfterLabelEdit;
             treeView1.AfterCollapse += treeView1_AfterCollapse;
@@ -804,10 +808,11 @@
             // 
             tabPage2.BorderStyle = BorderStyle.FixedSingle;
             tabPage2.Controls.Add(listView1);
-            tabPage2.Location = new Point(4, 28);
+            tabPage2.Controls.Add(pdfThumbnailViewer1);
+            tabPage2.Location = new Point(4, 30);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(270, 551);
+            tabPage2.Size = new Size(207, 223);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "サムネイル";
             tabPage2.UseVisualStyleBackColor = true;
@@ -816,19 +821,13 @@
             // 
             listView1.AllowDrop = true;
             listView1.BackColor = SystemColors.Control;
-            listView1.BorderStyle = BorderStyle.FixedSingle;
-            listView1.ContextMenuStrip = contextMenuStrip3;
-            listView1.LargeImageList = imageList2;
-            listView1.Location = new Point(36, 136);
+            listView1.BorderStyle = BorderStyle.None;
+            listView1.Location = new Point(6, 6);
             listView1.Name = "listView1";
             listView1.OwnerDraw = true;
-            listView1.Size = new Size(121, 97);
+            listView1.Size = new Size(87, 75);
             listView1.TabIndex = 0;
             listView1.UseCompatibleStateImageBehavior = false;
-            listView1.DrawItem += listView1_DrawItem;
-            listView1.SelectedIndexChanged += listView1_SelectedIndexChanged;
-            listView1.MouseClick += listView1_MouseClick;
-            listView1.MouseUp += listView1_MouseUp;
             // 
             // contextMenuStrip3
             // 
@@ -936,6 +935,18 @@
             ConvImgSetting3.MouseEnter += menuStrip1_MouseEnter;
             ConvImgSetting3.MouseLeave += menuStrip1_MouseLeave;
             // 
+            // pdfThumbnailViewer1
+            // 
+            pdfThumbnailViewer1.AllowDrop = true;
+            pdfThumbnailViewer1.BackColor = SystemColors.Control;
+            pdfThumbnailViewer1.ContextMenuStrip = contextMenuStrip3;
+            pdfThumbnailViewer1.Location = new Point(55, 100);
+            pdfThumbnailViewer1.Name = "pdfThumbnailViewer1";
+            pdfThumbnailViewer1.Size = new Size(75, 70);
+            pdfThumbnailViewer1.TabIndex = 11;
+            pdfThumbnailViewer1.SelectionChanged += PdfThumbnailViewer1_SelectionChanged;
+            pdfThumbnailViewer1.ThumbnailRightClicked += pdfThumbnailViewer1_ThumbnailRightClicked;
+            // 
             // imageList2
             // 
             imageList2.ColorDepth = ColorDepth.Depth32Bit;
@@ -949,7 +960,7 @@
             panel4.Dock = DockStyle.Top;
             panel4.Location = new Point(0, 0);
             panel4.Name = "panel4";
-            panel4.Size = new Size(301, 30);
+            panel4.Size = new Size(135, 30);
             panel4.TabIndex = 7;
             panel4.Tag = "PDFファイルを表示します";
             // 
@@ -965,11 +976,11 @@
             // 
             // Extxt
             // 
-            Extxt.Location = new Point(339, 271);
+            Extxt.Location = new Point(192, 512);
             Extxt.Multiline = true;
             Extxt.Name = "Extxt";
             Extxt.ReadOnly = true;
-            Extxt.Size = new Size(195, 103);
+            Extxt.Size = new Size(273, 103);
             Extxt.TabIndex = 8;
             Extxt.Visible = false;
             // 
@@ -1201,22 +1212,42 @@
             // panel2
             // 
             panel2.Controls.Add(panel4);
-            panel2.Controls.Add(Extxt);
-            panel2.Location = new Point(629, 257);
+            panel2.Location = new Point(146, 161);
             panel2.Name = "panel2";
-            panel2.Size = new Size(301, 214);
+            panel2.Size = new Size(135, 103);
             panel2.TabIndex = 9;
+            // 
+            // splitContainer1
+            // 
+            splitContainer1.BorderStyle = BorderStyle.FixedSingle;
+            splitContainer1.Cursor = Cursors.SizeWE;
+            splitContainer1.Location = new Point(198, 61);
+            splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            splitContainer1.Panel1.Controls.Add(tabControl1);
+            splitContainer1.Panel1.Cursor = Cursors.Default;
+            // 
+            // splitContainer1.Panel2
+            // 
+            splitContainer1.Panel2.Controls.Add(panel2);
+            splitContainer1.Panel2.Controls.Add(panel1);
+            splitContainer1.Panel2.Controls.Add(pdfViewer1);
+            splitContainer1.Panel2.Cursor = Cursors.Default;
+            splitContainer1.Size = new Size(695, 370);
+            splitContainer1.SplitterDistance = 339;
+            splitContainer1.SplitterWidth = 8;
+            splitContainer1.TabIndex = 10;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
             ClientSize = new Size(1035, 644);
-            Controls.Add(pdfViewer1);
-            Controls.Add(panel2);
-            Controls.Add(panel1);
+            Controls.Add(splitContainer1);
+            Controls.Add(Extxt);
             Controls.Add(splitter1);
-            Controls.Add(tabControl1);
             Controls.Add(statusStrip1);
             Controls.Add(toolStrip1);
             Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
@@ -1242,7 +1273,10 @@
             toolStrip1.ResumeLayout(false);
             toolStrip1.PerformLayout();
             panel2.ResumeLayout(false);
-            panel2.PerformLayout();
+            splitContainer1.Panel1.ResumeLayout(false);
+            splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
+            splitContainer1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -1356,5 +1390,7 @@
         private TreeView treeView1;
         private ListView listView1;
         private ImageList imageList2;
+        private SplitContainer splitContainer1;
+        private PdfThumbnailViewer pdfThumbnailViewer1;
     }
 }

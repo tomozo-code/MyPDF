@@ -22,7 +22,7 @@ namespace MyPDF
         public string ExtractText { get; private set; } = "";
 
         // 削除対象ページ()表示している
-        private int nowPage;
+        //private int nowPage;
         // 総ページ数
         private int maxPage;
 

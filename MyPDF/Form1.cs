@@ -17,9 +17,12 @@ using System.Diagnostics;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO.Pipelines;
+using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.Arm;
 using System.Text;
+using System.Xml.Linq;
+
 //using static System.Net.Mime.MediaTypeNames;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 //using static System.Windows.Forms.VisualStyles.VisualStyleElement;
@@ -127,14 +130,14 @@ namespace MyPDF
         private float PdfMarginRight = 0;
 
         // サムネキャッシュ
-        private readonly Dictionary<int, Bitmap> thumbnailCache = new();
-        private readonly Dictionary<int, int> imageIndexes = new();
+        //private readonly Dictionary<int, Bitmap> thumbnailCache = new();
+        //private readonly Dictionary<int, int> imageIndexes = new();
         // 生成中管理
-        private readonly HashSet<int> thumbnailLoading = new();
+        //private readonly HashSet<int> thumbnailLoading = new();
 
         // 仮想サムネ用
         private int thumbnailPageCount = 0;
-
+        // サムネイルの選択ページ番号
         private int currentThumbnailPage = -1;
         // サムネイルを右クリしたときのページ番号
         private int thumbnailRightClickPage = -1;
@@ -187,7 +190,12 @@ namespace MyPDF
             // アプリ名（タイトルバー表示）
             this.Text = myName;
 
+            splitContainer1.Dock = DockStyle.Fill;
+            splitContainer1.SplitterDistance = 350;
+
             pdfViewer1.Dock = DockStyle.Fill;
+            tabControl1.Dock = DockStyle.Fill;
+            pdfThumbnailViewer1.Dock = DockStyle.Fill;
 
             // pdfViewerのしおり表示を無効
             pdfViewer1.ShowBookmarks = false;
@@ -199,15 +207,19 @@ namespace MyPDF
             panel3.Visible = false;
             panel4.Visible = false;
 
+
+            splitter1.Visible = false;
+
             //panel1.Width = 300;
             tabControl1.Width = 350;
 
             treeView1.Dock = DockStyle.Fill;
             treeView1.ShowNodeToolTips = false;
 
-            listView1.Dock = DockStyle.Fill;
+            //listView1.Dock = DockStyle.Fill;
+            listView1.Visible = false;
 
-            InitThumbnailView();
+            //InitThumbnailView();
 
             StatusLabel.Text = "ファイル: PDF未選択";
             TotalPagetoolStripLabel.Text = "/ 1 ";
@@ -216,7 +228,6 @@ namespace MyPDF
             // しおり列選択 代わりに線なし
             treeView1.FullRowSelect = true;
             treeView1.ShowLines = false;
-
 
             // エラー表示用
             //Extxt.Visible = true;
@@ -348,12 +359,12 @@ namespace MyPDF
 
                 currentThumbnailPage = current;
 
-                listView1.Invalidate();
+                //listView1.Invalidate();
 
-                if (tabControl1.SelectedTab == tabPage2)
-                {
-                    EnsureThumbnailVisible(current);
-                }
+                //if (tabControl1.SelectedTab == tabPage2)
+                //{
+                    //EnsureThumbnailVisible(current);
+                //}
 
                 // NewPagetoolStripTextBoxにページ番号を表示
                 NewPagetoolStripTextBox.Text = (current + 1).ToString();
@@ -487,6 +498,8 @@ namespace MyPDF
             // 開けなかった場合 戻る(キャンセル、パス違う、壊れたPDFとか)
             if (!result.Success) return;
 
+            currentPassword = result.Password;
+
             // 編集可能判定(true:編集可、false:編集不可)
             canEdit = result.IsOwner;
 
@@ -501,6 +514,7 @@ namespace MyPDF
 
             try
             {
+
                 // PDF + しおりをまとめてバックグラウンドで作る
                 var resultData = await Task.Run(() =>
                 {
@@ -551,16 +565,17 @@ namespace MyPDF
                 isDirty = false;
 
                 // サムネ初期化
-                thumbnailCache.Clear();
-                thumbnailLoading.Clear();
-                imageIndexes.Clear();
+                //thumbnailCache.Clear();
+                //thumbnailLoading.Clear();
+                //imageIndexes.Clear();
 
                 thumbnailPageCount = currentSettings?.TotalPage ?? 0;
 
-                listView1.VirtualListSize = thumbnailPageCount;
+                //listView1.VirtualListSize = thumbnailPageCount;
 
                 // サムネイル更新(リセット)
-                RefreshThumbnailAll();
+                //RefreshThumbnailAll();
+
 
 #if DEBUG
                 // パスワード確認用
@@ -652,6 +667,8 @@ namespace MyPDF
             pdfViewer1.ZoomMode = PdfViewerZoomMode.FitBest;
             // ページ番号表示
             NewPagetoolStripTextBox.Text = "1";
+            // サムネイル生成
+            pdfThumbnailViewer1.LoadDocument(document);
         }
 
         // ==============================
@@ -1505,6 +1522,7 @@ namespace MyPDF
                     pdfViewer1.Document.Dispose();
                     // Viewerから切り離し
                     pdfViewer1.Document = null;
+
                 }
 
                 // UI更新してロック解除を待つ
@@ -1823,13 +1841,13 @@ namespace MyPDF
                 ReplacementMenu2.Enabled = false;
                 ReplacementMenu3.Enabled = false;
                 // 抽出
-                ReplacementMenu.Enabled = false;
-                ReplacementMenu2.Enabled = false;
-                ReplacementMenu3.Enabled = false;
+                PageExtractSetting.Enabled = false;
+                PageExtractSetting2.Enabled = false;
+                PageExtractSetting3.Enabled = false;
                 // ページ削除
-                ReplacementMenu.Enabled = false;
-                ReplacementMenu2.Enabled = false;
-                ReplacementMenu3.Enabled = false;
+                PageDeleteSetting.Enabled = false;
+                PageDeleteSetting2.Enabled = false;
+                PageDeleteSetting3.Enabled = false;
                 // 回転
                 RotatePagesSetting.Enabled = false;
                 RotatePagesSetting2.Enabled = false;
@@ -2344,7 +2362,9 @@ namespace MyPDF
             if (isSelected)
             {
                 // 選択中だったら背景を Windows標準選択色 にする
-                backColor = SystemColors.Highlight;
+                backColor = DrawingColor.Pink;
+                //backColor = SystemColors.Highlight;
+
             }
             // マウスホバー中？
             else if (e.Node == hoverNode)
@@ -2352,6 +2372,8 @@ namespace MyPDF
                 // ホバー色(薄いグレー)
                 //backColor = DrawingColor.FromArgb(230, 240, 250);
                 backColor = DrawingColor.FromArgb(200, 200, 200);
+                //backColor = DrawingColor.FromArgb(63, 63, 65);
+
             }
             // 選択もホバーもしてない
             else
@@ -2524,14 +2546,12 @@ namespace MyPDF
 
             // ノードごとの文字設定
             // ノード文字色
-            DrawingColor foreColor =
-                (e.State & TreeNodeStates.Selected) != 0
-                ? SystemColors.HighlightText
-                : e.Node.ForeColor;
+            DrawingColor foreColor = (e.State & TreeNodeStates.Selected) != 0 ? DrawingColor.Black : e.Node.ForeColor;
+            //foreColor = (e.State & TreeNodeStates.Selected) != 0 ? SystemColors.HighlightText : e.Node.ForeColor;
+            //DrawingColor foreColor = (e.State & TreeNodeStates.Selected) != 0 ? SystemColors.HighlightText : e.Node.ForeColor;
 
             // ノードフォント
-            Font nodeFont =
-                e.Node.NodeFont ?? treeView1.Font;
+            Font nodeFont = e.Node.NodeFont ?? treeView1.Font;
 
             int textX = e.Bounds.X + 20;
 
@@ -3460,6 +3480,8 @@ namespace MyPDF
             {
                 int currentPage = pdfViewer1.Renderer.Page;
 
+                // サムネイルクリア
+                pdfThumbnailViewer1.LoadDocument(null);
                 // Viewer解放
                 pdfViewer1.Document.Dispose();
                 pdfViewer1.Document = null;
@@ -3503,8 +3525,22 @@ namespace MyPDF
                 if (currentPage < doc.PageCount)
                     pdfViewer1.Renderer.Page = currentPage;
 
+                // サムネイル生成
+                pdfThumbnailViewer1.LoadDocument(doc);
+
+                // リロード完了後、計算しておいたターゲットページを強制選択＆スクロール追従させる
+                if (doc.PageCount > 0)
+                {
+                    // 回転によりターゲットがはみ出る場合の安全ガード
+                    int finalSelectIdx = Math.Min(currentPage, doc.PageCount - 1);
+
+                    // サムネイル側の公開メソッドを呼び出して選択インデックスを上書き
+                    pdfThumbnailViewer1.SetSelection(finalSelectIdx);
+
+                }
+
                 // サムネイル更新(リセット)
-                RefreshThumbnailAll();
+                //RefreshThumbnailAll();
 
                 // 未保存フラグON
                 isDirty = true;
@@ -3594,6 +3630,21 @@ namespace MyPDF
             {
                 int currentPage = pdfViewer1.Renderer.Page;
 
+                // 削除後にどこのサムネイルを選択するか、あらかじめターゲットを決めておく
+                // 複数選択されている場合もあるので、一番若い（先頭の）選択インデックスを基準にする
+                int nextSelectIndex = 0;
+                if (pdfThumbnailViewer1.SelectedIndices.Count > 0)
+                {
+                    // 選択されている最小のインデックス（0始まり）を取得
+                    int firstSelectedIdx = pdfThumbnailViewer1.SelectedIndices.Min();
+
+                    // 例: 5ページ目(idx:4)を消したら、リロード後は新しい5ページ目(idx:4)を指すようにする
+                    nextSelectIndex = firstSelectedIdx;
+                }
+
+                // サムネイルクリア
+                pdfThumbnailViewer1.LoadDocument(null);
+
                 // Viewer解放
                 pdfViewer1.Document.Dispose();
                 pdfViewer1.Document = null;
@@ -3649,9 +3700,24 @@ namespace MyPDF
                 currentSettings = PdfSettingsLoader.LoadPdfSettings(workingPath, originalPath, currentPassword);
                 // ステータスバーにファイル名(元ファイル)と総ページ数
                 UpdateStatus(originalPath, currentSettings.TotalPage);
+                                
+                // サムネイル生成
+                pdfThumbnailViewer1.LoadDocument(doc);
+
+                // リロード完了後、計算しておいたターゲットページを強制選択＆スクロール追従させる
+                if (doc.PageCount > 0)
+                {
+                    // 削除によって総ページ数が減り、ターゲットがはみ出る場合の安全ガード
+                    int finalSelectIdx = Math.Min(nextSelectIndex, doc.PageCount - 1);
+
+                    // サムネイル側の公開メソッドを呼び出して選択インデックスを上書き
+                    pdfThumbnailViewer1.SetSelection(finalSelectIdx);
+
+                }
+
 
                 // サムネイル更新(リセット)
-                RefreshThumbnailAll();
+                //RefreshThumbnailAll();
 
                 // 未保存フラグON
                 isDirty = true;
@@ -3846,11 +3912,14 @@ namespace MyPDF
             // キャンセルの場合は閉じない
             //    return;
 
+            // サムネイル破棄
+            pdfThumbnailViewer1.CloseDocument();
+
             // Viewer完全リセット
             ResetPdfViewer();
 
             // サムネイル全消去
-            ClearThumbnails();
+            //ClearThumbnails();
 
             // 作業用ファイルを破棄(前回PDFの tempファイル削除)
             CleanupWorkingFile();
@@ -3884,6 +3953,8 @@ namespace MyPDF
         {
             // Panel2から外す
             //panel2.Controls.Remove(pdfViewer1);
+            // splitContainer1.Panel2から外す
+            splitContainer1.Panel2.Controls.Remove(pdfViewer1);
 
             // 念のため破棄
             try
@@ -3902,11 +3973,12 @@ namespace MyPDF
             pdfViewer1.ShowBookmarks = false;
             // pdfViewerのツールバー表示を無効
             pdfViewer1.ShowToolbar = false;
-            pdfViewer1.BorderStyle = BorderStyle.FixedSingle;
+            pdfViewer1.BorderStyle = BorderStyle.None;
             pdfViewer1.ContextMenuStrip = contextMenuStrip2;
 
-            // 再追加
-            this.Controls.Add(pdfViewer1);
+            // 再追加(splitContainer1.Panel2へ)
+            //this.Controls.Add(pdfViewer1);
+            splitContainer1.Panel2.Controls.Add(pdfViewer1);
             //panel2.Controls.Add(pdfViewer1);
             pdfViewer1.BringToFront();
 
@@ -4335,6 +4407,9 @@ namespace MyPDF
                 // Viewer解放
                 if (pdfViewer1.Document != null)
                 {
+                    // サムネイルクリア
+                    pdfThumbnailViewer1.LoadDocument(null);
+
                     // ファイルロック解除しViewerから切り離す
                     pdfViewer1.Document.Dispose();
                     pdfViewer1.Document = null;
@@ -4460,9 +4535,23 @@ namespace MyPDF
 
                 // 挿入先のページを表示
                 pdfViewer1.Renderer.Page = targetPage - 1;
+              
+                // サムネイル生成
+                pdfThumbnailViewer1.LoadDocument(doc);
+
+                // リロード完了後、計算しておいたターゲットページを強制選択＆スクロール追従させる
+                if (doc.PageCount > 0)
+                {
+                    // 挿入よりターゲットがはみ出る場合の安全ガード
+                    int finalSelectIdx = Math.Min(targetPage, doc.PageCount - 1);
+
+                    // サムネイル側の公開メソッドを呼び出して選択インデックスを上書き
+                    pdfThumbnailViewer1.SetSelection(finalSelectIdx);
+
+                }
 
                 // サムネイル更新(リセット)
-                RefreshThumbnailAll();
+               // RefreshThumbnailAll();
 
                 // 未保存フラグON
                 isDirty = true;
@@ -4922,6 +5011,9 @@ namespace MyPDF
 
             try
             {
+                // サムネイルクリア
+                pdfThumbnailViewer1.LoadDocument(null);
+
                 // Viewer解放
                 pdfViewer1.Document?.Dispose();
                 pdfViewer1.Document = null;
@@ -5019,8 +5111,23 @@ namespace MyPDF
                 // 移動先を表示
                 pdfViewer1.Renderer.Page = insertIndex - 1;
 
+                // サムネイル生成
+                pdfThumbnailViewer1.LoadDocument(doc);
+
+                // リロード完了後、計算しておいたターゲットページを強制選択＆スクロール追従させる
+                if (doc.PageCount > 0)
+                {
+                    // 移動によりターゲットがはみ出る場合の安全ガード
+                    //int finalSelectIdx = Math.Min(insertIndex, doc.PageCount - 1);
+
+                    // サムネイル側の公開メソッドを呼び出して選択インデックスを上書き
+                    pdfThumbnailViewer1.SetSelection(insertIndex);
+                    //pdfThumbnailViewer1.SetSelection(finalSelectIdx);
+
+                }
+
                 // サムネイル更新(リセット)
-                RefreshThumbnailAll();
+                //RefreshThumbnailAll();
 
                 // 未保存フラグON
                 isDirty = true;
@@ -5179,6 +5286,9 @@ namespace MyPDF
 
             try
             {
+                // サムネイルクリア
+                pdfThumbnailViewer1.LoadDocument(null);
+
                 pdfViewer1.Document?.Dispose();
                 pdfViewer1.Document = null;
 
@@ -5316,8 +5426,22 @@ namespace MyPDF
                 // 置換ページの先頭を表示
                 pdfViewer1.Renderer.Page = start - 1;
 
+                // サムネイル生成
+                pdfThumbnailViewer1.LoadDocument(doc);
+
+                // リロード完了後、計算しておいたターゲットページを強制選択＆スクロール追従させる
+                if (doc.PageCount > 0)
+                {
+                    // 置換にてターゲットがはみ出る場合の安全ガード
+                    int finalSelectIdx = Math.Min(start, doc.PageCount - 1);
+
+                    // サムネイル側の公開メソッドを呼び出して選択インデックスを上書き
+                    pdfThumbnailViewer1.SetSelection(finalSelectIdx);
+
+                }
+
                 // サムネイル更新(リセット)
-                RefreshThumbnailAll();
+                //RefreshThumbnailAll();
 
                 // 未保存フラグON
                 isDirty = true;
@@ -5807,8 +5931,12 @@ namespace MyPDF
                             Debug.WriteLine("member workingPath=" + this.workingPath);
                             Debug.WriteLine("member originalPath=" + this.originalPath);
 
+
+                            // サムネイル生成
+                            pdfThumbnailViewer1.LoadDocument(document);
+
                             // サムネイル更新(リセット)
-                            RefreshThumbnailAll();
+                            //RefreshThumbnailAll();
 
                             // 未保存フラグOFF
                             isDirty = false;
@@ -6358,6 +6486,9 @@ namespace MyPDF
             return MessageBox.Show("この選択をすべてに適用しますか？", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes;
         }
 
+
+        /*
+
         // ==============================
         // サムネイル表示用ListViewの初期設定を行うメソッド
         // ==============================
@@ -6591,7 +6722,7 @@ namespace MyPDF
 
                 //using Pen pen = new Pen(DrawingColor.Red, 3);
                 //using Pen pen = new Pen(DrawingColor.OrangeRed, 3);
-                using Pen pen = new Pen(DrawingColor.DeepPink, 3);
+                using Pen pen = new Pen(DrawingColor.DeepPink, 2);
 
                 e.Graphics.DrawRectangle(pen, r);
             }
@@ -6609,16 +6740,9 @@ namespace MyPDF
 
             listView1.EnsureVisible(pageIndex);
 
-            /*
-            if (pageIndex < 0)
-                return;
-
-            if (pageIndex >= listView1.VirtualListSize)
-                return;
-
-            listView1.EnsureVisible(pageIndex);
-            */
         }
+
+        */
 
         // ==============================
         // サムネイルの選択ページを取得(複数ページ可)
@@ -6626,14 +6750,22 @@ namespace MyPDF
         private string GetSelectedPagesText()
         {
             List<int> pages = new();
-
-            foreach (int index in listView1.SelectedIndices)
+            // サムネイル選択ページを集める
+            foreach (int index in pdfThumbnailViewer1.SelectedIndices)
             {
                 pages.Add(index + 1);
             }
 
+            // もしサムネイルが1つも選択されていない場合は、
+            // 現在メインビューアで表示中のページをフォールバックとして取得
+            if (pages.Count == 0 && pdfViewer1.Document != null)
+            {
+                pages.Add(pdfViewer1.Renderer.Page + 1);
+            }
+
             pages.Sort();
 
+            // 既存の連番圧縮ロジックへそのまま渡して "1-3,5" などの文字列にする
             return CompressPageRanges(pages);
         }
 
@@ -6747,6 +6879,8 @@ namespace MyPDF
             await ExtractPagesAsync(pages);
         }
 
+        /*
+
         // ==============================
         // サムネイル全消去
         // ==============================
@@ -6812,6 +6946,8 @@ namespace MyPDF
             pdfViewer1.Renderer.Page = pageIndex;
         }
 
+        */
+
         // ==============================
         // サムネイルタブをクリックした場合
         // ==============================
@@ -6821,17 +6957,70 @@ namespace MyPDF
             if (pdfViewer1.Document == null)
                 return;
 
+            if (tabControl1.SelectedTab == tabPage1)
+            {
+                // しおりにフォーカス
+                treeView1.Focus();
+            }
+
             if (tabControl1.SelectedTab == tabPage2)
             {
                 // サムネイルにフォーカス
-                listView1.Focus();
+                //listView1.Focus();
+                pdfThumbnailViewer1.Focus();
 
                 // 表示ページを取得
                 int page = pdfViewer1.Renderer.Page;
                 // サムネイルの該当ページを選択状態に
-                listView1.SelectedIndices.Clear();
-                listView1.SelectedIndices.Add(page);
-                listView1.EnsureVisible(page);
+                //listView1.SelectedIndices.Clear();
+                //listView1.SelectedIndices.Add(page);
+                //listView1.EnsureVisible(page);
+            }
+        }
+
+        // ==============================
+        // サムネイルをクリックした場合
+        // ==============================
+        private void PdfThumbnailViewer1_SelectionChanged(object? sender, List<int> selectedIndices)
+        {
+            if (selectedIndices.Count == 0) return;
+
+            // 複数選択されている場合、最後に選択された（追加された）ページをメインビューアで表示する
+            int latestPage = selectedIndices[selectedIndices.Count - 1];
+
+            // 最後に選択したページを格納(ページを表示する)
+            pdfViewer1.Renderer.Page = latestPage;
+            currentThumbnailPage = latestPage;
+
+        }
+
+        // ==============================
+        // 右クリックしたサムネイルのページ番号を取得
+        // ==============================
+        private void pdfThumbnailViewer1_ThumbnailRightClicked(object? sender, (bool isSuccess, int pageNumber) e)
+        {
+            // PDFが開かれていないなら処理しない
+            if (pdfViewer1.Document == null)
+                return;
+
+            if (e.isSuccess)
+            {
+                // サムネイルから正常に取得できた場合
+                thumbnailRightClickPage = e.pageNumber;
+            }
+            else
+            {
+                // 取得できなかった場合：NewPagetoolStripTextBox から値を取得する
+                // テキストボックスの中身が正しい数字（整数）に変換できるかチェック
+                if (int.TryParse(NewPagetoolStripTextBox.Text, out int parsedPage))
+                {
+                    thumbnailRightClickPage = parsedPage;
+                }
+                else
+                {
+                    // もしテキストボックスが空だったり文字が入っていた場合の安全ガード（例: 1ページ目にするなど）
+                    thumbnailRightClickPage = 1;
+                }
             }
         }
     }
