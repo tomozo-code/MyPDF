@@ -41,6 +41,7 @@ namespace MyPDF
                         // パス付きで開く
                         reader = new PdfReader(pdfPath, props);
                     }
+
                     // PDFを実際に開く
                     pdf = new ITextDoc(reader);
                     // 管理者(制限パス)で開いてる true:制限パス false:以外)
