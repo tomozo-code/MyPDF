@@ -30,7 +30,6 @@ namespace MyPDF
         // true:カラー or false:グレースケール
         public bool IsColor { get; private set; }
 
-
         // ファイル名
         private string fileName;
 
@@ -68,15 +67,6 @@ namespace MyPDF
                 "75",  "96", "100", "200", "300", "400", "500", "600"
             });
             DpiComboBox.SelectedIndex = 4;
-
-            /*
-            // コンボボックス初期化
-            ImageTypeComboBox.Items.AddRange(new string[]
-            {
-                "jpg",  "png", "bmp", "tif"
-            });
-            ImageTypeComboBox.SelectedIndex = 1;
-            */
 
             toolHintTxt = "PDFを画像に変換します";
 
@@ -153,8 +143,6 @@ namespace MyPDF
                     ImgType = "bmp";
                 else
                     ImgType = "tif";
-
-                //ImgType = ImageTypeComboBox.Text;
 
                 // 色(true:カラー or false:グレースケール)
                 IsColor = radioColor.Checked;
