@@ -128,6 +128,7 @@
             EndMenu = new ToolStripMenuItem();
             HelpMenu = new ToolStripDropDownButton();
             UseMenu = new ToolStripMenuItem();
+            tempOpen = new ToolStripMenuItem();
             VerMenu = new ToolStripMenuItem();
             toolStripSeparator1 = new ToolStripSeparator();
             NewPagetoolStripTextBox = new ToolStripTextBox();
@@ -819,7 +820,6 @@
             // 
             // pdfThumbnailViewer1
             // 
-            pdfThumbnailViewer1.AllowDrop = true;
             pdfThumbnailViewer1.BackColor = SystemColors.Control;
             pdfThumbnailViewer1.ContextMenuStrip = contextMenuStrip3;
             pdfThumbnailViewer1.Location = new Point(55, 100);
@@ -1105,7 +1105,7 @@
             // HelpMenu
             // 
             HelpMenu.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            HelpMenu.DropDownItems.AddRange(new ToolStripItem[] { UseMenu, VerMenu });
+            HelpMenu.DropDownItems.AddRange(new ToolStripItem[] { UseMenu, tempOpen, VerMenu });
             HelpMenu.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             HelpMenu.ImageTransparentColor = Color.Magenta;
             HelpMenu.Name = "HelpMenu";
@@ -1118,17 +1118,27 @@
             // UseMenu
             // 
             UseMenu.Name = "UseMenu";
-            UseMenu.Size = new Size(199, 26);
+            UseMenu.Size = new Size(229, 26);
             UseMenu.Text = "使い方(&U)...";
             UseMenu.ToolTipText = "使い方を表示します";
             UseMenu.Click += UseMenu_Click;
             UseMenu.MouseEnter += menuStrip1_MouseEnter;
             UseMenu.MouseLeave += menuStrip1_MouseLeave;
             // 
+            // tempOpen
+            // 
+            tempOpen.Name = "tempOpen";
+            tempOpen.Size = new Size(229, 26);
+            tempOpen.Text = "tempフォルダを開く(&T)...";
+            tempOpen.ToolTipText = "作業用ファイル保存場所のフォルダを開きます";
+            tempOpen.Click += tempOpen_Click;
+            tempOpen.MouseEnter += menuStrip1_MouseEnter;
+            tempOpen.MouseLeave += menuStrip1_MouseLeave;
+            // 
             // VerMenu
             // 
             VerMenu.Name = "VerMenu";
-            VerMenu.Size = new Size(199, 26);
+            VerMenu.Size = new Size(229, 26);
             VerMenu.Text = "バージョン情報(&A)...";
             VerMenu.ToolTipText = "バージョン情報を表示します";
             VerMenu.Click += VerMenu_Click;
@@ -1379,5 +1389,6 @@
         private ImageList imageList2;
         private SplitContainer splitContainer1;
         private PdfThumbnailViewer pdfThumbnailViewer1;
+        private ToolStripMenuItem tempOpen;
     }
 }
