@@ -909,6 +909,42 @@ namespace MyPDF
 
                 // マウス位置の座標を取得
                 Point clientPoint = this.PointToClient(new Point(e.X, e.Y));
+
+                // ドラッグ中の自動スクロール処理
+                // スクロールバーが有効なときだけ処理
+                if (_vScrollBar.Enabled) 
+                {
+                    // 画面の上端・下端から「何ピクセル以内」に入ったらスクロールさせるか
+                    int scrollZone = 100;
+                    // 1回のリロードで進むスクロール量（ピクセル）
+                    int scrollSpeed = 30; 
+
+                    // 【上端付近にいる場合】上にスクロール
+                    if (clientPoint.Y < scrollZone)
+                    {
+                        int newScrollY = Math.Max(0, _scrollY - scrollSpeed);
+                        if (newScrollY != _scrollY)
+                        {
+                            _scrollY = newScrollY;
+                            // スクロールバーの位置も同期
+                            _vScrollBar.Value = _scrollY;
+                            // 画面再描画
+                            this.Invalidate(); 
+                        }
+                    }
+                    // 【下端付近にいる場合】下にスクロール
+                    else if (clientPoint.Y > this.Height - scrollZone)
+                    {
+                        int newScrollY = Math.Min(_vScrollBar.Maximum - _vScrollBar.LargeChange + 1, _scrollY + scrollSpeed);
+                        if (newScrollY != _scrollY)
+                        {
+                            _scrollY = newScrollY;
+                            _vScrollBar.Value = _scrollY;
+                            this.Invalidate();
+                        }
+                    }
+                }
+
                 int hoverIdx = HitTest(clientPoint);
 
                 if (hoverIdx != -1)
