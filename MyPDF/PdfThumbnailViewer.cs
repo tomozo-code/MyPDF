@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Text;
 using System.Windows.Forms;
+using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
 using FormTimer = System.Windows.Forms.Timer;
 
 // ==============================
@@ -81,6 +82,19 @@ namespace MyPDF
         // 外部から現在選択されているページ一式を取得・設定するためのプロパティ
         public List<int> SelectedIndices => new List<int>(_selectedIndices);
 
+        // ページがドラッグ＆ドロップで並び替えられたことをForm1に通知するイベント(移動：ページ入れ替え)
+        // 引数: (移動元の0始まりインデックス, 移動先の0始まりインデックス)
+        public event EventHandler<(int targetIdx, bool before)>? PageMoved;
+        // ドラッグ開始時のインデックス(移動：ページ入れ替え)
+        private int _draggedIndex = -1;
+
+        // マウスが押された位置を一時記憶
+        private Point _mouseDownPos;
+        // 現在マウスが乗っているサムネイルのインデックス
+        private int _dropTargetIndex = -1;
+        // そのサムネイルの「前(左/上)」か「後(右/下)」か
+        private bool _dropIsBefore = true;  
+
         public PdfThumbnailViewer()
         {
             InitializeComponent();
@@ -115,6 +129,11 @@ namespace MyPDF
             this.Resize += (s, e) => { UpdateScrollRange(); Invalidate(); };
             // マウスのホイールをコリコリと上下に回転させたときのイベント
             this.MouseWheel += PdfThumbnailViewer_MouseWheel;
+            // ドラッグ＆ドロップを許可(移動：ページ入れ替え)
+            this.AllowDrop = true;
+            // ドラッグ＆ドロップのイベントの紐付け(移動：ページ入れ替え)
+            this.DragOver += PdfThumbnailViewer_DragOver;
+            this.DragDrop += PdfThumbnailViewer_DragDrop;
         }
 
         // ==============================
@@ -402,6 +421,39 @@ namespace MyPDF
                 //TextRenderer.DrawText(g, pageText, _textFont, new Point(textX, textY), Color.White);
                 TextRenderer.DrawText(g, pageText, _textFont, new Point(textX, textY), Color.Black);
             }
+
+            // ドラッグ＆ドロップ用の挿入インジケータ（縦線）を描画
+            if (_dropTargetIndex != -1)
+            {
+                int row = _dropTargetIndex / cols;
+                int col = _dropTargetIndex % cols;
+
+                // 既存の座標計算と完全に同じロジックでターゲットの位置を特定
+                int itemLeftX = startX + col * ItemBlockWidth;
+                int itemTopY = Spacing + row * ItemBlockHeight - _scrollY;
+
+                // 線のX座標を決定（前ならブロックの左端、後ならブロックの右端）
+                // 選択座布団のサイズ（itemLeftX - 6 から +12）に綺麗に重なるように調整しています
+                int lineX = _dropIsBefore ? (itemLeftX - 6) : (itemLeftX + ThumbWidth + 6);
+
+                // 線の上下Y座標（座布団の高さとページ番号の隙間に合わせる）
+                int topY = itemTopY - 6;
+                int bottomY = itemTopY + ThumbHeight + 6;
+
+                // 太さ3ピクセルのRoyalBlue（好みに合わせてColor.Orange等でもOK）で線を描画
+                //using (Pen insertPen = new Pen(Color.RoyalBlue, 3))
+                using (Pen insertPen = new Pen(Color.Red, 3))
+                {
+                    // メインの縦線
+                    g.DrawLine(insertPen, lineX, topY, lineX, bottomY);
+
+                    // 視認性を劇的に上げるため、上下に小さな「丁字（ピン）」の横線をトッピング
+                    g.DrawLine(insertPen, lineX - 4, topY, lineX + 4, topY);
+                    g.DrawLine(insertPen, lineX - 4, bottomY, lineX + 4, bottomY);
+                }
+            }
+
+
             // 中ボタンドラッグスクロールモード中かどうかを判定
             if (_isMiddleDragging)
             {
@@ -410,6 +462,7 @@ namespace MyPDF
                 // そのグレーの円の周りを黒い極細線で縁取りし、WindowsのWebブラウザでおなじみのスクロール拠点のマークを描画
                 g.DrawEllipse(Pens.Black, _middleStartPos.X - 6, _middleStartPos.Y - 6, 12, 12);
             }
+
         }
 
         // ==============================
@@ -459,6 +512,8 @@ namespace MyPDF
         // ==============================
         private void PdfThumbnailViewer_MouseMove(object? sender, MouseEventArgs e)
         {
+            if (_pdfDocument == null) return;
+
             // // 中ボタンドラッグスクロールモード中かどうかを判定
             if (_isMiddleDragging)
             {
@@ -468,8 +523,25 @@ namespace MyPDF
                 _scrollVelocity = Math.Abs(deltaY) > 10 ? deltaY / 5 : 0;
                 return;
             }
-            // 通常移動時は、マウスの現在地を先ほどの HitTest 関数に放り込み、どのページの上にマウスがいるかを調べる
-            int newHover = HitTest(e.Location);
+
+            // 左ボタンが押されている、かつ有効なサムネイルの上から始まっている場合
+            if (e.Button == MouseButtons.Left && _draggedIndex != -1)
+            {
+                // Windows標準の「これ以上動いたらドラッグとみなす」距離（通常4ピクセル程度）を超えたかチェック
+                if (Math.Abs(e.X - _mouseDownPos.X) >= SystemInformation.DragSize.Width ||
+                    Math.Abs(e.Y - _mouseDownPos.Y) >= SystemInformation.DragSize.Height)
+                {
+                    // ドラッグ操作を正式に開始！（複数選択の状態が Form1.GetSelectedPagesText() で維持されます）
+                    this.DoDragDrop(_draggedIndex, DragDropEffects.Move);
+
+                    // ドラッグが終わるまでここにブロッキングされるので、終わったらリセット
+                    _draggedIndex = -1;
+                    return;
+                }
+            }
+
+                // 通常移動時は、マウスの現在地を先ほどの HitTest 関数に放り込み、どのページの上にマウスがいるかを調べる
+                int newHover = HitTest(e.Location);
             // 前回マウスが乗っていたページから、新しく別のページへと移動した場合（変更があったとき）のみ、中に入る
             if (newHover != _hoveredIndex)
             {
@@ -510,14 +582,27 @@ namespace MyPDF
             // 押されたボタンが通常のマウス「左クリック」だった場合の処理
             if (e.Button == MouseButtons.Left)
             {
+                // マウスが押された位置を記憶（MouseMoveでのドラッグ開始判定用）
+                _mouseDownPos = e.Location;
+
                 // クリックされた座標を HitTest に渡し、何ページ目がクリックされたのか番号を取得
                 int clickIdx = HitTest(e.Location);
                 // ページがクリックされていた場合の処理
                 if (clickIdx != -1)
                 {
-                    // 選択管理の統合コア関数（HandleSelection）を呼び出し
-                    // Shift や Ctrl が同時に押されているかどうかの状態（ModifierKeys）をそのまま一緒に引き渡し
-                    HandleSelection(clickIdx, ModifierKeys);
+                    _draggedIndex = clickIdx;
+
+                    // すでに選択されているページを通常クリックした場合は、
+                    // MouseDownの時点では選択を上書きせず、MouseMove（ドラッグするかどうか）に判断を委ねる。
+                    if (_selectedIndices.Contains(clickIdx) && ModifierKeys == Keys.None)
+                    {
+                        // 選択状態をキープ（何もしない）
+                    }
+                    else
+                    {
+                        // 未選択のページ、またはCtrl/Shift押しなら即座に選択変更
+                        HandleSelection(clickIdx, ModifierKeys);
+                    }
 
                 }
             }
@@ -586,6 +671,8 @@ namespace MyPDF
         // ==============================
         private void PdfThumbnailViewer_MouseUp(object? sender, MouseEventArgs e)
         {
+            if (_pdfDocument == null) return;
+
             // 離されたボタンが「中ボタン」であれば、オートスクロールを終了させる関数
             if (e.Button == MouseButtons.Middle)
             {
@@ -595,7 +682,6 @@ namespace MyPDF
             // 右クリックの処理
             if (e.Button == MouseButtons.Right)
             {
-                if (_pdfDocument == null) return;
 
                 // マウスが離された座標にあるサムネイルのインデックス（0始まり）を取得
                 int clickIdx = HitTest(e.Location);
@@ -611,6 +697,22 @@ namespace MyPDF
                     // 余白などで右クリックされた場合（失敗：false、ページは0にしておく）
                     ThumbnailRightClicked?.Invoke(this, (false, 0));
                 }
+            }
+
+            // 左クリックの処理
+            if (e.Button == MouseButtons.Left)
+            {
+                int clickIdx = HitTest(e.Location);
+
+                // ドラッグされずにその場でマウスが離され、かつMouseDown時と同じページの上であれば
+                // 留保していた「そのページだけの単一選択」をここで確定させる
+                if (clickIdx != -1 && clickIdx == _draggedIndex && ModifierKeys == Keys.None)
+                {
+                    HandleSelection(clickIdx, ModifierKeys);
+                }
+
+                // リセット
+                _draggedIndex = -1;
             }
         }
 
@@ -793,32 +895,95 @@ namespace MyPDF
 
             Invalidate();
 
-            /*
-            // 現在のレイアウトの横列数を調べる
-            int cols = GetColumnCount();
-            // 対象のページが、上から数えて「何行目」に位置するか
-            int row = index / cols;
-            // スクロールを引かない絶対Y座標
-            int itemTopY = Spacing + row * ItemBlockHeight; 
-
-            // サムネイルの上端が画面上部より上にある場合
-            if (itemTopY < _scrollY)
-            {
-                // 隠れていたそのページがちょうど画面の一番上にチョコンと綺麗に映り込む位置（itemTopY - Spacing）まで、スクロール位置を上に引き戻す
-                _scrollY = Math.Max(0, itemTopY - Spacing);
-            }
-            // サムネイルの下端が画面下部より下にある場合
-            else if (itemTopY + ItemBlockHeight > _scrollY + this.Height)
-            {
-                // スクロールバーが移動できる絶対的なMAXリミット値を計算
-                int maxV = _vScrollBar.Maximum - _vScrollBar.LargeChange;
-                // 隠れていたそのページの底辺が、画面の一番下にジャストで滑り込んで映り込むように計算された、新しいスクロール位置を算出して _scrollY に代入
-                _scrollY = Math.Min(maxV, itemTopY + ItemBlockHeight - this.Height + Spacing);
-            }
-            // 上記のいずれかで自動スライド調整された最終的なスクロール値を、右端のスクロールバーのつまみの位置に反映
-            _vScrollBar.Value = _scrollY;
-            Invalidate();
-            */
         }
+
+        // ==============================
+        // ドラッグ中（移動中）
+        // ドラッグ中のマウスカーソルの変化と、手を離した（ドロップした）瞬間の並び替え処理
+        // ==============================
+        private void PdfThumbnailViewer_DragOver(object? sender, DragEventArgs e)
+        {
+            if (e.Data != null && e.Data.GetDataPresent(typeof(int)))
+            {
+                e.Effect = DragDropEffects.Move;
+
+                // マウス位置の座標を取得
+                Point clientPoint = this.PointToClient(new Point(e.X, e.Y));
+                int hoverIdx = HitTest(clientPoint);
+
+                if (hoverIdx != -1)
+                {
+                    // カラム数（横並び数）を取得
+                    int cols = GetColumnCount();
+                    int col = hoverIdx % cols;
+                    int row = hoverIdx / cols;
+
+                    // 有効クリックエリアの計算と同じロジックで、そのサムネイルの正確な中心座標を割り出す
+                    int displayWidth = this.Width - (_vScrollBar.Enabled ? _vScrollBar.Width : 0);
+                    int startX = (int)(displayWidth - (cols * ItemBlockWidth - Spacing)) / 2;
+                    int itemLeftX = startX + col * ItemBlockWidth;
+                    int itemTopY = Spacing + row * ItemBlockHeight - _scrollY;
+
+                    // サムネイルの中心X座標（複数列グリッド配置を想定）
+                    int itemCenterX = itemLeftX + ThumbWidth / 2;
+
+                    // マウスがサムネイルの中心より「左」にあれば「前」、「右」にあれば「後」
+                    bool isBefore = clientPoint.X < itemCenterX;
+
+                    // 値が変わったときだけ画面を更新（チラつき防止）
+                    if (_dropTargetIndex != hoverIdx || _dropIsBefore != isBefore)
+                    {
+                        _dropTargetIndex = hoverIdx;
+                        _dropIsBefore = isBefore;
+                        this.Invalidate(); // OnPaintを強制的に走らせて線を描画
+                    }
+                }
+                else
+                {
+                    // サムネイルの無い虚無の空間にいる場合
+                    if (_dropTargetIndex != -1)
+                    {
+                        _dropTargetIndex = -1;
+                        this.Invalidate();
+                    }
+                }
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
+
+        }
+
+        // ==============================
+        // ドロップ
+        // ドラッグ中のマウスカーソルの変化と、手を離した（ドロップした）瞬間の並び替え処理
+        // ==============================
+        private void PdfThumbnailViewer_DragDrop(object? sender, DragEventArgs e)
+        {
+            if (e.Data == null || !e.Data.GetDataPresent(typeof(int))) return;
+            
+            if (_dropTargetIndex != -1)
+            {
+                // DragOverで計算済みのターゲットと前後フラグをそのままイベントでForm1へ通知
+                PageMoved?.Invoke(this, (_dropTargetIndex, _dropIsBefore));
+            }
+
+            // ドロップが終わったのでターゲット情報をリセットして再描画
+            _dropTargetIndex = -1;
+            this.Invalidate();
+
+        }
+
+        // ==============================
+        // ドロップ位置の線を消す
+        // ==============================
+        private void PdfThumbnailViewer_DragLeave(object? sender, EventArgs e)
+        {
+            // コントロール外に出たらターゲットをクリアして線を消す
+            _dropTargetIndex = -1;
+            this.Invalidate();
+        }
+
     }
 }
