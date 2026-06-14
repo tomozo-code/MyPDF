@@ -8,12 +8,9 @@ using System.Text;
 using System.Windows.Forms;
 using DrawingColor = System.Drawing.Color;
 
-
-
 // ==============================
 // しおりプロパティ設定フォーム
 // ==============================
-
 
 namespace MyPDF
 {
@@ -156,7 +153,6 @@ namespace MyPDF
                 ColorTxtBox1.Text = $"#{SelectedColor.R:X2}{SelectedColor.G:X2}{SelectedColor.B:X2}";
                 // 色RGB
                 ColorTxtBox2.Text = $"{SelectedColor.R},{SelectedColor.G},{SelectedColor.B}";
-
 
             }
         }

@@ -28,7 +28,6 @@ namespace MyPDF
             this.Width = 650;
             this.Height = 400;
             this.MinimumSize = new Size(400, 200);
-            //this.AutoScaleDimensions = new SizeF(96F, 96F);
 
             // PDF変換用TextBox
             NoteTxt.ReadOnly = true;
@@ -43,8 +42,6 @@ namespace MyPDF
             toolTip1.InitialDelay = 500;   // 表示までの時間(ms)
             toolTip1.AutoPopDelay = 5000;  // 表示時間
             toolTip1.ReshowDelay = 100;    // 次の表示まで
-
-
 
             // EnterキーをOKボタンに割り当て
             this.AcceptButton = OkBtn;

@@ -30,7 +30,6 @@ namespace MyPDF
             this.Width = 550;
             this.Height = 600;
             this.MinimumSize = new Size(400, 300);
-            //this.AutoScaleDimensions = new SizeF(96F, 96F);
 
             // null対策
             settings ??= new SecuritySettings();
@@ -58,13 +57,10 @@ namespace MyPDF
             toolTip1.AutoPopDelay = 5000;  // 表示時間
             toolTip1.ReshowDelay = 100;    // 次の表示まで
 
-
             // EnterキーをOKボタンに割り当て
             this.AcceptButton = OkBtn;
             //  EscキーをCancelボタンに割り当て
             this.CancelButton = CancelBtn;
-
-
         }
 
         // ==============================
@@ -290,25 +286,6 @@ namespace MyPDF
             settings.Check_chkAnnot = chkAnnot.Checked;
             settings.Check_chkForm = chkForm.Checked;
             settings.Check_chkExtract = chkExtract.Checked;
-
-            // デバッグ出力確認
-            Debug.WriteLine("-----SecuritySettings------------------------");
-            Debug.WriteLine("権限パス: " + txtOwnerPass.Text);
-            Debug.WriteLine("開くパス: " + txtUserPass.Text);
-
-            Debug.WriteLine("PDFをパスワードで保護: " + settings.Check_Owner);
-            Debug.WriteLine("開くときのパスワードを設定: " + settings.Check_User);
-
-            Debug.WriteLine("印刷: " + settings.Check_chkPrint);
-            Debug.WriteLine("テキスト・画像のコピー: " + settings.Check_chkCopy);
-            Debug.WriteLine("ページ挿入・削除・回転: " + settings.Check_chkEdit);
-            Debug.WriteLine("注釈追加: " + settings.Check_chkAnnot);
-            Debug.WriteLine("フォーム入力: " + settings.Check_chkForm);
-            Debug.WriteLine("内容の抽出: " + settings.Check_chkExtract);
-
-            Debug.WriteLine("制限許可: " + settings.Permissions);
-            Debug.WriteLine("暗号方式: " + settings.Encryption);
-
 
             // 親へ渡す
             Settings = settings;
