@@ -32,7 +32,6 @@ namespace MyPDF
             this.Width = 650;
             this.Height = 600;
             this.MinimumSize = new Size(400, 400);
-           // this.AutoScaleDimensions = new SizeF(96F, 96F);
 
             // コピー（参照渡し事故防止）
             Settings = new PdfSettings
@@ -280,7 +279,6 @@ namespace MyPDF
 
             }
 
-            //Settings.Zoom = MagComboBox.Text;
             // 倍率
             switch (MagComboBox.Text)
             {
@@ -340,13 +338,6 @@ namespace MyPDF
                     break;
 
             }
-
-            // デバッグ出力確認
-            Debug.WriteLine("-----PDFプロパティ(OK)------------------------");
-            Debug.WriteLine("タイトル: " + Settings.Title);
-            Debug.WriteLine("作成者: " + Settings.Author);
-            Debug.WriteLine("サブタイトル: " + Settings.Subject);
-            Debug.WriteLine("キーワード: " + Settings.Keywords);
 
             if (int.TryParse(PageTxt.Text, out int page))
                 Settings.OpenPage = page;
