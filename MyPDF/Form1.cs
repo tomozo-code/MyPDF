@@ -42,6 +42,7 @@ using SysRectangle = System.Drawing.Rectangle;
 // --- 役割 ---
 // PDF表示 → PdfiumViewer.Core
 // しおり操作 → TreeView
+// サムネイル → PdfThumbnailViewer(ユーザーコントロール:自前)
 // 保存 → iText
 
 // --- セキュリティ設定の仕様 ---
@@ -67,6 +68,21 @@ using SysRectangle = System.Drawing.Rectangle;
 // Form12:指定ページの置換
 // Form13:画像PDF変換の設定
 // Form14:PDF画像変換の設定
+
+// --- クラス ---
+// BookmarkInfo.cs:しおり用(メタデータ)
+// ComboItem.cs:PDFプロパティ用(開き方コンボボックス) Form2用
+// NaturalStringComparer.cs:画像をPDFに変換のファイル名ソート用クラス
+// PageRangeHelper.cs:ページ指定入力のチェック
+// PdfBookmarkLoader.cs:PDFのしおり情報取得用
+// PdfDateUtil.cs:PDFメタデータの日付変換
+// PdfFileUtil.cs:作業用ファイル作成
+// PdfLoadResult.cs:PDF開く結果格納用
+// PdfOpenResult.cs:開く・挿入・置換用 パスワード入力処理
+// PdfSecurityHelper.cs:PDFを開いて権限確認(開く・挿入・置換用)
+// PdfSettings.cs:PDFプロパティ用(メタデータ)
+// PdfSettingsLoader.cs:PDFの設定情報を読み込む
+// SecuritySettings.cs:セキュリティ設定用(メタデータ)
 // ==============================
 
 namespace MyPDF
@@ -3725,7 +3741,7 @@ namespace MyPDF
                 currentSettings = PdfSettingsLoader.LoadPdfSettings(workingPath, originalPath, currentPassword);
                 // ステータスバーにファイル名(元ファイル)と総ページ数
                 UpdateStatus(originalPath, currentSettings.TotalPage);
-                                
+
                 // サムネイル生成
                 pdfThumbnailViewer1.LoadDocument(doc);
 
@@ -4560,7 +4576,7 @@ namespace MyPDF
 
                 // 挿入先のページを表示
                 pdfViewer1.Renderer.Page = targetPage - 1;
-              
+
                 // サムネイル生成
                 pdfThumbnailViewer1.LoadDocument(doc);
 
@@ -4576,7 +4592,7 @@ namespace MyPDF
                 }
 
                 // サムネイル更新(リセット)
-               // RefreshThumbnailAll();
+                // RefreshThumbnailAll();
 
                 // 未保存フラグON
                 isDirty = true;
@@ -5143,10 +5159,10 @@ namespace MyPDF
                 if (doc.PageCount > 0)
                 {
                     // 移動によりターゲットがはみ出る場合の安全ガード
-                    //int finalSelectIdx = Math.Min(insertIndex, doc.PageCount - 1);
+                    int finalSelectIdx = Math.Max(0, Math.Min(insertIndex - 1, doc.PageCount - 1));
 
                     // サムネイル側の公開メソッドを呼び出して選択インデックスを上書き
-                    pdfThumbnailViewer1.SetSelection(insertIndex);
+                    pdfThumbnailViewer1.SetSelection(finalSelectIdx);
                     //pdfThumbnailViewer1.SetSelection(finalSelectIdx);
 
                 }
@@ -5962,7 +5978,7 @@ namespace MyPDF
 
                             // サムネイル生成
                             pdfThumbnailViewer1.LoadDocument(document);
-                                                        
+
                             // サムネイル更新(リセット)
                             //RefreshThumbnailAll();
 
@@ -7052,5 +7068,22 @@ namespace MyPDF
                 }
             }
         }
+
+        // ==============================
+        // サムネイル　ドラッグ＆ドロップで移動(ページ入れ替え)
+        // ==============================
+        private void PdfThumbnailViewer1_PageMoved(object? sender, (int targetIdx, bool before) e)
+        {
+            // 選択されているページテキスト（例: "2,3" や "5-7"）を取得
+            string pageText = GetSelectedPagesText();
+            if (string.IsNullOrEmpty(pageText)) return;
+
+            // 移動先のページ番号（1始まり）を計算
+            int targetPage = e.targetIdx + 1;
+
+            // ページ移動処理へ丸投げ
+            MovePdfPage(pageText, targetPage, e.before);
+        }
+
     }
 }

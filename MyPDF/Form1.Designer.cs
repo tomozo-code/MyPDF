@@ -303,7 +303,7 @@
             // 
             PageMove2.Enabled = false;
             PageMove2.Name = "PageMove2";
-            PageMove2.Size = new Size(180, 26);
+            PageMove2.Size = new Size(174, 26);
             PageMove2.Text = "移動(&M)...";
             PageMove2.ToolTipText = "ページを指定して移動します";
             PageMove2.Click += PageMove_Click;
@@ -314,7 +314,7 @@
             // 
             PageInsert2.Enabled = false;
             PageInsert2.Name = "PageInsert2";
-            PageInsert2.Size = new Size(180, 26);
+            PageInsert2.Size = new Size(174, 26);
             PageInsert2.Text = "挿入(&I)...";
             PageInsert2.ToolTipText = "ファイルからページを挿入します";
             PageInsert2.Click += PageInsert_Click;
@@ -325,7 +325,7 @@
             // 
             ReplacementMenu2.Enabled = false;
             ReplacementMenu2.Name = "ReplacementMenu2";
-            ReplacementMenu2.Size = new Size(180, 26);
+            ReplacementMenu2.Size = new Size(174, 26);
             ReplacementMenu2.Text = "置換(&K)...";
             ReplacementMenu2.ToolTipText = "ファイルからページを置換します";
             ReplacementMenu2.Click += ReplacementMenu_Click;
@@ -336,7 +336,7 @@
             // 
             PageExtractSetting2.Enabled = false;
             PageExtractSetting2.Name = "PageExtractSetting2";
-            PageExtractSetting2.Size = new Size(180, 26);
+            PageExtractSetting2.Size = new Size(174, 26);
             PageExtractSetting2.Text = "抽出(&X)...";
             PageExtractSetting2.ToolTipText = "ページを指定して抽出します";
             PageExtractSetting2.Click += PageExtractSetting_Click;
@@ -347,7 +347,7 @@
             // 
             RotatePagesSetting2.Enabled = false;
             RotatePagesSetting2.Name = "RotatePagesSetting2";
-            RotatePagesSetting2.Size = new Size(180, 26);
+            RotatePagesSetting2.Size = new Size(174, 26);
             RotatePagesSetting2.Text = "回転(&R)...";
             RotatePagesSetting2.ToolTipText = "ページを指定して回転します";
             RotatePagesSetting2.Click += RotatePagesSetting_Click;
@@ -358,7 +358,7 @@
             // 
             PageDeleteSetting2.Enabled = false;
             PageDeleteSetting2.Name = "PageDeleteSetting2";
-            PageDeleteSetting2.Size = new Size(180, 26);
+            PageDeleteSetting2.Size = new Size(174, 26);
             PageDeleteSetting2.Text = "削除(&D)...";
             PageDeleteSetting2.ToolTipText = "ページを指定して削除します";
             PageDeleteSetting2.Click += PageDeleteSetting_Click;
@@ -369,7 +369,7 @@
             // 
             ConvImgSetting2.Enabled = false;
             ConvImgSetting2.Name = "ConvImgSetting2";
-            ConvImgSetting2.Size = new Size(180, 26);
+            ConvImgSetting2.Size = new Size(174, 26);
             ConvImgSetting2.Text = "画像変換(&G)...";
             ConvImgSetting2.ToolTipText = "ページを指定して画像ファイル(jpg/png/bmp/tif)に変換します";
             ConvImgSetting2.Click += ConvImgSetting_Click;
@@ -797,10 +797,10 @@
             tabPage2.BorderStyle = BorderStyle.FixedSingle;
             tabPage2.Controls.Add(listView1);
             tabPage2.Controls.Add(pdfThumbnailViewer1);
-            tabPage2.Location = new Point(4, 28);
+            tabPage2.Location = new Point(4, 30);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(207, 225);
+            tabPage2.Size = new Size(207, 223);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "サムネイル";
             tabPage2.UseVisualStyleBackColor = true;
@@ -828,19 +828,20 @@
             pdfThumbnailViewer1.TabIndex = 11;
             pdfThumbnailViewer1.SelectionChanged += PdfThumbnailViewer1_SelectionChanged;
             pdfThumbnailViewer1.ThumbnailRightClicked += pdfThumbnailViewer1_ThumbnailRightClicked;
+            pdfThumbnailViewer1.PageMoved += PdfThumbnailViewer1_PageMoved;
             // 
             // contextMenuStrip3
             // 
             contextMenuStrip3.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             contextMenuStrip3.Items.AddRange(new ToolStripItem[] { PageMove3, PageInsert3, ReplacementMenu3, PageExtractSetting3, RotatePagesSettingLeft90, RotatePagesSettingRight90, RotatePagesSetting180, PageDeleteSetting3, ConvImgSetting3 });
             contextMenuStrip3.Name = "contextMenuStrip3";
-            contextMenuStrip3.Size = new Size(181, 260);
+            contextMenuStrip3.Size = new Size(175, 238);
             // 
             // PageMove3
             // 
             PageMove3.Enabled = false;
             PageMove3.Name = "PageMove3";
-            PageMove3.Size = new Size(180, 26);
+            PageMove3.Size = new Size(174, 26);
             PageMove3.Text = "移動(&M)...";
             PageMove3.ToolTipText = "ページを指定して移動します";
             PageMove3.Click += PageMove_Click;
@@ -851,7 +852,7 @@
             // 
             PageInsert3.Enabled = false;
             PageInsert3.Name = "PageInsert3";
-            PageInsert3.Size = new Size(180, 26);
+            PageInsert3.Size = new Size(174, 26);
             PageInsert3.Text = "挿入(&I)...";
             PageInsert3.ToolTipText = "ファイルからページを挿入します";
             PageInsert3.Click += PageInsert_Click;
@@ -862,7 +863,7 @@
             // 
             ReplacementMenu3.Enabled = false;
             ReplacementMenu3.Name = "ReplacementMenu3";
-            ReplacementMenu3.Size = new Size(180, 26);
+            ReplacementMenu3.Size = new Size(174, 26);
             ReplacementMenu3.Text = "置換(&K)...";
             ReplacementMenu3.ToolTipText = "選択したページを置換します";
             ReplacementMenu3.Click += ReplacementMenu_Click;
@@ -873,7 +874,7 @@
             // 
             PageExtractSetting3.Enabled = false;
             PageExtractSetting3.Name = "PageExtractSetting3";
-            PageExtractSetting3.Size = new Size(180, 26);
+            PageExtractSetting3.Size = new Size(174, 26);
             PageExtractSetting3.Text = "抽出(&X)";
             PageExtractSetting3.ToolTipText = "選択したページを抽出します";
             PageExtractSetting3.Click += PageExtractSetting_Click;
@@ -884,7 +885,7 @@
             // 
             RotatePagesSettingLeft90.Enabled = false;
             RotatePagesSettingLeft90.Name = "RotatePagesSettingLeft90";
-            RotatePagesSettingLeft90.Size = new Size(180, 26);
+            RotatePagesSettingLeft90.Size = new Size(174, 26);
             RotatePagesSettingLeft90.Text = "左90°回転(&R)";
             RotatePagesSettingLeft90.ToolTipText = "選択したページを左に90°回転します";
             RotatePagesSettingLeft90.Click += RotatePagesSettingLeft90_Click;
@@ -895,7 +896,7 @@
             // 
             RotatePagesSettingRight90.Enabled = false;
             RotatePagesSettingRight90.Name = "RotatePagesSettingRight90";
-            RotatePagesSettingRight90.Size = new Size(180, 26);
+            RotatePagesSettingRight90.Size = new Size(174, 26);
             RotatePagesSettingRight90.Text = "右90°回転(&R)";
             RotatePagesSettingRight90.ToolTipText = "選択したページを右に90°回転します";
             RotatePagesSettingRight90.Click += RotatePagesSettingRight90_Click;
@@ -906,7 +907,7 @@
             // 
             RotatePagesSetting180.Enabled = false;
             RotatePagesSetting180.Name = "RotatePagesSetting180";
-            RotatePagesSetting180.Size = new Size(180, 26);
+            RotatePagesSetting180.Size = new Size(174, 26);
             RotatePagesSetting180.Text = "180°回転(&R)";
             RotatePagesSetting180.ToolTipText = "選択したページを180°回転します";
             RotatePagesSetting180.Click += RotatePagesSetting180_Click;
@@ -917,7 +918,7 @@
             // 
             PageDeleteSetting3.Enabled = false;
             PageDeleteSetting3.Name = "PageDeleteSetting3";
-            PageDeleteSetting3.Size = new Size(180, 26);
+            PageDeleteSetting3.Size = new Size(174, 26);
             PageDeleteSetting3.Text = "削除(&D)";
             PageDeleteSetting3.ToolTipText = "選択したページを削除します";
             PageDeleteSetting3.Click += PageDeleteSetting_Click;
@@ -928,7 +929,7 @@
             // 
             ConvImgSetting3.Enabled = false;
             ConvImgSetting3.Name = "ConvImgSetting3";
-            ConvImgSetting3.Size = new Size(180, 26);
+            ConvImgSetting3.Size = new Size(174, 26);
             ConvImgSetting3.Text = "画像変換(&G)...";
             ConvImgSetting3.ToolTipText = "選択したページを画像ファイル(jpg/png/bmp/tif)に変換します";
             ConvImgSetting3.Click += ConvImgSetting_Click;
