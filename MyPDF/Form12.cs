@@ -9,7 +9,6 @@ using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
-
 // ==============================
 // 指定ページの置換フォーム
 // ==============================
@@ -45,7 +44,6 @@ namespace MyPDF
             this.Width = 400;
             this.Height = 420;
             this.MinimumSize = new Size(300, 200);
-            //this.AutoScaleDimensions = new SizeF(96F, 96F);
 
             // 置換するファイル名をセット
             KaeFileName.Text = Path.GetFileName(ReplacementFile);
@@ -78,8 +76,6 @@ namespace MyPDF
             ExtractTxt.Text = nowPage;
             // 総ページ
             TotalPage.Text = "/ " + maxPage.ToString();
-
-
 
             toolHintTxt = "ファイルからページを置換します";
 

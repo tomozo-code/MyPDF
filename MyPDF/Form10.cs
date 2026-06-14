@@ -10,7 +10,6 @@ using System.Windows.Forms;
 // ファイル挿入フォーム
 // ==============================
 
-
 namespace MyPDF
 {
     public partial class Form10 : Form
@@ -39,7 +38,6 @@ namespace MyPDF
             this.Width = 400;
             this.Height = 420;
             this.MinimumSize = new Size(300, 200);
-            //this.AutoScaleDimensions = new SizeF(96F, 96F);
 
             // 挿入するファイル名をセット
             InsertFileName.Text = Path.GetFileName(InsertFile);
@@ -151,7 +149,6 @@ namespace MyPDF
         {
             this.DialogResult = DialogResult.Cancel;
             this.Close();
-
         }
 
 

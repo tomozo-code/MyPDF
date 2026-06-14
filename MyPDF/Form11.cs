@@ -26,7 +26,6 @@ namespace MyPDF
         // 総ページ数
         private int maxPage;
 
-
         public Form11(string PageText, int maxPage)
         {
             InitializeComponent();
@@ -35,7 +34,6 @@ namespace MyPDF
             this.Width = 400;
             this.Height = 350;
             this.MinimumSize = new Size(300, 200);
-            //this.AutoScaleDimensions = new SizeF(96F, 96F);
 
             // 総ページ数をセット
             this.maxPage = maxPage;

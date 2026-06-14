@@ -32,7 +32,6 @@ namespace MyPDF
             this.Width = 400;
             this.Height = 220;
             this.MinimumSize = new Size(300, 200);
-            //this.AutoScaleDimensions = new SizeF(96F, 96F);
 
             // 今のページ
             //this.nowPage = nowPage;

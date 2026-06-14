@@ -6,11 +6,9 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-
 // ==============================
 // 指定ページの回転フォーム
 // ==============================
-
 
 namespace MyPDF
 {
@@ -32,7 +30,6 @@ namespace MyPDF
         // 総ページ数
         private int maxPage;
 
-
         public Form7(int nowPage, int maxPage)
         {
             InitializeComponent();
@@ -41,7 +38,6 @@ namespace MyPDF
             this.Width = 450;
             this.Height = 300;
             this.MinimumSize = new Size(300, 200);
-            //this.AutoScaleDimensions = new SizeF(96F, 96F);
 
             // 今のページをセット
             this.nowPage = nowPage;
@@ -52,16 +48,6 @@ namespace MyPDF
 
             // 総ページ
             TotalPage.Text = "/ " + maxPage.ToString();
-
-            /*
-            // コンボボックス初期化
-            RollSelect.Items.AddRange(new string[]
-            {
-                "左へ90°回転",  "右へ90°回転", "180°回転"
-            });
-            RollSelect.SelectedIndex = 0;
-            */
-
 
             toolHintTxt = "ページを指定して回転します";
 
@@ -116,15 +102,6 @@ namespace MyPDF
                 else
                     RotationAngle = 180; // 180°
 
-                /*
-                switch (RollSelect.SelectedIndex)
-                {
-                    case 0: RotationAngle = 270; break; // 左90°
-                    case 1: RotationAngle = 90; break;  // 右90°
-                    case 2: RotationAngle = 180; break; // 180°
-                }
-                */
-
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
@@ -132,7 +109,6 @@ namespace MyPDF
             {
                 MessageBox.Show(ex.Message, "ページ入力エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
 
         }
 

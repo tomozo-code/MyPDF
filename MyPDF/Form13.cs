@@ -10,13 +10,11 @@ using System.Windows.Forms;
 // 画像をPDFに変換設定フォーム
 // ==============================
 
-
 namespace MyPDF
 {
     public partial class Form13 : Form
     {
         private string? toolHintTxt = null;
-
 
         // 画像PDFのサイズ
         public int PdfImageMode { get; private set; }
@@ -41,29 +39,10 @@ namespace MyPDF
             this.Height = 480;
             this.MinimumSize = new Size(250, 250);
 
-            /*
-            // 変換サイズ初期化
-            PdfImageSize.Items.AddRange(new string[]
-            {
-                "A4縦",  "A4横", "元サイズ"
-            });
-
-            PdfImageSize.SelectedIndex = 2;
-
-            // 配置初期化
-            Place.Items.AddRange(new string[]
-            {
-                "中央",  "上詰め", "下詰め", "左詰め", "右詰め"
-            });
-            Place.SelectedIndex = 0;
-
-            */
-
             PdfMarginTop = 0;
             PdfMarginBottom = 0;
             PdfMarginLeft = 0;
             PdfMarginRight = 0;
-
 
             toolHintTxt = "変換サイズを設定します";
 
@@ -73,7 +52,6 @@ namespace MyPDF
 
             // EnterキーをOKボタンに割り当て
             this.AcceptButton = OkBtn;
-
 
         }
 
@@ -127,8 +105,6 @@ namespace MyPDF
             else
                 PdfImageMode = 2; // 元サイズ
 
-            //PdfImageMode = PdfImageSize.SelectedIndex;
-
             // 配置
             if (radioCenter.Checked)
                 PdfPlace = 0; // 中央
@@ -140,8 +116,6 @@ namespace MyPDF
                 PdfPlace = 3; //左詰め
             else
                 PdfPlace = 4; // 右詰め
-
-            //PdfPlace = Place.SelectedIndex;
 
             this.DialogResult = DialogResult.OK;
             this.Close();
