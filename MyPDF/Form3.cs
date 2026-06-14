@@ -27,7 +27,6 @@ namespace MyPDF
             this.Width = 555;
             this.Height = 500;
             this.MinimumSize = new Size(300, 300);
-            //this.AutoScaleDimensions = new SizeF(96F, 96F);
 
             // PDF変換用TextBox
             LicenseTxtBox.ReadOnly = true;
