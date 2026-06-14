@@ -156,7 +156,7 @@ namespace MyPDF
                 // 更新日
                 settings.ModDate = PdfDateUtil.FormatPdfDate(info.GetMoreInfo("ModDate")) ?? "";
 
-
+                
                 // デバッグ出力確認
                 Debug.WriteLine("-----LoadPdfSettings------------------------");
                 Debug.WriteLine("ファイル名: " + settings.PdfFileName);
@@ -176,7 +176,7 @@ namespace MyPDF
                 Debug.WriteLine("作成日: " + settings.CreationDate);
                 Debug.WriteLine("更新日: " + settings.ModDate);
                 Debug.WriteLine("入力PW: " + password);
-
+                
                 // Catalog取得
                 var catalog = pdf.GetCatalog();
                 // 生PDF辞書取得
