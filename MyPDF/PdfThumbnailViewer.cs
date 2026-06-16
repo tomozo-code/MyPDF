@@ -335,13 +335,26 @@ namespace MyPDF
 
                 // 超混在対応ロジック：A4縦の高さ（約842ポイント）を「基準の100%」としてスケールを測る
                 // これにより、A3（1191×842）が来た時に、A4よりも物理的に巨大であることが計算で導き出されます
-                float baseScale = 842f;
+                //float baseScale = 842f;
                 // 初期値として160×160を入れる
                 float currentThumbWidth = ThumbWidth;
                 float currentThumbHeight = ThumbHeight;
                 // 縦横のサイズが正常にあることを確認して、実寸比率の計算を開始
                 if (realSize.Width > 0 && realSize.Height > 0)
                 {
+                    // 小さいものは拡大、大きいものは縮小し、160x160の枠にぴったり合わせるロジック
+                    // 横幅基準のスケールと、縦幅基準のスケールをそれぞれ計算
+                    float scaleX = (float)ThumbWidth / realSize.Width;
+                    float scaleY = (float)ThumbHeight / realSize.Height;
+
+                    // 縦横比（アスペクト比）を維持するため、より厳しい方（小さい方の倍率）を採用する
+                    // これにより、小さいPDFは160枠まで均等に「拡大」され、大きいPDFは「縮小」されます
+                    float finalScale = Math.Min(scaleX, scaleY);
+
+                    currentThumbWidth = realSize.Width * finalScale;
+                    currentThumbHeight = realSize.Height * finalScale;
+
+                    /*
                     // A4縦の標準的なサイズ（160px）を1.0としたときの、このページのドット換算サイズ
                     // 160pxの枠に対して、どれくらいの比率で描画すべきかを計算
                     float factor = (float)ThumbWidth / baseScale;
@@ -349,6 +362,8 @@ namespace MyPDF
                     // 物理実寸通りのピクセルサイズを一旦計算
                     currentThumbWidth = realSize.Width * factor;
                     currentThumbHeight = realSize.Height * factor;
+                    */
+
 
                     // 万が一、超巨大な図面などで160pxの最大枠をはみ出してしまう場合の安全ガード
                     if (currentThumbWidth > ThumbWidth || currentThumbHeight > ThumbHeight)
@@ -361,7 +376,7 @@ namespace MyPDF
                     }
                 }
 
-                // 160×160のダークな領域（ブロック）の中で、用紙が中央に綺麗に収まるように配置座標（X, Y）を計算
+                // 160×160の領域（ブロック）の中で、用紙が中央に綺麗に収まるように配置座標（X, Y）を計算
                 int imgX = itemLeftX + (ThumbWidth - (int)currentThumbWidth) / 2;
                 int imgY = itemTopY + (ThumbHeight - (int)currentThumbHeight) / 2;
                 // 最終的にPDFの用紙を型どって描画するための、ジャストな長方形（座標とサイズ）オブジェクトを生成
@@ -579,6 +594,7 @@ namespace MyPDF
                 Invalidate();
                 return;
             }
+
             // 押されたボタンが通常のマウス「左クリック」だった場合の処理
             if (e.Button == MouseButtons.Left)
             {
@@ -663,6 +679,46 @@ namespace MyPDF
             Invalidate();
 
             // イベント発火（選択が変わったことを外に伝える）
+            SelectionChanged?.Invoke(this, SelectedIndices);
+        }
+
+        // ==============================
+        // プログラムから選択状態を完全にクリアするメソッド
+        // ==============================
+        public void ClearSelectionWithoutEvent()
+        {
+            // 選択リストを空にする
+            _selectedIndices.Clear();
+
+            // アクティブ位置も初期化（必要であれば）
+            _activeIndex = -1;
+
+            // 画面の選択枠を消すために再描画
+            Invalidate();
+        }
+
+        // ==============================
+        // プログラムから純粋に複数選択を追加するためのメソッド
+        // ==============================
+        public void AddSelectionWithoutClearing(int targetIndex)
+        {
+            // インデックスが範囲外なら処理しない（安全ガード）
+            if (targetIndex < 0) return;
+
+            // すでに選択リストに含まれていない場合のみ追加（重複防止）
+            if (!_selectedIndices.Contains(targetIndex))
+            {
+                _selectedIndices.Add(targetIndex);
+            }
+
+            // 最後に関わったページをアクティブターゲットに記憶
+            _activeIndex = targetIndex;
+
+            // 再描画を要求
+            Invalidate();
+
+            // ※ここでは毎回イベント（SelectionChanged）を飛ばすと重くなるため、
+            // 呼び出し側のループが終わった後に外側で一発飛ばすか、必要に応じてInvokeしてください。
             SelectionChanged?.Invoke(this, SelectedIndices);
         }
 
