@@ -95,7 +95,6 @@
             tabPage1 = new TabPage();
             treeView1 = new TreeView();
             tabPage2 = new TabPage();
-            listView1 = new ListView();
             pdfThumbnailViewer1 = new PdfThumbnailViewer();
             contextMenuStrip3 = new ContextMenuStrip(components);
             PageMove3 = new ToolStripMenuItem();
@@ -139,6 +138,7 @@
             toolStrip1 = new ToolStrip();
             panel2 = new Panel();
             splitContainer1 = new SplitContainer();
+            pdfCustomViewer1 = new PdfCustomViewer();
             statusStrip1.SuspendLayout();
             contextMenuStrip2.SuspendLayout();
             contextMenuStrip1.SuspendLayout();
@@ -193,13 +193,12 @@
             // pdfViewer1
             // 
             pdfViewer1.ContextMenuStrip = contextMenuStrip2;
-            pdfViewer1.Location = new Point(69, 29);
+            pdfViewer1.Location = new Point(49, 471);
             pdfViewer1.Margin = new Padding(4, 4, 4, 4);
             pdfViewer1.Name = "pdfViewer1";
-            pdfViewer1.Size = new Size(114, 89);
+            pdfViewer1.Size = new Size(119, 95);
             pdfViewer1.TabIndex = 0;
             pdfViewer1.ZoomMode = PdfiumViewer.PdfViewerZoomMode.FitBest;
-            pdfViewer1.MouseUp += pdfViewer1_MouseUp;
             // 
             // contextMenuStrip2
             // 
@@ -796,30 +795,18 @@
             // tabPage2
             // 
             tabPage2.BorderStyle = BorderStyle.FixedSingle;
-            tabPage2.Controls.Add(listView1);
             tabPage2.Controls.Add(pdfThumbnailViewer1);
-            tabPage2.Location = new Point(4, 30);
+            tabPage2.Location = new Point(4, 28);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(207, 223);
+            tabPage2.Size = new Size(207, 225);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "サムネイル";
             tabPage2.UseVisualStyleBackColor = true;
             // 
-            // listView1
-            // 
-            listView1.AllowDrop = true;
-            listView1.BackColor = SystemColors.Control;
-            listView1.BorderStyle = BorderStyle.None;
-            listView1.Location = new Point(6, 6);
-            listView1.Name = "listView1";
-            listView1.OwnerDraw = true;
-            listView1.Size = new Size(87, 75);
-            listView1.TabIndex = 0;
-            listView1.UseCompatibleStateImageBehavior = false;
-            // 
             // pdfThumbnailViewer1
             // 
+            pdfThumbnailViewer1.AllowDrop = true;
             pdfThumbnailViewer1.BackColor = SystemColors.Control;
             pdfThumbnailViewer1.ContextMenuStrip = contextMenuStrip3;
             pdfThumbnailViewer1.Location = new Point(55, 100);
@@ -921,7 +908,7 @@
             PageDeleteSetting3.Size = new Size(174, 26);
             PageDeleteSetting3.Text = "削除(&D)";
             PageDeleteSetting3.ToolTipText = "選択したページを削除します";
-            PageDeleteSetting3.Click += PageDeleteSetting_Click;
+            PageDeleteSetting3.Click += PageDeleteSetting3_Click;
             PageDeleteSetting3.MouseEnter += menuStrip1_MouseEnter;
             PageDeleteSetting3.MouseLeave += menuStrip1_MouseLeave;
             // 
@@ -1220,7 +1207,7 @@
             // 
             splitContainer1.BorderStyle = BorderStyle.FixedSingle;
             splitContainer1.Cursor = Cursors.SizeWE;
-            splitContainer1.Location = new Point(198, 61);
+            splitContainer1.Location = new Point(328, 103);
             splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -1230,14 +1217,23 @@
             // 
             // splitContainer1.Panel2
             // 
+            splitContainer1.Panel2.Controls.Add(pdfCustomViewer1);
             splitContainer1.Panel2.Controls.Add(panel2);
             splitContainer1.Panel2.Controls.Add(panel1);
-            splitContainer1.Panel2.Controls.Add(pdfViewer1);
             splitContainer1.Panel2.Cursor = Cursors.Default;
             splitContainer1.Size = new Size(695, 370);
             splitContainer1.SplitterDistance = 339;
             splitContainer1.SplitterWidth = 8;
             splitContainer1.TabIndex = 10;
+            // 
+            // pdfCustomViewer1
+            // 
+            pdfCustomViewer1.BackColor = SystemColors.Control;
+            pdfCustomViewer1.ContextMenuStrip = contextMenuStrip2;
+            pdfCustomViewer1.Location = new Point(177, 20);
+            pdfCustomViewer1.Name = "pdfCustomViewer1";
+            pdfCustomViewer1.Size = new Size(118, 94);
+            pdfCustomViewer1.TabIndex = 11;
             // 
             // Form1
             // 
@@ -1245,8 +1241,9 @@
             AutoScaleMode = AutoScaleMode.Dpi;
             ClientSize = new Size(1035, 644);
             Controls.Add(splitContainer1);
-            Controls.Add(Extxt);
             Controls.Add(splitter1);
+            Controls.Add(pdfViewer1);
+            Controls.Add(Extxt);
             Controls.Add(statusStrip1);
             Controls.Add(toolStrip1);
             Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
@@ -1385,10 +1382,10 @@
         private ToolStripMenuItem ConvImgSetting3;
         private ToolStripMenuItem PageMove3;
         private TreeView treeView1;
-        private ListView listView1;
         private ImageList imageList2;
         private SplitContainer splitContainer1;
         private PdfThumbnailViewer pdfThumbnailViewer1;
         private ToolStripMenuItem tempOpen;
+        private PdfCustomViewer pdfCustomViewer1;
     }
 }

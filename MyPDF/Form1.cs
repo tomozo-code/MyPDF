@@ -151,6 +151,8 @@ namespace MyPDF
         private int currentThumbnailPage = -1;
         // サムネイルを右クリしたときのページ番号
         private int thumbnailRightClickPage = -1;
+        // サムネイル複数選択リスト
+        private List<int> _savedSelectedIndices = new List<int>();
 
 
 
@@ -203,33 +205,31 @@ namespace MyPDF
             splitContainer1.Dock = DockStyle.Fill;
             splitContainer1.SplitterDistance = 350;
 
-            pdfViewer1.Dock = DockStyle.Fill;
+            //pdfViewer1.Dock = DockStyle.Fill;
             tabControl1.Dock = DockStyle.Fill;
             pdfThumbnailViewer1.Dock = DockStyle.Fill;
+            pdfCustomViewer1.Dock = DockStyle.Fill;
 
             // pdfViewerのしおり表示を無効
-            pdfViewer1.ShowBookmarks = false;
+            //pdfViewer1.ShowBookmarks = false;
             // pdfViewerのツールバー表示を無効
-            pdfViewer1.ShowToolbar = false;
+            //pdfViewer1.ShowToolbar = false;
 
+
+            pdfViewer1.Visible = false;
             panel1.Visible = false;
             panel2.Visible = false;
             panel3.Visible = false;
             panel4.Visible = false;
 
 
-            splitter1.Visible = false;
+            //splitter1.Visible = false;
 
             //panel1.Width = 300;
             tabControl1.Width = 350;
 
             treeView1.Dock = DockStyle.Fill;
             treeView1.ShowNodeToolTips = false;
-
-            //listView1.Dock = DockStyle.Fill;
-            listView1.Visible = false;
-
-            //InitThumbnailView();
 
             StatusLabel.Text = "ファイル: PDF未選択";
             TotalPagetoolStripLabel.Text = "/ 1 ";
@@ -360,7 +360,35 @@ namespace MyPDF
         private void PageTimer_Tick(object? sender, EventArgs e)
         {
             // PDFが開かれていないなら処理しない
-            if (pdfViewer1.Document == null) return;
+            //if (pdfViewer1.Document == null) return;
+
+            // PDFが開かれていないなら処理しない
+            if (pdfCustomViewer1.Document == null) return;
+
+
+            // 自作のカスタムビューアから、現在表示中のページ（0始まり）を取得
+            int current = pdfCustomViewer1.CurrentPage;
+
+            // ページ変わった時だけ更新
+            if (current != lastPage)
+            {
+                lastPage = current;
+
+                currentThumbnailPage = current;
+
+                if (tabControl1.SelectedTab == tabPage2)
+                {
+                    // 無限ループ（チャタリング）防止ガード
+                    if (!pdfThumbnailViewer1.SelectedIndices.Contains(current))
+                    {
+                        pdfThumbnailViewer1.SetSelection(current);
+                    }
+                }
+                // NewPagetoolStripTextBoxにページ番号を表示
+                NewPagetoolStripTextBox.Text = (current + 1).ToString();
+            }
+
+            /*
 
             // 現在ページ取得（0始まり）
             int current = pdfViewer1.Renderer.Page;
@@ -384,6 +412,8 @@ namespace MyPDF
                 // NewPagetoolStripTextBoxにページ番号を表示
                 NewPagetoolStripTextBox.Text = (current + 1).ToString();
             }
+
+            */
 
         }
 
@@ -663,11 +693,15 @@ namespace MyPDF
         private void DisplayPdf(PdfiumViewer.PdfDocument document)
         {
             // PDFを表示
-            pdfViewer1.Document = document;
+            //pdfViewer1.Document = document;
+
+            // pdfCustomViewerにPDFを表示
+            pdfCustomViewer1.LoadDocument(document);
+
             // 自動調整
             ZoomtoolStripComboBox.SelectedIndex = 0;
             // PDF表示を自動調整に
-            pdfViewer1.ZoomMode = PdfViewerZoomMode.FitBest;
+            //pdfViewer1.ZoomMode = PdfViewerZoomMode.FitBest;
             // ページ番号表示
             NewPagetoolStripTextBox.Text = "1";
             // サムネイル生成
@@ -902,10 +936,19 @@ namespace MyPDF
         private void JumpToPage(int page)
         {
             // PDFにページがないなら戻る
-            if (pdfViewer1.Document == null) return;
+            //if (pdfViewer1.Document == null) return;
+
+            // PDFにページがないなら戻る
+            if (pdfCustomViewer1.Document == null) return;
+
+            // pdfCustomViewer1は0始まりなので -1
+            int pageIndex = page - 1;
+            // 指定ページを表示            
+            pdfCustomViewer1.ScrollToPage(pageIndex);
 
             // Pdfiumは0始まりなので -1
-            pdfViewer1.Renderer.Page = page - 1;
+            //pdfViewer1.Renderer.Page = page - 1;
+
         }
 
         // ==============================
@@ -975,7 +1018,7 @@ namespace MyPDF
                 return;
             // 現在ページ取得
             // 現在の表示ページ番号を退避
-            int currentPage = GetCurrentPage();
+            int currentPage = pdfCustomViewer1.CurrentPage;
 
             try
             {
@@ -1062,36 +1105,22 @@ namespace MyPDF
         private void ReleaseViewer()
         {
             // Viewer解放（ロック防止）
-            if (pdfViewer1.Document == null)
+            //if (pdfViewer1.Document == null)
+            //    return;
+
+            // Viewer解放（ロック防止）
+            if (pdfCustomViewer1.Document == null)
                 return;
 
             // サムネイル破棄
             pdfThumbnailViewer1.CloseDocument();
+            // pdfCustomViewer解放
+            pdfCustomViewer1.CloseDocument();
 
             // PDF Viewer解放
-            pdfViewer1.Document.Dispose();
+            //pdfViewer1.Document.Dispose();
             // Viewerから切り離し
-            pdfViewer1.Document = null;
-        }
-
-        // ==============================
-        // 保存処理(上書き保存、名前を付けて保存 共通)
-        // 現在ページ取得
-        // 現在ページ退避し保存後に表示しているページに戻す
-        // ==============================
-        private int GetCurrentPage()
-        {
-            try
-            {
-                if (pdfViewer1.Document == null)
-                    return 0;
-
-                return pdfViewer1.Renderer.Page;
-            }
-            catch (ObjectDisposedException)
-            {
-                return 0;
-            }
+            //pdfViewer1.Document = null;
         }
 
         // ==============================
@@ -1387,7 +1416,11 @@ namespace MyPDF
                 ? PdfiumDoc.Load(workingPath) // パスなし
                 : PdfiumDoc.Load(workingPath, openPassword); // パスあり
             // PDF表示
-            pdfViewer1.Document = doc;
+            //pdfViewer1.Document = doc;
+
+            // pdfCustomViewerにPDFを表示
+            pdfCustomViewer1.LoadDocument(doc);
+
             // パスワードを更新
             currentPassword = openPassword;
             // 保存との整合性 作業用ファイルのデータを入れる
@@ -1404,7 +1437,8 @@ namespace MyPDF
             if (currentPage >= 0 && currentPage < doc.PageCount)
             {
                 // 保存前のページへ戻す
-                pdfViewer1.Renderer.Page = currentPage;
+                //pdfViewer1.Renderer.Page = currentPage;
+                pdfCustomViewer1.ScrollToPage(currentPage);
             }
 
             // サムネイル生成
@@ -1528,14 +1562,18 @@ namespace MyPDF
             try
             {
                 // Viewer解放（ロック防止）
-                if (pdfViewer1.Document != null)
+                //if (pdfViewer1.Document != null)
+                if (pdfCustomViewer1.Document != null)
                 {
                     // サムネイル破棄
                     pdfThumbnailViewer1.CloseDocument();
+                    // pdfCustomViewer解放
+                    pdfCustomViewer1.CloseDocument();
+
                     // PDF Viewer解放
-                    pdfViewer1.Document.Dispose();
+                    //pdfViewer1.Document.Dispose();
                     // Viewerから切り離し
-                    pdfViewer1.Document = null;
+                    //pdfViewer1.Document = null;
 
                 }
 
@@ -1992,11 +2030,11 @@ namespace MyPDF
                 // 現在の表示ページを取得
                 int currentPage = 1;
                 // PDF開いてる？
-                if (pdfViewer1.Document != null)
-                {
+                //if (pdfViewer1.Document != null)
+                //{
                     // 現在表示ページ取得(ゼロ始まりなので +1 する)
-                    currentPage = pdfViewer1.Renderer.Page + 1;
-                }
+                //    currentPage = pdfViewer1.Renderer.Page + 1;
+                //}
                 // BookmarkInfo初期化開始
                 newNode.Tag = new BookmarkInfo
                 {
@@ -2654,31 +2692,6 @@ namespace MyPDF
         // ==============================
         // 現在のページ番号表示(NewPagetoolStripTextBox)でキーを押したとき
         // ==============================
-        private void NowPageTxt_KeyDown(object sender, KeyEventArgs e)
-        {
-            // エンター以外なら戻る
-            if (e.KeyCode != Keys.Enter) return;
-            // プロパティ情報ががないなら戻る
-            if (currentSettings == null) return;
-
-            // 数値チェック
-            if (!int.TryParse(NewPagetoolStripTextBox.Text, out int page))
-                return;
-
-            // ページ範囲チェック
-            int maxPage = currentSettings?.TotalPage ?? 0;
-
-            // ページ範囲外なら戻る
-            if (page < 1 || page > maxPage)
-                return;
-
-            // ジャンプ
-            JumpToPage(page);
-
-            // Enter音防止
-            e.SuppressKeyPress = true;
-        }
-
         private void NewPagetoolStripTextBox_KeyDown(object sender, KeyEventArgs e)
         {
             // エンター以外なら戻る
@@ -2692,7 +2705,6 @@ namespace MyPDF
 
             // ページ範囲チェック
             int maxPage = currentSettings?.TotalPage ?? 0;
-            //int maxPage = pdfViewer1.Document.PageCount;
 
             // ページ範囲外なら戻る
             if (page < 1 || page > maxPage)
@@ -2703,15 +2715,6 @@ namespace MyPDF
 
             // Enter音防止
             e.SuppressKeyPress = true;
-        }
-
-        // ==============================
-        // NewPagetoolStripTextBoxにフォーカスが当たったら全選択
-        // ==============================
-        private void NowPageTxt_Enter(object sender, EventArgs e)
-        {
-            // 全選択
-            NewPagetoolStripTextBox.SelectAll();
         }
 
         // ==============================
@@ -2731,10 +2734,15 @@ namespace MyPDF
             // しおりが選択されていないなら何もしない
             if (treeView1.SelectedNode == null) return;
             // しおりが選択されていないなら何もしない
-            if (pdfViewer1.Document == null) return;
+            //if (pdfViewer1.Document == null) return;
+
+            // pdf開いてないなら何もしない
+            if (pdfCustomViewer1.Document == null) return;
 
             // 今表示しているページ番号を取得(0始まりなので+1)
-            int currentPage = pdfViewer1.Renderer.Page + 1;
+            //int currentPage = pdfViewer1.Renderer.Page + 1;
+            int currentPage = pdfCustomViewer1.CurrentPage + 1;
+
 
             // 選択中のしおりにページ番号を保存
             if (treeView1.SelectedNode.Tag is BookmarkInfo info)
@@ -2779,11 +2787,19 @@ namespace MyPDF
         private void PdfPropertyMenu_Click(object sender, EventArgs e)
         {
             // PDFが開かれていないなら処理しない
-            if (pdfViewer1.Document == null)
+            //if (pdfViewer1.Document == null)
+            //{
+            //    MessageBox.Show("PDFが開かれていません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            //    return;
+            //}
+
+            // PDFが開かれていないなら処理しない
+            if (pdfCustomViewer1.Document == null)
             {
                 MessageBox.Show("PDFが開かれていません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+
             // PDF設定情報が存在するか確認
             if (currentSettings == null)
             {
@@ -3001,8 +3017,40 @@ namespace MyPDF
         // ==============================
         private void ZoomtoolStripComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (pdfViewer1.Document == null) return;
+            //if (pdfViewer1.Document == null) return;
 
+            if (pdfCustomViewer1.Document == null) return;
+
+            // 表示方法選択
+            int selectedIndex = ZoomtoolStripComboBox.SelectedIndex;
+
+            switch (selectedIndex)
+            {
+                // 自動調整（今回は幅合わせ、または100%などお好みの標準挙動を割り当てます）
+                case 0:
+                    // カスタム側：ひとまず100%（1.0f）にする例（またはFitToWidthでもOK）
+                    pdfCustomViewer1.Zoom = 1.0f;
+                    break;
+
+                // 高さに合わせる
+                case 1:
+                    // カスタム側：高さに合わせるメソッドを呼び出す
+                    pdfCustomViewer1.FitToHeight();
+                    break;
+
+                // 幅に合わせる
+                case 2:
+                    // カスタム側：すでに作成済みの幅合わせメソッドを呼び出す
+                    pdfCustomViewer1.FitToWidth();
+                    break;
+            }
+            // 既存のページ番号を取得（0始まり）
+            int currentPage = pdfCustomViewer1.CurrentPage;
+            // カスタムビューア側も、倍率変更後に現在のページ位置へ再スクロールさせて描画更新
+            pdfCustomViewer1.ScrollToPage(currentPage);
+
+
+            /*
             // 先にZoomをリセット（ここが核心）
             pdfViewer1.Renderer.Zoom = 1.0f;
 
@@ -3029,6 +3077,8 @@ namespace MyPDF
             int page = pdfViewer1.Renderer.Page;
 
             pdfViewer1.Refresh();
+
+            */
         }
 
 
@@ -3078,11 +3128,19 @@ namespace MyPDF
             FontStyle currentStyle = info.SelectedStyle;
 
             // PDFが開かれていないなら処理しない
-            if (pdfViewer1.Document == null)
+            //if (pdfViewer1.Document == null)
+            //{
+            //    MessageBox.Show("PDFが開かれていません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            //    return;
+            //}
+
+            // PDFが開かれていないなら処理しない
+            if (pdfCustomViewer1.Document == null)
             {
                 MessageBox.Show("PDFが開かれていません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+
             // PDF設定情報が存在するか確認
             if (currentSettings == null)
             {
@@ -3506,17 +3564,23 @@ namespace MyPDF
         // ==============================
         private void RotatePages(string pageText, int addRotation)
         {
-            if (pdfViewer1.Document == null) return;
+            //if (pdfViewer1.Document == null) return;
+
+            if (pdfCustomViewer1.Document == null) return;
 
             try
             {
-                int currentPage = pdfViewer1.Renderer.Page;
+
+                //int currentPage = pdfViewer1.Renderer.Page;
 
                 // サムネイルクリア
                 pdfThumbnailViewer1.LoadDocument(null);
+                // pdfCustomViewer解放
+                pdfCustomViewer1.CloseDocument();
+
                 // Viewer解放
-                pdfViewer1.Document.Dispose();
-                pdfViewer1.Document = null;
+                //pdfViewer1.Document.Dispose();
+                //pdfViewer1.Document = null;
 
                 string tempPath = workingPath + ".tmp";
 
@@ -3552,23 +3616,33 @@ namespace MyPDF
                 var doc = string.IsNullOrEmpty(currentPassword)
                     ? PdfiumDoc.Load(workingPath)
                     : PdfiumDoc.Load(workingPath, currentPassword);
-                pdfViewer1.Document = doc;
 
-                if (currentPage < doc.PageCount)
-                    pdfViewer1.Renderer.Page = currentPage;
+                //pdfViewer1.Document = doc;
+
+                // pdfCustomViewerにPDFを表示
+                pdfCustomViewer1.LoadDocument(doc);
+
+                //if (currentPage < doc.PageCount)
+                //    pdfViewer1.Renderer.Page = currentPage;
 
                 // サムネイル生成
                 pdfThumbnailViewer1.LoadDocument(doc);
 
-                // リロード完了後、計算しておいたターゲットページを強制選択＆スクロール追従させる
-                if (doc.PageCount > 0)
+                // 自動で選択される1ページ目のサムネイルをリセット
+                pdfThumbnailViewer1.ClearSelectionWithoutEvent();
+
+                // リロード完了後、退避しておいた複数選択状態を復元する
+                if (doc.PageCount > 0 && _savedSelectedIndices.Count > 0)
                 {
-                    // 回転によりターゲットがはみ出る場合の安全ガード
-                    int finalSelectIdx = Math.Min(currentPage, doc.PageCount - 1);
-
-                    // サムネイル側の公開メソッドを呼び出して選択インデックスを上書き
-                    pdfThumbnailViewer1.SetSelection(finalSelectIdx);
-
+                    foreach (int selectIdx in _savedSelectedIndices)
+                    {
+                        // 安全ガード（回転前後のページ数変化トラブル防止）
+                        if (selectIdx >= 0 && selectIdx < doc.PageCount)
+                        {
+                            // サムネイル側の選択メソッドを呼び出す
+                            pdfThumbnailViewer1.AddSelectionWithoutClearing(selectIdx);
+                        }
+                    }
                 }
 
                 // 未保存フラグON
@@ -3592,11 +3666,18 @@ namespace MyPDF
         private void RotatePagesSetting_Click(object sender, EventArgs e)
         {
             // PDFが開かれていないなら処理しない
-            if (pdfViewer1.Document == null)
+            //if (pdfViewer1.Document == null)
+            //{
+            //    MessageBox.Show("PDFが開かれていません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            //    return;
+            //}
+            // PDFが開かれていないなら処理しない
+            if (pdfCustomViewer1.Document == null)
             {
                 MessageBox.Show("PDFが開かれていません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+
             // PDF設定情報が存在するか確認
             if (currentSettings == null)
             {
@@ -3604,10 +3685,26 @@ namespace MyPDF
                 return;
             }
 
-            int page = pdfViewer1.Renderer.Page + 1;
+            // どこから呼ばれたか
+            string pageText;
+
+            if (sender == RotatePagesSetting || sender == RotatePagesSetting2)
+            {
+                // メニュー or pdfViewer
+                //pageText = (pdfViewer1.Renderer.Page + 1).ToString();
+                pageText = (pdfCustomViewer1.CurrentPage + 1).ToString();
+            }
+            else
+            {
+                // サムネイル
+                pageText = GetSelectedPagesText();
+            }
+
+
+            //int page = pdfViewer1.Renderer.Page + 1;
 
             // Form7起動
-            using (var f = new Form7(page, currentSettings.TotalPage))
+            using (var f = new Form7(pageText, currentSettings.TotalPage))
             {
                 if (f.ShowDialog() == DialogResult.OK)
                 {
@@ -3624,11 +3721,14 @@ namespace MyPDF
         // ==============================
         private void DeletePages(string pageText)
         {
-            if (pdfViewer1.Document == null) return;
+            //if (pdfViewer1.Document == null) return;
+
+            if (pdfCustomViewer1.Document == null) return;
 
             try
             {
-                int currentPage = pdfViewer1.Renderer.Page;
+                //int currentPage = pdfViewer1.Renderer.Page;
+                int currentPage = pdfCustomViewer1.CurrentPage + 1;
 
                 // 削除後にどこのサムネイルを選択するか、あらかじめターゲットを決めておく
                 // 複数選択されている場合もあるので、一番若い（先頭の）選択インデックスを基準にする
@@ -3644,10 +3744,12 @@ namespace MyPDF
 
                 // サムネイルクリア
                 pdfThumbnailViewer1.LoadDocument(null);
+                // pdfCustomViewer解放
+                pdfCustomViewer1.CloseDocument();
 
                 // Viewer解放
-                pdfViewer1.Document.Dispose();
-                pdfViewer1.Document = null;
+                //pdfViewer1.Document.Dispose();
+                //pdfViewer1.Document = null;
 
                 string tempPath = workingPath + ".tmp";
 
@@ -3682,13 +3784,17 @@ namespace MyPDF
                 var doc = string.IsNullOrEmpty(currentPassword)
                     ? PdfiumDoc.Load(workingPath)
                     : PdfiumDoc.Load(workingPath, currentPassword);
-                pdfViewer1.Document = doc;
+
+                //pdfViewer1.Document = doc;
+
+                // pdfCustomViewerにPDFを表示
+                pdfCustomViewer1.LoadDocument(doc);
 
                 // ページ位置補正
-                if (doc.PageCount > 0)
-                {
-                    pdfViewer1.Renderer.Page = Math.Min(currentPage, doc.PageCount - 1);
-                }
+                //if (doc.PageCount > 0)
+                //{
+                //    pdfViewer1.Renderer.Page = Math.Min(currentPage, doc.PageCount - 1);
+                //}
 
                 // 右クリックメニュー更新
                 UpdateContextMenuState();
@@ -3700,6 +3806,8 @@ namespace MyPDF
 
                 // サムネイル生成
                 pdfThumbnailViewer1.LoadDocument(doc);
+                // 自動で選択される1ページ目のサムネイルをリセット
+                pdfThumbnailViewer1.ClearSelectionWithoutEvent();
 
                 // リロード完了後、計算しておいたターゲットページを強制選択＆スクロール追従させる
                 if (doc.PageCount > 0)
@@ -3779,17 +3887,6 @@ namespace MyPDF
         }
 
         // ==============================
-        // 表示ページ削除(頃合いを見て消す)
-        // ==============================
-        private void PageDelete_Click(object sender, EventArgs e)
-        {
-            if (pdfViewer1.Document == null) return;
-
-            int page = pdfViewer1.Renderer.Page + 1; // 0始まり→1始まり
-            DeletePages(page.ToString());
-        }
-
-        // ==============================
         // しおり昇格ロジック(挿入、抽出、置換、削除)
         // ==============================
         private void PromoteChildrenAndRemove(TreeNode node, TreeNodeCollection rootNodes)
@@ -3832,11 +3929,18 @@ namespace MyPDF
         private void PageDeleteSetting_Click(object sender, EventArgs e)
         {
             // PDFが開かれていないなら処理しない
-            if (pdfViewer1.Document == null)
+            //if (pdfViewer1.Document == null)
+            //{
+            //    MessageBox.Show("PDFが開かれていません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            //    return;
+            //}
+            // PDFが開かれていないなら処理しない
+            if (pdfCustomViewer1.Document == null)
             {
                 MessageBox.Show("PDFが開かれていません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+
             // PDF設定情報が存在するか確認
             if (currentSettings == null)
             {
@@ -3850,7 +3954,8 @@ namespace MyPDF
             if (sender == PageDeleteSetting || sender == PageDeleteSetting2)
             {
                 // メニュー or pdfViewer
-                pageText = (pdfViewer1.Renderer.Page + 1).ToString();
+                //pageText = (pdfViewer1.Renderer.Page + 1).ToString();
+                pageText = (pdfCustomViewer1.CurrentPage + 1).ToString();
             }
             else
             {
@@ -3931,33 +4036,37 @@ namespace MyPDF
             // Panel2から外す
             //panel2.Controls.Remove(pdfViewer1);
             // splitContainer1.Panel2から外す
-            splitContainer1.Panel2.Controls.Remove(pdfViewer1);
+            //splitContainer1.Panel2.Controls.Remove(pdfViewer1);
+            //this.Controls.Remove(pdfViewer1);
 
             // 念のため破棄
             try
             {
-                pdfViewer1.Document?.Dispose();
-                pdfViewer1.Dispose();
+                // pdfCustomViewer解放
+                pdfCustomViewer1.CloseDocument();
+
+                //pdfViewer1.Document?.Dispose();
+                //pdfViewer1.Dispose();
             }
             catch { }
 
             // 表示が消えないので新しく作り直す
-            pdfViewer1 = new PdfViewer();
+            //pdfViewer1 = new PdfViewer();
 
             // 設定を再適用
-            pdfViewer1.Dock = DockStyle.Fill;
+            //pdfViewer1.Dock = DockStyle.Fill;
             // pdfViewerのしおり表示を無効
-            pdfViewer1.ShowBookmarks = false;
+            //pdfViewer1.ShowBookmarks = false;
             // pdfViewerのツールバー表示を無効
-            pdfViewer1.ShowToolbar = false;
-            pdfViewer1.BorderStyle = BorderStyle.None;
-            pdfViewer1.ContextMenuStrip = contextMenuStrip2;
+            //pdfViewer1.ShowToolbar = false;
+            //pdfViewer1.BorderStyle = BorderStyle.None;
+            //pdfViewer1.ContextMenuStrip = contextMenuStrip2;
 
             // 再追加(splitContainer1.Panel2へ)
             //this.Controls.Add(pdfViewer1);
-            splitContainer1.Panel2.Controls.Add(pdfViewer1);
+            //splitContainer1.Panel2.Controls.Add(pdfViewer1);
             //panel2.Controls.Add(pdfViewer1);
-            pdfViewer1.BringToFront();
+            //pdfViewer1.BringToFront();
 
             // メニューリセット
             MenuReset();
@@ -3969,7 +4078,9 @@ namespace MyPDF
         // ==============================
         private async Task ExtractPagesAsync(string pageText)
         {
-            if (pdfViewer1.Document == null) return;
+            //if (pdfViewer1.Document == null) return;
+
+            if (pdfCustomViewer1.Document == null) return;
 
             try
             {
@@ -4216,11 +4327,18 @@ namespace MyPDF
         private async void PageExtractSetting_Click(object sender, EventArgs e)
         {
             // PDFが開かれていないなら処理しない
-            if (pdfViewer1.Document == null)
+            //if (pdfViewer1.Document == null)
+            //{
+            //    MessageBox.Show("PDFが開かれていません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            //    return;
+            //}
+            // PDFが開かれていないなら処理しない
+            if (pdfCustomViewer1.Document == null)
             {
                 MessageBox.Show("PDFが開かれていません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+
             // PDF設定情報が存在するか確認
             if (currentSettings == null)
             {
@@ -4234,7 +4352,8 @@ namespace MyPDF
             if (sender == PageExtractSetting || sender == PageExtractSetting2)
             {
                 // メニュー or pdfViewer
-                pageText = (pdfViewer1.Renderer.Page + 1).ToString();
+                //pageText = (pdfViewer1.Renderer.Page + 1).ToString();
+                pageText = (pdfCustomViewer1.CurrentPage + 1).ToString();
             }
             else
             {
@@ -4267,7 +4386,11 @@ namespace MyPDF
         private async void PageInsert_Click(object sender, EventArgs e)
         {
             // PDFが開かれていないなら処理しない
-            if (pdfViewer1.Document == null) return;
+            //if (pdfViewer1.Document == null) return;
+
+            // PDFが開かれていないなら処理しない
+            if (pdfCustomViewer1.Document == null) return;
+
             // PDF設定情報が存在するか確認
             if (currentSettings == null)
             {
@@ -4282,13 +4405,15 @@ namespace MyPDF
                 using (OpenFileDialog ofd = new OpenFileDialog())
                 {
                     // 表示しているページを取得
-                    int nowPage = pdfViewer1.Renderer.Page + 1;
+                    //int nowPage = pdfViewer1.Renderer.Page + 1;
+                    int nowPage = pdfCustomViewer1.CurrentPage + 1;
 
 
                     if (sender == PageInsert || sender == PageInsert2)
                     {
                         // メニュー or pdfViewer
-                        nowPage = pdfViewer1.Renderer.Page + 1;
+                        //nowPage = pdfViewer1.Renderer.Page + 1;
+                        nowPage = pdfCustomViewer1.CurrentPage + 1;
                     }
                     else
                     {
@@ -4374,16 +4499,35 @@ namespace MyPDF
 
             try
             {
+
+                // サムネイルクリア
+                pdfThumbnailViewer1.LoadDocument(null);
+                // pdfCustomViewer解放
+                pdfCustomViewer1.CloseDocument();
+
+                // Viewer解放
+                //pdfViewer1.Document?.Dispose();
+                //pdfViewer1.Document = null;
+
+                /*
                 // Viewer解放
                 if (pdfViewer1.Document != null)
                 {
-                    // サムネイルクリア
-                    pdfThumbnailViewer1.LoadDocument(null);
-
                     // ファイルロック解除しViewerから切り離す
                     pdfViewer1.Document.Dispose();
                     pdfViewer1.Document = null;
                 }
+
+                // Viewer解放
+                if (pdfCustomViewer1.Document != null)
+                {
+                    // サムネイルクリア
+                    pdfThumbnailViewer1.LoadDocument(null);
+
+                    // pdfCustomViewer解放
+                    pdfCustomViewer1.Dispose();
+                }
+                */
 
                 //Application.DoEvents();
 
@@ -4487,7 +4631,10 @@ namespace MyPDF
                     ? PdfiumDoc.Load(workingPath)
                     : PdfiumDoc.Load(workingPath, currentPassword);
                 // PDF表示
-                pdfViewer1.Document = doc;
+                //pdfViewer1.Document = doc;
+
+                // pdfCustomViewerにPDFを表示
+                pdfCustomViewer1.LoadDocument(doc);
 
                 // 保存との整合性 作業用ファイルのデータを入れる
                 currentSettings = PdfSettingsLoader.LoadPdfSettings(workingPath, originalPath, currentPassword);
@@ -4498,7 +4645,7 @@ namespace MyPDF
                 UpdateContextMenuState();
 
                 // 挿入先のページを表示
-                pdfViewer1.Renderer.Page = targetPage - 1;
+                //pdfViewer1.Renderer.Page = targetPage - 1;
 
                 // サムネイル生成
                 pdfThumbnailViewer1.LoadDocument(doc);
@@ -4901,11 +5048,19 @@ namespace MyPDF
         private void PageMove_Click(object sender, EventArgs e)
         {
             // PDFが開かれていないなら処理しない
-            if (pdfViewer1.Document == null)
+            //if (pdfViewer1.Document == null)
+            //{
+            //    MessageBox.Show("PDFが開かれていません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            //    return;
+            //}
+
+            // PDFが開かれていないなら処理しない
+            if (pdfCustomViewer1.Document == null)
             {
                 MessageBox.Show("PDFが開かれていません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+
             // PDF設定情報が存在するか確認
             if (currentSettings == null)
             {
@@ -4919,16 +5074,14 @@ namespace MyPDF
             if (sender == PageMove || sender == PageMove2)
             {
                 // メニュー or pdfViewer
-                pageText = (pdfViewer1.Renderer.Page + 1).ToString();
+                //pageText = (pdfViewer1.Renderer.Page + 1).ToString();
+                pageText = (pdfCustomViewer1.CurrentPage + 1).ToString();
             }
             else
             {
                 // サムネイル
                 pageText = GetSelectedPagesText();
             }
-
-            // 表示しているページを取得
-            //int nowPage = pdfViewer1.Renderer.Page + 1;
 
             // Form11起動
             using (var f = new Form11(pageText, currentSettings.TotalPage))
@@ -4951,6 +5104,8 @@ namespace MyPDF
 
             Dictionary<int, int> pageMap = new Dictionary<int, int>();
 
+            List<int> movePages = new List<int>();
+
             // 移動先決定
             int insertIndex = target;
 
@@ -4958,10 +5113,12 @@ namespace MyPDF
             {
                 // サムネイルクリア
                 pdfThumbnailViewer1.LoadDocument(null);
+                // pdfCustomViewer解放
+                pdfCustomViewer1.CloseDocument();
 
                 // Viewer解放
-                pdfViewer1.Document?.Dispose();
-                pdfViewer1.Document = null;
+                //pdfViewer1.Document?.Dispose();
+                //pdfViewer1.Document = null;
 
                 ReaderProperties props = string.IsNullOrEmpty(currentPassword)
                     ? new ReaderProperties()
@@ -4975,7 +5132,7 @@ namespace MyPDF
                     int total = srcPdf.GetNumberOfPages();
 
                     // ページ解析
-                    var movePages = PageRangeHelper.ParsePageRanges(pageText, total).Distinct().OrderBy(x => x).ToList();
+                    movePages = PageRangeHelper.ParsePageRanges(pageText, total).Distinct().OrderBy(x => x).ToList();
 
                     if (movePages.Count == 0)
                         return;
@@ -5044,7 +5201,10 @@ namespace MyPDF
                     ? PdfiumDoc.Load(workingPath)
                     : PdfiumDoc.Load(workingPath, currentPassword);
 
-                pdfViewer1.Document = doc;
+                //pdfViewer1.Document = doc;
+
+                // pdfCustomViewerにPDFを表示
+                pdfCustomViewer1.LoadDocument(doc);
 
                 // 保存との整合性 作業用ファイルのデータを入れる
                 currentSettings = PdfSettingsLoader.LoadPdfSettings(workingPath, originalPath, currentPassword);
@@ -5052,20 +5212,38 @@ namespace MyPDF
                 UpdateStatus(originalPath, currentSettings.TotalPage);
 
                 // 移動先を表示
-                pdfViewer1.Renderer.Page = insertIndex - 1;
+                //pdfViewer1.Renderer.Page = insertIndex - 1;
 
                 // サムネイル生成
                 pdfThumbnailViewer1.LoadDocument(doc);
+                // 自動で選択される1ページ目のサムネイルをリセット
+                pdfThumbnailViewer1.ClearSelectionWithoutEvent();
 
-                // リロード完了後、計算しておいたターゲットページを強制選択＆スクロール追従させる
-                if (doc.PageCount > 0)
+                if (doc.PageCount > 0 && movePages.Count > 0)
                 {
-                    // 移動によりターゲットがはみ出る場合の安全ガード
-                    int finalSelectIdx = Math.Max(0, Math.Min(insertIndex - 1, doc.PageCount - 1));
+                    // 移動元となった各ページ（1始まり）が、移動後に何番になったかを調べて復元
+                    foreach (int oldPageNum in movePages)
+                    {
+                        // pageMapに存在する場合、そこから移動後の「1始まりページ番号」を取得
+                        if (pageMap.TryGetValue(oldPageNum, out int newPageNum))
+                        {
+                            // サムネイル用に「0始まりインデックス」に変換
+                            int newSelectIdx = newPageNum - 1;
 
-                    // サムネイル側の公開メソッドを呼び出して選択インデックスを上書き
-                    pdfThumbnailViewer1.SetSelection(finalSelectIdx);
+                            // 安全ガード
+                            if (newSelectIdx >= 0 && newSelectIdx < doc.PageCount)
+                            {
+                                // 移動後の位置を順番に買い足して選択状態にする
+                                pdfThumbnailViewer1.AddSelectionWithoutClearing(newSelectIdx);
+                            }
+                        }
+                    }
 
+                    // 【オプション】移動後の先頭ページにメインビューアもスクロール連動させる場合
+                    if (pageMap.TryGetValue(movePages[0], out int firstNewPageNum))
+                    {
+                        pdfCustomViewer1.ScrollToPage(firstNewPageNum - 1);
+                    }
                 }
 
                 // 未保存フラグON
@@ -5119,7 +5297,13 @@ namespace MyPDF
         private async void ReplacementMenu_Click(object sender, EventArgs e)
         {
             // PDFが開かれていないなら処理しない
-            if (pdfViewer1.Document == null)
+            //if (pdfViewer1.Document == null)
+            //{
+            //    MessageBox.Show("PDFが開かれていません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            //    return;
+            //}
+            // PDFが開かれていないなら処理しない
+            if (pdfCustomViewer1.Document == null)
             {
                 MessageBox.Show("PDFが開かれていません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -5174,7 +5358,8 @@ namespace MyPDF
                     if (sender == ReplacementMenu || sender == ReplacementMenu2)
                     {
                         // メニュー or pdfViewer
-                        pageText = (pdfViewer1.Renderer.Page + 1).ToString();
+                        //pageText = (pdfViewer1.Renderer.Page + 1).ToString();
+                        pageText = (pdfCustomViewer1.CurrentPage + 1).ToString();
                     }
                     else
                     {
@@ -5224,9 +5409,11 @@ namespace MyPDF
             {
                 // サムネイルクリア
                 pdfThumbnailViewer1.LoadDocument(null);
+                // pdfCustomViewer解放
+                pdfCustomViewer1.CloseDocument();
 
-                pdfViewer1.Document?.Dispose();
-                pdfViewer1.Document = null;
+                //pdfViewer1.Document?.Dispose();
+                //pdfViewer1.Document = null;
 
                 ReaderProperties props = string.IsNullOrEmpty(currentPassword)
                     ? new ReaderProperties()
@@ -5344,7 +5531,10 @@ namespace MyPDF
                     ? PdfiumDoc.Load(workingPath)
                     : PdfiumDoc.Load(workingPath, currentPassword);
 
-                pdfViewer1.Document = doc;
+                //pdfViewer1.Document = doc;
+
+                // pdfCustomViewerにPDFを表示
+                pdfCustomViewer1.LoadDocument(doc);
 
                 // 保存との整合性 作業用ファイルのデータを入れる
                 currentSettings = PdfSettingsLoader.LoadPdfSettings(workingPath, originalPath, currentPassword);
@@ -5355,7 +5545,7 @@ namespace MyPDF
                 UpdateContextMenuState();
 
                 // 置換ページの先頭を表示
-                pdfViewer1.Renderer.Page = start - 1;
+                //pdfViewer1.Renderer.Page = start - 1;
 
                 // サムネイル生成
                 pdfThumbnailViewer1.LoadDocument(doc);
@@ -5718,7 +5908,7 @@ namespace MyPDF
 
                                         // pdf.GetNumberOfPages()はページ番号、xyは左下が原点(0,0)で、xは右へ、yは上へ
                                         image.SetFixedPosition(pdf.GetNumberOfPages(), x, y);
-        
+
                                         // 追加
                                         document.Add(image);
 
@@ -5795,7 +5985,10 @@ namespace MyPDF
                             // パスワードなし
                             document = PdfiumDoc.Load(workingPath);
 
-                            pdfViewer1.Document = document;
+                            //pdfViewer1.Document = document;
+
+                            // pdfCustomViewerにPDFを表示
+                            pdfCustomViewer1.LoadDocument(document);
 
                             // 保存との整合性 作業用ファイルのデータを入れる
                             currentSettings = PdfSettingsLoader.LoadPdfSettings(workingPath, originalPath, null);
@@ -5808,7 +6001,7 @@ namespace MyPDF
                             // 自動調整
                             ZoomtoolStripComboBox.SelectedIndex = 0;
 
-                            pdfViewer1.ZoomMode = PdfViewerZoomMode.FitBest;
+                            //pdfViewer1.ZoomMode = PdfViewerZoomMode.FitBest;
 
                             // セキュリティなし
                             canEdit = true;
@@ -5863,8 +6056,8 @@ namespace MyPDF
                 this.Enabled = true;
             }
         }
-
-
+        
+        /*
         // ==============================
         // PdfViewer1右クリックしたとき(挙動が変なので念のため)
         // ==============================
@@ -5876,7 +6069,7 @@ namespace MyPDF
                 contextMenuStrip2.Show(pdfViewer1, e.Location);
             }
         }
-
+        */
 
         // ==============================
         // TreeView(しおりパネル)がリサイズされたら
@@ -5892,11 +6085,18 @@ namespace MyPDF
         private async void ConvImgSetting_Click(object sender, EventArgs e)
         {
             // PDFが開かれていないなら処理しない
-            if (pdfViewer1.Document == null)
+            //if (pdfViewer1.Document == null)
+            //{
+            //    MessageBox.Show("PDFが開かれていません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            //    return;
+            //}
+            // PDFが開かれていないなら処理しない
+            if (pdfCustomViewer1.Document == null)
             {
                 MessageBox.Show("PDFが開かれていません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+
             // PDF設定情報が存在するか確認
             if (currentSettings == null)
             {
@@ -5915,7 +6115,8 @@ namespace MyPDF
             if (sender == ConvImgSetting || sender == ConvImgSetting2)
             {
                 // メニュー or pdfViewer
-                pageText = (pdfViewer1.Renderer.Page + 1).ToString();
+                //pageText = (pdfViewer1.Renderer.Page + 1).ToString();
+                pageText = (pdfCustomViewer1.CurrentPage + 1).ToString();
             }
             else
             {
@@ -5963,9 +6164,14 @@ namespace MyPDF
         // ==============================
         private async Task PdfConvImage(string pageText, string ImgFileName, string saveFolderPath, int ImgDpi, string ImgType, bool isColor)
         {
-
             // PDFが開かれていないなら処理しない
-            if (pdfViewer1.Document == null)
+            //if (pdfViewer1.Document == null)
+            //{
+            //    MessageBox.Show("PDFが開かれていません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            //    return;
+            //}
+            // PDFが開かれていないなら処理しない
+            if (pdfCustomViewer1.Document == null)
             {
                 MessageBox.Show("PDFが開かれていません。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -6026,14 +6232,17 @@ namespace MyPDF
                             });
 
                             // PDFサイズ取得
-                            var size = pdfViewer1.Document.PageSizes[p - 1];
+                            //var size = pdfViewer1.Document.PageSizes[p - 1];
+                            var size = pdfCustomViewer1.Document.PageSizes[p - 1];
+
 
                             // DPIからピクセル計算
                             int width = (int)(size.Width / 72f * ImgDpi);
                             int height = (int)(size.Height / 72f * ImgDpi);
 
                             // PDF → Bitmap
-                            using Bitmap bmp = (Bitmap)pdfViewer1.Document.Render(
+                            //using Bitmap bmp = (Bitmap)pdfViewer1.Document.Render(
+                            using Bitmap bmp = (Bitmap)pdfCustomViewer1.Document.Render(
                                 p - 1,
                                 width,
                                 height,
@@ -6381,9 +6590,11 @@ namespace MyPDF
 
             // もしサムネイルが1つも選択されていない場合は、
             // 現在メインビューアで表示中のページをフォールバックとして取得
-            if (pages.Count == 0 && pdfViewer1.Document != null)
+            //if (pages.Count == 0 && pdfViewer1.Document != null)
+            if (pages.Count == 0 && pdfCustomViewer1.Document != null)
             {
-                pages.Add(pdfViewer1.Renderer.Page + 1);
+                //pages.Add(pdfViewer1.Renderer.Page + 1);
+                pages.Add(pdfCustomViewer1.CurrentPage + 1);
             }
 
             pages.Sort();
@@ -6468,8 +6679,11 @@ namespace MyPDF
         // ==============================
         private void RotatePagesSettingLeft90_Click(object sender, EventArgs e)
         {
+            // サムネイル複数選択状態を保持
+            SaveCurrentSelections();
+            // 選択ページを整える
             string pages = GetSelectedPagesText();
-
+            // 回転処理
             RotatePages(pages, 270);
         }
 
@@ -6478,8 +6692,11 @@ namespace MyPDF
         // ==============================
         private void RotatePagesSettingRight90_Click(object sender, EventArgs e)
         {
+            // サムネイル複数選択状態を保持
+            SaveCurrentSelections();
+            // 選択ページを整える
             string pages = GetSelectedPagesText();
-
+            // 回転処理
             RotatePages(pages, 90);
         }
 
@@ -6488,8 +6705,11 @@ namespace MyPDF
         // ==============================
         private void RotatePagesSetting180_Click(object sender, EventArgs e)
         {
+            // サムネイル複数選択状態を保持
+            SaveCurrentSelections();
+            // 選択ページを整える
             string pages = GetSelectedPagesText();
-
+            // 回転処理
             RotatePages(pages, 180);
         }
 
@@ -6508,7 +6728,10 @@ namespace MyPDF
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
             // PDFが開かれていないなら処理しない
-            if (pdfViewer1.Document == null)
+            //if (pdfViewer1.Document == null)
+            //    return;
+            // PDFが開かれていないなら処理しない
+            if (pdfCustomViewer1.Document == null)
                 return;
 
             if (tabControl1.SelectedTab == tabPage1)
@@ -6523,7 +6746,8 @@ namespace MyPDF
                 pdfThumbnailViewer1.Focus();
 
                 // 表示ページを取得
-                int page = pdfViewer1.Renderer.Page;
+                //int page = pdfViewer1.Renderer.Page;
+                int page = pdfCustomViewer1.CurrentPage + 1;
 
             }
         }
@@ -6539,7 +6763,8 @@ namespace MyPDF
             int latestPage = selectedIndices[selectedIndices.Count - 1];
 
             // 最後に選択したページを格納(ページを表示する)
-            pdfViewer1.Renderer.Page = latestPage;
+            //pdfViewer1.Renderer.Page = latestPage;
+            pdfCustomViewer1.ScrollToPage(latestPage);
             currentThumbnailPage = latestPage;
 
         }
@@ -6550,13 +6775,17 @@ namespace MyPDF
         private void pdfThumbnailViewer1_ThumbnailRightClicked(object? sender, (bool isSuccess, int pageNumber) e)
         {
             // PDFが開かれていないなら処理しない
-            if (pdfViewer1.Document == null)
+            //if (pdfViewer1.Document == null)
+            //    return;
+            // PDFが開かれていないなら処理しない
+            if (pdfCustomViewer1.Document == null)
                 return;
 
             if (e.isSuccess)
             {
                 // サムネイルから正常に取得できた場合
                 thumbnailRightClickPage = e.pageNumber;
+
             }
             else
             {
@@ -6590,6 +6819,24 @@ namespace MyPDF
             MovePdfPage(pageText, targetPage, e.before);
         }
 
+        // ==============================
+        // 現在のサムネイル選択状態（またはメインの現在ページ）を退避する
+        // ==============================
+        private void SaveCurrentSelections()
+        {
+            _savedSelectedIndices.Clear();
 
+            // サムネイルの選択インデックスをそのままコピー
+            foreach (int index in pdfThumbnailViewer1.SelectedIndices)
+            {
+                _savedSelectedIndices.Add(index);
+            }
+
+            // サムネイル未選択時のフォールバック（メイン画面の現在ページを救済）
+            if (_savedSelectedIndices.Count == 0 && pdfCustomViewer1.Document != null)
+            {
+                _savedSelectedIndices.Add(pdfCustomViewer1.CurrentPage);
+            }
+        }
     }
 }

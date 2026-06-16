@@ -26,11 +26,11 @@ namespace MyPDF
         public int RotationAngle { get; private set; }
 
         // 今のページ
-        private int nowPage;
+        //private int nowPage;
         // 総ページ数
         private int maxPage;
 
-        public Form7(int nowPage, int maxPage)
+        public Form7(string pageText, int maxPage)
         {
             InitializeComponent();
 
@@ -40,11 +40,11 @@ namespace MyPDF
             this.MinimumSize = new Size(300, 200);
 
             // 今のページをセット
-            this.nowPage = nowPage;
+           // this.nowPage = pageText;
             // 総ページ数をセット
             this.maxPage = maxPage;
             // 今のページをセット
-            ExtractTxt.Text = nowPage.ToString();
+            ExtractTxt.Text = pageText;
 
             // 総ページ
             TotalPage.Text = "/ " + maxPage.ToString();
