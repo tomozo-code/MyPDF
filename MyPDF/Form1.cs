@@ -34,13 +34,14 @@ using PdfiTextReader = iText.Kernel.Pdf.PdfReader;
 using PdfiumDoc = PdfiumViewer.PdfDocument;
 using SysImage = System.Drawing.Image;
 using SysRectangle = System.Drawing.Rectangle;
+using DrawingPoint = System.Drawing.Point;
 
 // ==============================
 // ライブラリ：iText、PdfiumViewer.Core
 // PDFの閲覧・編集・管理をシンプルに行う
 
 // --- 役割 ---
-// PDF表示 → PdfiumViewer.Core
+// PDF表示 → PdfiumViewer.Core → pdfCustomViewer(ユーザーコントロール:自前)
 // しおり操作 → TreeView
 // サムネイル → PdfThumbnailViewer(ユーザーコントロール:自前)
 // 保存 → iText
@@ -111,6 +112,8 @@ namespace MyPDF
         private bool isOpening = false;
         // 編集可能フラグ(PDFがセキュリティありかチェック用 true:可、false:不可)
         private bool canEdit = true;
+        // サムネイルクリック時の同期フラグ
+        private bool _isSyncing = false;
 
         // PDF設定・セキュリティ
         // 現在読み込んでいるPDFの各種設定（メタデータ・表示設定など）
@@ -365,6 +368,43 @@ namespace MyPDF
             // PDFが開かれていないなら処理しない
             if (pdfCustomViewer1.Document == null) return;
 
+            // マウスがメインビューアの上にあるかどうかを判定
+            // マウスカーソルの位置（画面全体の座標）を、pdfCustomViewer1から見た相対座標に変換
+            DrawingPoint clientMousePos = pdfCustomViewer1.PointToClient(Cursor.Position);
+
+            // マウスがメインビューアの枠内に入っているか
+            bool isMouseOverMainViewer = pdfCustomViewer1.ClientRectangle.Contains(clientMousePos);
+
+            // ユーザーがサムネイル側を「本当に操作中」のときだけガードする
+            // ※マウスがメインビューア上にある（＝ホイールを回そうとしている）なら、フォーカスがあってもガードしない
+            if ((pdfThumbnailViewer1.Focused && !isMouseOverMainViewer) ||
+                (Control.MouseButtons == MouseButtons.Left && pdfThumbnailViewer1.Bounds.Contains(pdfThumbnailViewer1.PointToClient(Cursor.Position))) ||
+                (Control.ModifierKeys & Keys.Shift) == Keys.Shift ||
+                (Control.ModifierKeys & Keys.Control) == Keys.Control)
+            {
+                // テキストボックスの更新だけ行い、サムネイル選択はスルー
+                int currentIdx = pdfCustomViewer1.CurrentPage;
+                NewPagetoolStripTextBox.Text = (currentIdx + 1).ToString();
+                lastPage = currentIdx;
+                return;
+            }
+
+            /*
+            // ユーザーがサムネイル側を操作（クリックやドラッグ）している間、
+            // またはShiftやCtrlで複数選択を頑張っている最中は、タイマーによる強制上書きを「絶対に」させない！
+            if (pdfThumbnailViewer1.Focused ||
+                (Control.MouseButtons == MouseButtons.Left && pdfThumbnailViewer1.Bounds.Contains(pdfThumbnailViewer1.PointToClient(Cursor.Position))) ||
+                (Control.ModifierKeys & Keys.Shift) == Keys.Shift ||
+                (Control.ModifierKeys & Keys.Control) == Keys.Control)
+            {
+                // ユーザーがサムネイルを操作中、またはキーを押している間は、
+                // テキストボックスの更新だけ行い、サムネイルの選択変更（SetSelection）はスルーする
+                int currentIdx = pdfCustomViewer1.CurrentPage;
+                NewPagetoolStripTextBox.Text = (currentIdx + 1).ToString();
+                lastPage = currentIdx;
+                return;
+            }
+            */
 
             // 自作のカスタムビューアから、現在表示中のページ（0始まり）を取得
             int current = pdfCustomViewer1.CurrentPage;
@@ -698,9 +738,27 @@ namespace MyPDF
             // pdfCustomViewerにPDFを表示
             pdfCustomViewer1.LoadDocument(document);
 
+            var pageSizes = pdfCustomViewer1?.Document?.PageSizes;
+            SizeF firstPageSize = pageSizes?[0];
+
             // 自動調整
             ZoomtoolStripComboBox.SelectedIndex = 0;
-            // PDF表示を自動調整に
+
+            // 縦長か横長かを判定
+            if (firstPageSize.Height >= firstPageSize.Width)
+            {
+                // 縦長なら高さに合わせる
+                pdfCustomViewer1?.FitToHeight();
+                ZoomtoolStripComboBox.SelectedIndex = 1;
+            }
+            else
+            {
+                // 横長なら幅に合わせる
+                pdfCustomViewer1?.FitToWidth();
+                ZoomtoolStripComboBox.SelectedIndex = 2;
+            }
+
+
             //pdfViewer1.ZoomMode = PdfViewerZoomMode.FitBest;
             // ページ番号表示
             NewPagetoolStripTextBox.Text = "1";
@@ -1201,6 +1259,11 @@ namespace MyPDF
                         AddOutlineFromNode(pdf, outlines, node);
                     }
 
+                    // メタデータ設定
+                    ApplyMetadataAndViewerSettings(pdf);
+
+                    /*
+
                     // 既存メタデータを完全クリア(info)
                     pdf.GetTrailer().Remove(PdfName.Info);
                     // 既存メタデータを完全クリア(XMP)
@@ -1306,11 +1369,10 @@ namespace MyPDF
                     // PDFにXMP設定
                     pdf.SetXmpMetadata(xmp);
 
-
                     // 表示設定
                     var catalog = pdf.GetCatalog();
                     // 表示モード(しおり表示など設定 アクロバットなどでPDFを開いたときの設定値)
-                    switch (currentSettings.PageMode)
+                    switch (currentSettings?.PageMode)
                     {
                         // パネルは閉じた状態
                         case "UseNone":
@@ -1335,7 +1397,7 @@ namespace MyPDF
                     }
 
                     // ページレイアウト切替(単ページ・見開き等設定 アクロバットなどでPDFを開いたときの設定値)
-                    switch (currentSettings.PageLayout)
+                    switch (currentSettings?.PageLayout)
                     {
                         // 単ページ表示
                         case "SinglePage":
@@ -1364,7 +1426,7 @@ namespace MyPDF
                     var p = pdf.GetPage(page);
 
                     // 初期倍率切替
-                    switch (currentSettings.Zoom)
+                    switch (currentSettings?.Zoom)
                     {
                         // 全体表示
                         case "Fit":
@@ -1389,6 +1451,8 @@ namespace MyPDF
                             break;
                     }
 
+                    */
+
                 }
             });
 
@@ -1401,6 +1465,154 @@ namespace MyPDF
             originalPath = savePath;
 
             return msgFlag;
+        }
+
+        // ==============================
+        // 指定されたPDFドキュメントに、現在のメタデータと表示設定を書き込む
+        // ==============================
+        private void ApplyMetadataAndViewerSettings(ITextDoc pdf)
+        {
+            // 1. 既存メタデータの完全クリア(info)
+            pdf.GetTrailer().Remove(PdfName.Info);
+            // 既存メタデータを完全クリア(XMP)
+            pdf.GetCatalog().Remove(PdfName.Metadata);
+
+            // 新しいinfoを作り直す
+            var info = pdf.GetDocumentInfo();
+
+            // 空対策のローカル関数
+            string Clean(string? s) => string.IsNullOrWhiteSpace(s) ? "" : s.Trim();
+
+            // 設定が読み込まれていない、または新規作成時でnullの場合はデフォルトインスタンスを生成
+            var settings = currentSettings ?? new PdfSettings(); // ※お使いの設定クラス名に合わせてください
+
+            // 各項目をクリーンアップして取得
+            string title = Clean(settings.Title); // タイトル
+            string author = Clean(settings.Author); // 作成者
+            string subject = Clean(settings.Subject); // サブタイトル
+            string keywordsRaw = Clean(settings.Keywords); // キーワード
+            string producer = myName; // PDF変換
+            string appName = myName; // アプリケーション
+
+            // キーワード解析開始
+            var keywordList = keywordsRaw
+                .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(k => k.Trim()) // 前後空白除去
+                .Where(k => !string.IsNullOrEmpty(k)) // 空除去
+                .Distinct() // 重複除去
+                .ToList(); // List化
+
+            // PDF Info（レガシーメタデータ）設定
+            info.SetTitle(title);
+            info.SetAuthor(author);
+            info.SetSubject(subject);
+            info.SetCreator(appName);
+
+
+            // Info（セミコロン区切り）
+            //string keywordsJoined = string.Join("; ", keywordList);
+            //info.SetKeywords(keywordsJoined);
+            //info.SetMoreInfo("Keywords", keywordsJoined);
+
+            //info.SetProducer(producer);
+
+            // XMPメタデータ（モダンメタデータ）生成
+            var xmp = XMPMetaFactory.Create();
+
+            // 念のため完全クリア
+            xmp.DeleteProperty(XMPConst.NS_DC, "subject");
+            xmp.DeleteProperty(XMPConst.NS_DC, "title");
+            xmp.DeleteProperty(XMPConst.NS_DC, "description");
+            xmp.DeleteProperty(XMPConst.NS_DC, "creator");
+
+            xmp.SetLocalizedText(XMPConst.NS_DC, "title", "", "x-default", title);
+            xmp.SetLocalizedText(XMPConst.NS_DC, "description", "", "x-default", subject);
+            xmp.AppendArrayItem(XMPConst.NS_DC, "creator", new PropertyOptions(PropertyOptions.ARRAY_ORDERED), author, null);
+
+            // Keywordsクリアと再設定
+            //info.SetKeywords("");
+            pdf.GetTrailer().GetAsDictionary(PdfName.Info)?.Remove(PdfName.Keywords);
+
+            string keywordsJoined = string.Join("; ", keywordList);
+
+            // Info
+            //info.SetKeywords(keywordsJoined);
+
+            // subject完全削除
+            while (xmp.DoesPropertyExist(XMPConst.NS_DC, "subject"))
+            {
+                // 削除
+                xmp.DeleteProperty(XMPConst.NS_DC, "subject");
+            }
+
+            // キーワード追加
+            if (keywordList.Count > 0)
+            {
+                var opt = new PropertyOptions(PropertyOptions.ARRAY);
+                // キーワード1個ずつ
+                foreach (var k in keywordList)
+                {
+                    // XMPへ追加
+                    xmp.AppendArrayItem(XMPConst.NS_DC, "subject", opt, k, null);
+                }
+            }
+            // PDF情報
+            xmp.SetProperty(XMPConst.NS_PDF, "Producer", producer);
+            xmp.SetProperty(XMPConst.NS_XMP, "CreatorTool", appName);
+            // PDFにXMP設定
+            pdf.SetXmpMetadata(xmp);
+
+            // --- ここから表示設定 (Catalog) ---
+            var catalog = pdf.GetCatalog();
+
+            // 表示モード
+            switch (settings.PageMode)
+            {
+                case "UseNone": catalog.SetPageMode(PdfName.UseNone); break;
+                case "UseOutlines": catalog.SetPageMode(PdfName.UseOutlines); break;
+                case "UseThumbs": catalog.SetPageMode(PdfName.UseThumbs); break;
+                case "UseAttachments": catalog.SetPageMode(PdfName.UseAttachments); break;
+                case "UseOC": catalog.SetPageMode(PdfName.UseOC); break;
+                default: catalog.SetPageMode(PdfName.UseNone); break;
+            }
+
+            // ページレイアウト
+            switch (settings.PageLayout)
+            {
+                case "SinglePage": catalog.SetPageLayout(PdfName.SinglePage); break;
+                case "OneColumn": catalog.SetPageLayout(PdfName.OneColumn); break;
+                case "TwoColumnLeft": catalog.SetPageLayout(PdfName.TwoColumnLeft); break;
+                case "TwoPageLeft": catalog.SetPageLayout(PdfName.TwoPageLeft); break;
+                default: catalog.SetPageLayout(PdfName.SinglePage); break;
+            }
+
+            // 初期倍率と開始ページ
+            int maxPages = pdf.GetNumberOfPages();
+            if (maxPages > 0)
+            {
+                int openPage = Math.Max(1, Math.Min(settings.OpenPage, maxPages));
+                var p = pdf.GetPage(openPage);
+
+                switch (settings.Zoom)
+                {
+                    case "Fit":
+                        catalog.SetOpenAction(PdfExplicitDestination.CreateFit(p));
+                        break;
+                    case "FitH":
+                        catalog.SetOpenAction(PdfExplicitDestination.CreateFitH(p, p.GetPageSize().GetTop()));
+                        break;
+                    case "FitV":
+                        catalog.SetOpenAction(PdfExplicitDestination.CreateFitV(p, 0));
+                        break;
+                    case "XYZ":
+                        float scale = settings.ZoomValue ?? 1.0f;
+                        catalog.SetOpenAction(PdfExplicitDestination.CreateXYZ(p, 0, p.GetPageSize().GetTop(), scale));
+                        break;
+                    default:
+                        catalog.SetOpenAction(PdfExplicitDestination.CreateFit(p));
+                        break;
+                }
+            }
         }
 
         // ==============================
@@ -2032,7 +2244,7 @@ namespace MyPDF
                 // PDF開いてる？
                 //if (pdfViewer1.Document != null)
                 //{
-                    // 現在表示ページ取得(ゼロ始まりなので +1 する)
+                // 現在表示ページ取得(ゼロ始まりなので +1 する)
                 //    currentPage = pdfViewer1.Renderer.Page + 1;
                 //}
                 // BookmarkInfo初期化開始
@@ -3573,6 +3785,18 @@ namespace MyPDF
 
                 //int currentPage = pdfViewer1.Renderer.Page;
 
+                // 回転後にどこのサムネイルを選択するか、あらかじめターゲットを決めておく
+                // 複数選択されている場合もあるので、一番若い（先頭の）選択インデックスを基準にする
+                int nextSelectIndex = 0;
+                if (pdfThumbnailViewer1.SelectedIndices.Count > 0)
+                {
+                    // 選択されている最小のインデックス（0始まり）を取得
+                    int firstSelectedIdx = pdfThumbnailViewer1.SelectedIndices.Min();
+
+                    // リロード後はページをセットしておく
+                    nextSelectIndex = firstSelectedIdx;
+                }
+
                 // サムネイルクリア
                 pdfThumbnailViewer1.LoadDocument(null);
                 // pdfCustomViewer解放
@@ -3631,8 +3855,33 @@ namespace MyPDF
                 // 自動で選択される1ページ目のサムネイルをリセット
                 pdfThumbnailViewer1.ClearSelectionWithoutEvent();
 
+                int SelectedIdx = 0;
+                if (_savedSelectedIndices != null && _savedSelectedIndices.Count > 0)
+                {
+                    // 選択された最初のページ（インデックス）を取得
+                    SelectedIdx = _savedSelectedIndices[0];
+                }
+                else
+                {
+                    // サムネイル未選択（起動直後など）なら、現在の表示ページを基準にする
+                    SelectedIdx = pdfCustomViewer1.CurrentPage;
+                }
+
+                // メインビューアをそのページへスクロールさせる場合
+                pdfCustomViewer1.ScrollToPage(SelectedIdx);
+
+                if (doc.PageCount > 0)
+                {
+                    // ターゲットがはみ出る場合の安全ガード
+                    int finalSelectIdx = Math.Min(nextSelectIndex, doc.PageCount - 1);
+
+                    // サムネイル側の公開メソッドを呼び出して選択インデックスを上書き
+                    pdfThumbnailViewer1.SetSelection(finalSelectIdx);
+
+                }
+
                 // リロード完了後、退避しておいた複数選択状態を復元する
-                if (doc.PageCount > 0 && _savedSelectedIndices.Count > 0)
+                if (doc.PageCount > 0 && _savedSelectedIndices?.Count > 0)
                 {
                     foreach (int selectIdx in _savedSelectedIndices)
                     {
@@ -4177,6 +4426,9 @@ namespace MyPDF
                         {
                             AddOutlineFromNode(destPdf, destOutlines, node);
                         }
+
+                        // メタデータ設定
+                        ApplyMetadataAndViewerSettings(destPdf);
                     }
 
                 });
@@ -4650,16 +4902,20 @@ namespace MyPDF
                 // サムネイル生成
                 pdfThumbnailViewer1.LoadDocument(doc);
 
+                pdfCustomViewer1.ScrollToPage(insertPage - 1);
+                // サムネイル側の公開メソッドを呼び出して選択インデックスを上書き
+                pdfThumbnailViewer1.SetSelection(insertPage - 1);
+
                 // リロード完了後、計算しておいたターゲットページを強制選択＆スクロール追従させる
-                if (doc.PageCount > 0)
-                {
-                    // 挿入よりターゲットがはみ出る場合の安全ガード
-                    int finalSelectIdx = Math.Min(targetPage, doc.PageCount - 1);
+                //if (doc.PageCount > 0)
+                //{
+                // 挿入よりターゲットがはみ出る場合の安全ガード
+                //    int finalSelectIdx = Math.Min(targetPage, doc.PageCount - 1);
 
-                    // サムネイル側の公開メソッドを呼び出して選択インデックスを上書き
-                    pdfThumbnailViewer1.SetSelection(finalSelectIdx);
+                // サムネイル側の公開メソッドを呼び出して選択インデックスを上書き
+                //    pdfThumbnailViewer1.SetSelection(finalSelectIdx);
 
-                }
+                //}
 
                 // 未保存フラグON
                 isDirty = true;
@@ -5219,6 +5475,10 @@ namespace MyPDF
                 // 自動で選択される1ページ目のサムネイルをリセット
                 pdfThumbnailViewer1.ClearSelectionWithoutEvent();
 
+                // サムネイル側の公開メソッドを呼び出して選択インデックスを上書き
+                pdfThumbnailViewer1.SetSelection(insertIndex - 1);
+
+
                 if (doc.PageCount > 0 && movePages.Count > 0)
                 {
                     // 移動元となった各ページ（1始まり）が、移動後に何番になったかを調べて復元
@@ -5239,11 +5499,6 @@ namespace MyPDF
                         }
                     }
 
-                    // 【オプション】移動後の先頭ページにメインビューアもスクロール連動させる場合
-                    if (pageMap.TryGetValue(movePages[0], out int firstNewPageNum))
-                    {
-                        pdfCustomViewer1.ScrollToPage(firstNewPageNum - 1);
-                    }
                 }
 
                 // 未保存フラグON
@@ -5364,7 +5619,7 @@ namespace MyPDF
                     else
                     {
                         // サムネイル
-                        pageText = thumbnailRightClickPage.ToString();
+                        pageText = GetSelectedPagesText();
                     }
 
                     // Form12起動
@@ -5546,7 +5801,7 @@ namespace MyPDF
 
                 // 置換ページの先頭を表示
                 //pdfViewer1.Renderer.Page = start - 1;
-
+                
                 // サムネイル生成
                 pdfThumbnailViewer1.LoadDocument(doc);
 
@@ -5554,7 +5809,7 @@ namespace MyPDF
                 if (doc.PageCount > 0)
                 {
                     // 置換にてターゲットがはみ出る場合の安全ガード
-                    int finalSelectIdx = Math.Min(start, doc.PageCount - 1);
+                    int finalSelectIdx = Math.Min(start - 1, doc.PageCount - 1);
 
                     // サムネイル側の公開メソッドを呼び出して選択インデックスを上書き
                     pdfThumbnailViewer1.SetSelection(finalSelectIdx);
@@ -5948,6 +6203,9 @@ namespace MyPDF
                                         });
                                         //pageNum++;
                                     }
+
+                                    // メタデータ設定
+                                    ApplyMetadataAndViewerSettings(pdf);
                                 }
                                 finally
                                 {
@@ -6056,7 +6314,7 @@ namespace MyPDF
                 this.Enabled = true;
             }
         }
-        
+
         /*
         // ==============================
         // PdfViewer1右クリックしたとき(挙動が変なので念のため)
@@ -6759,13 +7017,24 @@ namespace MyPDF
         {
             if (selectedIndices.Count == 0) return;
 
-            // 複数選択されている場合、最後に選択された（追加された）ページをメインビューアで表示する
-            int latestPage = selectedIndices[selectedIndices.Count - 1];
+            // プログラムからの強制操作が始まるのでロックをかける！
+            _isSyncing = true;
 
-            // 最後に選択したページを格納(ページを表示する)
-            //pdfViewer1.Renderer.Page = latestPage;
-            pdfCustomViewer1.ScrollToPage(latestPage);
-            currentThumbnailPage = latestPage;
+            try
+            {
+                // 複数選択されている場合、最後に選択された（追加された）ページをメインビューアで表示する
+                int latestPage = selectedIndices[selectedIndices.Count - 1];
+
+                // 最後に選択したページを格納(ページを表示する)
+                //pdfViewer1.Renderer.Page = latestPage;
+                pdfCustomViewer1.ScrollToPage(latestPage);
+                currentThumbnailPage = latestPage;
+            }
+            finally
+            {
+                // スクロール命令が完全に終わったら、ロックを解除する
+                _isSyncing = false;
+            }
 
         }
 
