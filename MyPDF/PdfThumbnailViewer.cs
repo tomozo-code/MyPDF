@@ -220,7 +220,7 @@ namespace MyPDF
         {
             // PDFがないなら戻る
             if (_pdfDocument == null) return;
-            // 先ほど作った関数を呼び出し、現在の最新の横列数を取得
+            // レイアウト・列数の自動計算関数を呼び出し、現在の最新の横列数を取得
             int cols = GetColumnCount();
             // 総ページ数を列数で割り算(例：11ページ÷3列＝3.66 → 切り上げて 4行）
             int rows = (int)Math.Ceiling((double)PageCount / cols);
