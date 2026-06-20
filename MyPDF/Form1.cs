@@ -22,11 +22,12 @@ using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Xml.Linq;
-
+using static MyPDF.PdfCustomViewer;
 //using static System.Net.Mime.MediaTypeNames;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 //using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using DrawingColor = System.Drawing.Color;
+using DrawingPoint = System.Drawing.Point;
 using IOPath = System.IO.Path;
 using ITextDoc = iText.Kernel.Pdf.PdfDocument;
 using ITextImage = iText.Layout.Element.Image;
@@ -34,7 +35,6 @@ using PdfiTextReader = iText.Kernel.Pdf.PdfReader;
 using PdfiumDoc = PdfiumViewer.PdfDocument;
 using SysImage = System.Drawing.Image;
 using SysRectangle = System.Drawing.Rectangle;
-using DrawingPoint = System.Drawing.Point;
 
 // ==============================
 // ライブラリ：iText、PdfiumViewer.Core
@@ -157,8 +157,6 @@ namespace MyPDF
         // サムネイル複数選択リスト
         private List<int> _savedSelectedIndices = new List<int>();
 
-
-
         // PDF画像変換用
         public enum SaveConflictMode
         {
@@ -196,7 +194,7 @@ namespace MyPDF
             InitializeComponent();
 
             // フォームサイズ
-            this.Width = 900;
+            this.Width = 1000;
             this.Height = 600;
             this.MinimumSize = new Size(400, 400);
 
@@ -207,6 +205,7 @@ namespace MyPDF
 
             splitContainer1.Dock = DockStyle.Fill;
             splitContainer1.SplitterDistance = 350;
+            ViewSelect.Enabled = false;
 
             //pdfViewer1.Dock = DockStyle.Fill;
             tabControl1.Dock = DockStyle.Fill;
@@ -224,7 +223,11 @@ namespace MyPDF
             panel2.Visible = false;
             panel3.Visible = false;
             panel4.Visible = false;
+            //PageEditMenu.Visible = false;
+            //ShioriMenu.Visible = false;
 
+            ShioriMenu.Enabled = false;
+            PageEditMenu.Enabled = false;
 
             //splitter1.Visible = false;
 
@@ -310,7 +313,8 @@ namespace MyPDF
             ExportShioriMenu.ShortcutKeys = Keys.Control | Keys.E;
             // 指定して回転
             //RotatePagesSetting.ShortcutKeys = Keys.Shift | Keys.Control | Keys.R;
-            RotatePagesSetting2.ShortcutKeys = Keys.Shift | Keys.Control | Keys.R;
+            //RotatePagesSetting2.ShortcutKeys = Keys.Shift | Keys.Control | Keys.R;
+            PageDetailesRotate2.ShortcutKeys = Keys.Shift | Keys.Control | Keys.R;
             // 移動
             //PageMove.ShortcutKeys = Keys.Shift | Keys.Control | Keys.M;
             PageMove2.ShortcutKeys = Keys.Shift | Keys.Control | Keys.M;
@@ -322,10 +326,12 @@ namespace MyPDF
             ReplacementMenu2.ShortcutKeys = Keys.Shift | Keys.Control | Keys.K;
             // 指定して抽出
             //PageExtractSetting.ShortcutKeys = Keys.Shift | Keys.Control | Keys.X;
-            PageExtractSetting2.ShortcutKeys = Keys.Shift | Keys.Control | Keys.X;
+            //PageExtractSetting2.ShortcutKeys = Keys.Shift | Keys.Control | Keys.X;
+            SelectPageExtract2.ShortcutKeys = Keys.Shift | Keys.Control | Keys.X;
             // 指定して削除
             //PageDeleteSetting.ShortcutKeys = Keys.Shift | Keys.Control | Keys.D;
-            PageDeleteSetting2.ShortcutKeys = Keys.Shift | Keys.Control | Keys.D;
+            //PageDeleteSetting2.ShortcutKeys = Keys.Shift | Keys.Control | Keys.D;
+            SelectPageDel2.ShortcutKeys = Keys.Shift | Keys.Control | Keys.D;
             // PDFを画像に変換
             //ConvImgSetting.ShortcutKeys = Keys.Shift | Keys.Control | Keys.G;
             ConvImgSetting2.ShortcutKeys = Keys.Shift | Keys.Control | Keys.G;
@@ -389,23 +395,6 @@ namespace MyPDF
                 return;
             }
 
-            /*
-            // ユーザーがサムネイル側を操作（クリックやドラッグ）している間、
-            // またはShiftやCtrlで複数選択を頑張っている最中は、タイマーによる強制上書きを「絶対に」させない！
-            if (pdfThumbnailViewer1.Focused ||
-                (Control.MouseButtons == MouseButtons.Left && pdfThumbnailViewer1.Bounds.Contains(pdfThumbnailViewer1.PointToClient(Cursor.Position))) ||
-                (Control.ModifierKeys & Keys.Shift) == Keys.Shift ||
-                (Control.ModifierKeys & Keys.Control) == Keys.Control)
-            {
-                // ユーザーがサムネイルを操作中、またはキーを押している間は、
-                // テキストボックスの更新だけ行い、サムネイルの選択変更（SetSelection）はスルーする
-                int currentIdx = pdfCustomViewer1.CurrentPage;
-                NewPagetoolStripTextBox.Text = (currentIdx + 1).ToString();
-                lastPage = currentIdx;
-                return;
-            }
-            */
-
             // 自作のカスタムビューアから、現在表示中のページ（0始まり）を取得
             int current = pdfCustomViewer1.CurrentPage;
 
@@ -427,33 +416,6 @@ namespace MyPDF
                 // NewPagetoolStripTextBoxにページ番号を表示
                 NewPagetoolStripTextBox.Text = (current + 1).ToString();
             }
-
-            /*
-
-            // 現在ページ取得（0始まり）
-            int current = pdfViewer1.Renderer.Page;
-
-            // ページ変わった時だけ更新
-            if (current != lastPage)
-            {
-                lastPage = current;
-
-                currentThumbnailPage = current;
-
-                if (tabControl1.SelectedTab == tabPage2)
-                {
-                    // 無限ループ（チャタリング）防止ガード
-                    // サムネイル側がまだそのページを選択していない場合のみ、選択命令を送る
-                    if (!pdfThumbnailViewer1.SelectedIndices.Contains(current))
-                    {
-                        pdfThumbnailViewer1.SetSelection(current);
-                    }
-                }
-                // NewPagetoolStripTextBoxにページ番号を表示
-                NewPagetoolStripTextBox.Text = (current + 1).ToString();
-            }
-
-            */
 
         }
 
@@ -738,6 +700,40 @@ namespace MyPDF
             // pdfCustomViewerにPDFを表示
             pdfCustomViewer1.LoadDocument(document);
 
+            // PDFの縦横方向に応じた表示
+            DisplaySize();
+
+            //pdfViewer1.ZoomMode = PdfViewerZoomMode.FitBest;
+            // ページ番号表示
+            NewPagetoolStripTextBox.Text = "1";
+            // サムネイル生成
+            pdfThumbnailViewer1.LoadDocument(document);
+
+            if (tabControl1.SelectedTab == tabPage1)
+            {
+                ShioriMenu.Enabled = true;
+                PageEditMenu.Enabled = false;
+
+                // しおりにフォーカス
+                treeView1.Focus();
+            }
+
+            if (tabControl1.SelectedTab == tabPage2)
+            {
+                ShioriMenu.Enabled = false;
+                PageEditMenu.Enabled = true;
+
+                // サムネイルにフォーカス
+                pdfThumbnailViewer1.Focus();
+
+            }
+        }
+
+        // ==============================
+        // PDFの縦横方向に応じた表示
+        // ==============================
+        private void DisplaySize()
+        {
             var pageSizes = pdfCustomViewer1?.Document?.PageSizes;
             SizeF firstPageSize = pageSizes?[0];
 
@@ -758,12 +754,6 @@ namespace MyPDF
                 ZoomtoolStripComboBox.SelectedIndex = 2;
             }
 
-
-            //pdfViewer1.ZoomMode = PdfViewerZoomMode.FitBest;
-            // ページ番号表示
-            NewPagetoolStripTextBox.Text = "1";
-            // サムネイル生成
-            pdfThumbnailViewer1.LoadDocument(document);
         }
 
         // ==============================
@@ -1980,6 +1970,10 @@ namespace MyPDF
             // サムネイルドラッグ＆ドロップ
             pdfThumbnailViewer1.AllowDrop = false;
 
+            // 表示方法切り替え
+            ViewSelect.Enabled = false;
+
+
             // 移動
             PageMove.Enabled = false;
             PageMove2.Enabled = false;
@@ -2003,6 +1997,7 @@ namespace MyPDF
             // 回転
             RotatePagesSetting.Enabled = false;
             RotatePagesSetting2.Enabled = false;
+            RotatePagesSetting3.Enabled = false;
             RotatePagesSettingLeft90.Enabled = false;
             RotatePagesSettingRight90.Enabled = false;
             RotatePagesSetting180.Enabled = false;
@@ -2106,6 +2101,7 @@ namespace MyPDF
                 // 回転
                 RotatePagesSetting.Enabled = false;
                 RotatePagesSetting2.Enabled = false;
+                RotatePagesSetting3.Enabled = false;
                 RotatePagesSettingLeft90.Enabled = false;
                 RotatePagesSettingRight90.Enabled = false;
                 RotatePagesSetting180.Enabled = false;
@@ -2186,6 +2182,7 @@ namespace MyPDF
                 // 回転
                 RotatePagesSetting.Enabled = true;
                 RotatePagesSetting2.Enabled = true;
+                RotatePagesSetting3.Enabled = true;
                 RotatePagesSettingLeft90.Enabled = true;
                 RotatePagesSettingRight90.Enabled = true;
                 RotatePagesSetting180.Enabled = true;
@@ -2215,6 +2212,8 @@ namespace MyPDF
             ZoomtoolStripComboBox.Enabled = true;
             // 閉じる
             CloseMenu.Enabled = true;
+            // 表示方法切り替え
+            ViewSelect.Enabled = true;
         }
 
         // ==============================
@@ -3238,10 +3237,11 @@ namespace MyPDF
 
             switch (selectedIndex)
             {
-                // 自動調整（今回は幅合わせ、または100%などお好みの標準挙動を割り当てます）
+                // 自動調整
                 case 0:
                     // カスタム側：ひとまず100%（1.0f）にする例（またはFitToWidthでもOK）
-                    pdfCustomViewer1.Zoom = 1.0f;
+                    //pdfCustomViewer1.Zoom = 1.0f;
+                    pdfCustomViewer1.AutoFit();
                     break;
 
                 // 高さに合わせる
@@ -3874,7 +3874,6 @@ namespace MyPDF
                 {
                     // ターゲットがはみ出る場合の安全ガード
                     int finalSelectIdx = Math.Min(nextSelectIndex, doc.PageCount - 1);
-
                     // サムネイル側の公開メソッドを呼び出して選択インデックスを上書き
                     pdfThumbnailViewer1.SetSelection(finalSelectIdx);
 
@@ -3893,6 +3892,9 @@ namespace MyPDF
                         }
                     }
                 }
+
+                // PDFの縦横方向に応じた表示
+                DisplaySize();
 
                 // 未保存フラグON
                 isDirty = true;
@@ -4066,8 +4068,11 @@ namespace MyPDF
 
                     // サムネイル側の公開メソッドを呼び出して選択インデックスを上書き
                     pdfThumbnailViewer1.SetSelection(finalSelectIdx);
-
+                    pdfCustomViewer1.ScrollToPage(finalSelectIdx);
                 }
+
+                // PDFの縦横方向に応じた表示
+                DisplaySize();
 
                 // 未保存フラグON
                 isDirty = true;
@@ -4089,13 +4094,16 @@ namespace MyPDF
         // ==============================
         private void AdjustBookmarksAfterDelete(TreeNodeCollection nodes, List<int> deletedPages)
         {
+            // 削除したページ番号
             deletedPages = deletedPages
-                .Distinct()
-                .OrderBy(x => x)
+                .Distinct() // 重複ページは1つにまとめる
+                .OrderBy(x => x) // 昇順に並び替え
                 .ToList();
 
+            // しおりリストの後ろから処理
             for (int i = nodes.Count - 1; i >= 0; i--)
             {
+                // しおりページ補正2
                 AdjustNodeAfterDelete(nodes[i], deletedPages);
 
             }
@@ -4110,6 +4118,7 @@ namespace MyPDF
             // 先に子を処理
             for (int i = node.Nodes.Count - 1; i >= 0; i--)
             {
+                // 再帰呼び出し
                 AdjustNodeAfterDelete(node.Nodes[i], deletedPages);
             }
 
@@ -4254,6 +4263,10 @@ namespace MyPDF
 
             // 作業用ファイルを破棄(前回PDFの tempファイル削除)
             CleanupWorkingFile();
+
+            ShioriMenu.Enabled = false;
+            PageEditMenu.Enabled = false;
+            ViewSelect.Enabled = false;
 
             // 状態リセット
             originalPath = "";
@@ -4601,17 +4614,17 @@ namespace MyPDF
             // どこから呼ばれたか
             string pageText;
 
-            if (sender == PageExtractSetting || sender == PageExtractSetting2)
-            {
-                // メニュー or pdfViewer
-                //pageText = (pdfViewer1.Renderer.Page + 1).ToString();
-                pageText = (pdfCustomViewer1.CurrentPage + 1).ToString();
-            }
-            else
-            {
-                // サムネイル
-                pageText = GetSelectedPagesText();
-            }
+            //if (sender == PageExtractSetting || sender == PageExtractSetting2)
+            //{
+            // メニュー or pdfViewer
+            //pageText = (pdfViewer1.Renderer.Page + 1).ToString();
+            //    pageText = (pdfCustomViewer1.CurrentPage + 1).ToString();
+            //}
+            //else
+            //{
+            // サムネイル
+            pageText = GetSelectedPagesText();
+            //}
 
             // Form9起動
             using (var f = new Form9(pageText, currentSettings.TotalPage))
@@ -5327,17 +5340,17 @@ namespace MyPDF
             // どこから呼ばれたか
             string pageText;
 
-            if (sender == PageMove || sender == PageMove2)
-            {
-                // メニュー or pdfViewer
-                //pageText = (pdfViewer1.Renderer.Page + 1).ToString();
-                pageText = (pdfCustomViewer1.CurrentPage + 1).ToString();
-            }
-            else
-            {
-                // サムネイル
-                pageText = GetSelectedPagesText();
-            }
+            //if (sender == PageMove || sender == PageMove2)
+            //{
+            // メニュー or pdfViewer
+            //pageText = (pdfViewer1.Renderer.Page + 1).ToString();
+            //    pageText = (pdfCustomViewer1.CurrentPage + 1).ToString();
+            //}
+            //else
+            //{
+            // サムネイル
+            pageText = GetSelectedPagesText();
+            //}
 
             // Form11起動
             using (var f = new Form11(pageText, currentSettings.TotalPage))
@@ -5610,17 +5623,17 @@ namespace MyPDF
                     // どこから呼ばれたか
                     string pageText;
 
-                    if (sender == ReplacementMenu || sender == ReplacementMenu2)
-                    {
-                        // メニュー or pdfViewer
-                        //pageText = (pdfViewer1.Renderer.Page + 1).ToString();
-                        pageText = (pdfCustomViewer1.CurrentPage + 1).ToString();
-                    }
-                    else
-                    {
-                        // サムネイル
-                        pageText = GetSelectedPagesText();
-                    }
+                    //if (sender == ReplacementMenu || sender == ReplacementMenu2)
+                    //{
+                    // メニュー or pdfViewer
+                    //pageText = (pdfViewer1.Renderer.Page + 1).ToString();
+                    //    pageText = (pdfCustomViewer1.CurrentPage + 1).ToString();
+                    //}
+                    //else
+                    //{
+                    // サムネイル
+                    pageText = GetSelectedPagesText();
+                    //}
 
                     // Form12起動
                     using (var f = new Form12(currentSettings.PdfFileName ?? "", replacementPath, pageText, currentSettings.TotalPage, InsTotalPages))
@@ -5801,7 +5814,7 @@ namespace MyPDF
 
                 // 置換ページの先頭を表示
                 //pdfViewer1.Renderer.Page = start - 1;
-                
+
                 // サムネイル生成
                 pdfThumbnailViewer1.LoadDocument(doc);
 
@@ -6972,7 +6985,7 @@ namespace MyPDF
         }
 
         // ==============================
-        // サムネイルを選択し抽出処理(頃合いを見て消す)
+        // サムネイルを選択し抽出処理
         // ==============================
         private async void PageExtractSetting3_Click(object sender, EventArgs e)
         {
@@ -6994,18 +7007,24 @@ namespace MyPDF
 
             if (tabControl1.SelectedTab == tabPage1)
             {
+                ShioriMenu.Enabled = true;
+                PageEditMenu.Enabled = false;
+
                 // しおりにフォーカス
                 treeView1.Focus();
             }
 
             if (tabControl1.SelectedTab == tabPage2)
             {
+                ShioriMenu.Enabled = false;
+                PageEditMenu.Enabled = true;
+
                 // サムネイルにフォーカス
                 pdfThumbnailViewer1.Focus();
 
                 // 表示ページを取得
                 //int page = pdfViewer1.Renderer.Page;
-                int page = pdfCustomViewer1.CurrentPage + 1;
+                //int page = pdfCustomViewer1.CurrentPage + 1;
 
             }
         }
@@ -7106,6 +7125,40 @@ namespace MyPDF
             {
                 _savedSelectedIndices.Add(pdfCustomViewer1.CurrentPage);
             }
+        }
+
+        // ==============================
+        // 連続スクロールと1ページずつ表示の切り替え
+        // ==============================
+        private void ViewSelect_Click(object sender, EventArgs e)
+        {
+            if (ViewSelect.Checked)
+            {
+                // 連続スクロール表示にする
+                pdfCustomViewer1.ViewMode = PdfCustomViewer.PdfViewMode.Continuous;
+                ViewSelect.Text = "連続スクロール表示をOFFにする";
+            }
+            else
+            {
+                // 1ページずつの表示にする
+                pdfCustomViewer1.ViewMode = PdfCustomViewer.PdfViewMode.SinglePage;
+                ViewSelect.Text = "連続スクロール表示をONにする";
+            }
+
+            // 数値チェック
+            if (!int.TryParse(NewPagetoolStripTextBox.Text, out int page))
+                return;
+
+            // ページ範囲チェック
+            int maxPage = currentSettings?.TotalPage ?? 0;
+
+            // ページ範囲外なら戻る
+            if (page < 1 || page > maxPage)
+                return;
+
+            // ジャンプ
+            JumpToPage(page);
+
         }
     }
 }

@@ -48,8 +48,16 @@
             PageInsert2 = new ToolStripMenuItem();
             ReplacementMenu2 = new ToolStripMenuItem();
             PageExtractSetting2 = new ToolStripMenuItem();
+            SelectPageExtract2 = new ToolStripMenuItem();
+            PageDetailesExtract2 = new ToolStripMenuItem();
             RotatePagesSetting2 = new ToolStripMenuItem();
+            RotatePagesSettingLeft902 = new ToolStripMenuItem();
+            RotatePagesSettingRight902 = new ToolStripMenuItem();
+            RotatePagesSetting1802 = new ToolStripMenuItem();
+            PageDetailesRotate2 = new ToolStripMenuItem();
             PageDeleteSetting2 = new ToolStripMenuItem();
+            SelectPageDel2 = new ToolStripMenuItem();
+            PageDetailesDel2 = new ToolStripMenuItem();
             ConvImgSetting2 = new ToolStripMenuItem();
             contextMenuStrip1 = new ContextMenuStrip(components);
             AddShioriToolStripMenuItem = new ToolStripMenuItem();
@@ -101,10 +109,16 @@
             PageInsert3 = new ToolStripMenuItem();
             ReplacementMenu3 = new ToolStripMenuItem();
             PageExtractSetting3 = new ToolStripMenuItem();
+            SelectPageExtract3 = new ToolStripMenuItem();
+            PageDetailesExtract3 = new ToolStripMenuItem();
+            RotatePagesSetting3 = new ToolStripMenuItem();
             RotatePagesSettingLeft90 = new ToolStripMenuItem();
             RotatePagesSettingRight90 = new ToolStripMenuItem();
             RotatePagesSetting180 = new ToolStripMenuItem();
+            PageDetailesRotate3 = new ToolStripMenuItem();
             PageDeleteSetting3 = new ToolStripMenuItem();
+            SelectPageDel3 = new ToolStripMenuItem();
+            PageDetailesDel3 = new ToolStripMenuItem();
             ConvImgSetting3 = new ToolStripMenuItem();
             imageList2 = new ImageList(components);
             treeToolTip = new ToolTip(components);
@@ -136,6 +150,7 @@
             ZoomtoolStripComboBox = new ToolStripComboBox();
             toolStripSeparator3 = new ToolStripSeparator();
             toolStrip1 = new ToolStrip();
+            ViewSelect = new ToolStripButton();
             panel2 = new Panel();
             splitContainer1 = new SplitContainer();
             pdfCustomViewer1 = new PdfCustomViewer();
@@ -164,7 +179,7 @@
             statusStrip1.Location = new Point(0, 618);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Padding = new Padding(1, 0, 16, 0);
-            statusStrip1.Size = new Size(1035, 26);
+            statusStrip1.Size = new Size(1206, 26);
             statusStrip1.TabIndex = 1;
             statusStrip1.Text = "statusStrip1";
             // 
@@ -303,7 +318,7 @@
             // 
             PageMove2.Enabled = false;
             PageMove2.Name = "PageMove2";
-            PageMove2.Size = new Size(174, 26);
+            PageMove2.Size = new Size(180, 26);
             PageMove2.Text = "移動(&M)...";
             PageMove2.ToolTipText = "ページを指定して移動します";
             PageMove2.Click += PageMove_Click;
@@ -314,7 +329,7 @@
             // 
             PageInsert2.Enabled = false;
             PageInsert2.Name = "PageInsert2";
-            PageInsert2.Size = new Size(174, 26);
+            PageInsert2.Size = new Size(180, 26);
             PageInsert2.Text = "挿入(&I)...";
             PageInsert2.ToolTipText = "ファイルからページを挿入します";
             PageInsert2.Click += PageInsert_Click;
@@ -325,7 +340,7 @@
             // 
             ReplacementMenu2.Enabled = false;
             ReplacementMenu2.Name = "ReplacementMenu2";
-            ReplacementMenu2.Size = new Size(174, 26);
+            ReplacementMenu2.Size = new Size(180, 26);
             ReplacementMenu2.Text = "置換(&K)...";
             ReplacementMenu2.ToolTipText = "ファイルからページを置換します";
             ReplacementMenu2.Click += ReplacementMenu_Click;
@@ -334,42 +349,123 @@
             // 
             // PageExtractSetting2
             // 
+            PageExtractSetting2.DropDownItems.AddRange(new ToolStripItem[] { SelectPageExtract2, PageDetailesExtract2 });
             PageExtractSetting2.Enabled = false;
             PageExtractSetting2.Name = "PageExtractSetting2";
-            PageExtractSetting2.Size = new Size(174, 26);
-            PageExtractSetting2.Text = "抽出(&X)...";
-            PageExtractSetting2.ToolTipText = "ページを指定して抽出します";
-            PageExtractSetting2.Click += PageExtractSetting_Click;
+            PageExtractSetting2.Size = new Size(180, 26);
+            PageExtractSetting2.Text = "抽出(&X)";
+            PageExtractSetting2.ToolTipText = "ページを抽出します";
             PageExtractSetting2.MouseEnter += menuStrip1_MouseEnter;
             PageExtractSetting2.MouseLeave += menuStrip1_MouseLeave;
             // 
+            // SelectPageExtract2
+            // 
+            SelectPageExtract2.Name = "SelectPageExtract2";
+            SelectPageExtract2.Size = new Size(216, 26);
+            SelectPageExtract2.Text = "選択したページを抽出";
+            SelectPageExtract2.ToolTipText = "選択したページを抽出します";
+            SelectPageExtract2.Click += PageExtractSetting3_Click;
+            SelectPageExtract2.MouseEnter += menuStrip1_MouseEnter;
+            SelectPageExtract2.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // PageDetailesExtract2
+            // 
+            PageDetailesExtract2.Name = "PageDetailesExtract2";
+            PageDetailesExtract2.Size = new Size(216, 26);
+            PageDetailesExtract2.Text = "ページを指定して抽出";
+            PageDetailesExtract2.ToolTipText = "ページを指定して抽出します";
+            PageDetailesExtract2.Click += PageExtractSetting_Click;
+            PageDetailesExtract2.MouseEnter += menuStrip1_MouseEnter;
+            PageDetailesExtract2.MouseLeave += menuStrip1_MouseLeave;
+            // 
             // RotatePagesSetting2
             // 
+            RotatePagesSetting2.DropDownItems.AddRange(new ToolStripItem[] { RotatePagesSettingLeft902, RotatePagesSettingRight902, RotatePagesSetting1802, PageDetailesRotate2 });
             RotatePagesSetting2.Enabled = false;
             RotatePagesSetting2.Name = "RotatePagesSetting2";
-            RotatePagesSetting2.Size = new Size(174, 26);
-            RotatePagesSetting2.Text = "回転(&R)...";
-            RotatePagesSetting2.ToolTipText = "ページを指定して回転します";
-            RotatePagesSetting2.Click += RotatePagesSetting_Click;
+            RotatePagesSetting2.Size = new Size(180, 26);
+            RotatePagesSetting2.Text = "回転(&R)";
+            RotatePagesSetting2.ToolTipText = "ページを回転します";
             RotatePagesSetting2.MouseEnter += menuStrip1_MouseEnter;
             RotatePagesSetting2.MouseLeave += menuStrip1_MouseLeave;
             // 
+            // RotatePagesSettingLeft902
+            // 
+            RotatePagesSettingLeft902.Name = "RotatePagesSettingLeft902";
+            RotatePagesSettingLeft902.Size = new Size(215, 26);
+            RotatePagesSettingLeft902.Text = "左90°回転";
+            RotatePagesSettingLeft902.ToolTipText = "選択したページを左に90°回転します";
+            RotatePagesSettingLeft902.Click += RotatePagesSettingLeft90_Click;
+            RotatePagesSettingLeft902.MouseEnter += menuStrip1_MouseEnter;
+            RotatePagesSettingLeft902.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // RotatePagesSettingRight902
+            // 
+            RotatePagesSettingRight902.Name = "RotatePagesSettingRight902";
+            RotatePagesSettingRight902.Size = new Size(215, 26);
+            RotatePagesSettingRight902.Text = "右90°回転";
+            RotatePagesSettingRight902.ToolTipText = "選択したページを右に90°回転します";
+            RotatePagesSettingRight902.Click += RotatePagesSettingRight90_Click;
+            RotatePagesSettingRight902.MouseEnter += menuStrip1_MouseEnter;
+            RotatePagesSettingRight902.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // RotatePagesSetting1802
+            // 
+            RotatePagesSetting1802.Name = "RotatePagesSetting1802";
+            RotatePagesSetting1802.Size = new Size(215, 26);
+            RotatePagesSetting1802.Text = "180°回転";
+            RotatePagesSetting1802.ToolTipText = "選択したページを180°回転します";
+            RotatePagesSetting1802.Click += RotatePagesSetting180_Click;
+            RotatePagesSetting1802.MouseEnter += menuStrip1_MouseEnter;
+            RotatePagesSetting1802.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // PageDetailesRotate2
+            // 
+            PageDetailesRotate2.Name = "PageDetailesRotate2";
+            PageDetailesRotate2.Size = new Size(215, 26);
+            PageDetailesRotate2.Text = "ページを指定して回転";
+            PageDetailesRotate2.ToolTipText = "ページを指定して回転します";
+            PageDetailesRotate2.Click += RotatePagesSetting_Click;
+            PageDetailesRotate2.MouseEnter += menuStrip1_MouseEnter;
+            PageDetailesRotate2.MouseLeave += menuStrip1_MouseLeave;
+            // 
             // PageDeleteSetting2
             // 
+            PageDeleteSetting2.DropDownItems.AddRange(new ToolStripItem[] { SelectPageDel2, PageDetailesDel2 });
             PageDeleteSetting2.Enabled = false;
             PageDeleteSetting2.Name = "PageDeleteSetting2";
-            PageDeleteSetting2.Size = new Size(174, 26);
-            PageDeleteSetting2.Text = "削除(&D)...";
-            PageDeleteSetting2.ToolTipText = "ページを指定して削除します";
-            PageDeleteSetting2.Click += PageDeleteSetting_Click;
+            PageDeleteSetting2.Size = new Size(180, 26);
+            PageDeleteSetting2.Text = "削除(&D)";
+            PageDeleteSetting2.ToolTipText = "ページを削除します";
+            PageDeleteSetting2.Click += PageDeleteSetting3_Click;
             PageDeleteSetting2.MouseEnter += menuStrip1_MouseEnter;
             PageDeleteSetting2.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // SelectPageDel2
+            // 
+            SelectPageDel2.Name = "SelectPageDel2";
+            SelectPageDel2.Size = new Size(216, 26);
+            SelectPageDel2.Text = "選択したページを削除";
+            SelectPageDel2.ToolTipText = "選択したページを削除します";
+            SelectPageDel2.Click += PageDeleteSetting3_Click;
+            SelectPageDel2.MouseEnter += menuStrip1_MouseEnter;
+            SelectPageDel2.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // PageDetailesDel2
+            // 
+            PageDetailesDel2.Name = "PageDetailesDel2";
+            PageDetailesDel2.Size = new Size(216, 26);
+            PageDetailesDel2.Text = "ページを指定して削除";
+            PageDetailesDel2.ToolTipText = "ページを指定して削除します";
+            PageDetailesDel2.Click += PageDeleteSetting_Click;
+            PageDetailesDel2.MouseEnter += menuStrip1_MouseEnter;
+            PageDetailesDel2.MouseLeave += menuStrip1_MouseLeave;
             // 
             // ConvImgSetting2
             // 
             ConvImgSetting2.Enabled = false;
             ConvImgSetting2.Name = "ConvImgSetting2";
-            ConvImgSetting2.Size = new Size(174, 26);
+            ConvImgSetting2.Size = new Size(180, 26);
             ConvImgSetting2.Text = "画像変換(&G)...";
             ConvImgSetting2.ToolTipText = "ページを指定して画像ファイル(jpg/png/bmp/tif)に変換します";
             ConvImgSetting2.Click += ConvImgSetting_Click;
@@ -820,9 +916,9 @@
             // contextMenuStrip3
             // 
             contextMenuStrip3.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
-            contextMenuStrip3.Items.AddRange(new ToolStripItem[] { PageMove3, PageInsert3, ReplacementMenu3, PageExtractSetting3, RotatePagesSettingLeft90, RotatePagesSettingRight90, RotatePagesSetting180, PageDeleteSetting3, ConvImgSetting3 });
+            contextMenuStrip3.Items.AddRange(new ToolStripItem[] { PageMove3, PageInsert3, ReplacementMenu3, PageExtractSetting3, RotatePagesSetting3, PageDeleteSetting3, ConvImgSetting3 });
             contextMenuStrip3.Name = "contextMenuStrip3";
-            contextMenuStrip3.Size = new Size(175, 238);
+            contextMenuStrip3.Size = new Size(175, 186);
             // 
             // PageMove3
             // 
@@ -859,21 +955,51 @@
             // 
             // PageExtractSetting3
             // 
+            PageExtractSetting3.DropDownItems.AddRange(new ToolStripItem[] { SelectPageExtract3, PageDetailesExtract3 });
             PageExtractSetting3.Enabled = false;
             PageExtractSetting3.Name = "PageExtractSetting3";
             PageExtractSetting3.Size = new Size(174, 26);
             PageExtractSetting3.Text = "抽出(&X)";
-            PageExtractSetting3.ToolTipText = "選択したページを抽出します";
-            PageExtractSetting3.Click += PageExtractSetting_Click;
+            PageExtractSetting3.ToolTipText = "ページを抽出します";
             PageExtractSetting3.MouseEnter += menuStrip1_MouseEnter;
             PageExtractSetting3.MouseLeave += menuStrip1_MouseLeave;
             // 
+            // SelectPageExtract3
+            // 
+            SelectPageExtract3.Name = "SelectPageExtract3";
+            SelectPageExtract3.Size = new Size(216, 26);
+            SelectPageExtract3.Text = "選択したページを抽出";
+            SelectPageExtract3.ToolTipText = "選択したページを抽出します";
+            SelectPageExtract3.Click += PageExtractSetting3_Click;
+            SelectPageExtract3.MouseEnter += menuStrip1_MouseEnter;
+            SelectPageExtract3.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // PageDetailesExtract3
+            // 
+            PageDetailesExtract3.Name = "PageDetailesExtract3";
+            PageDetailesExtract3.Size = new Size(216, 26);
+            PageDetailesExtract3.Text = "ページを指定して抽出";
+            PageDetailesExtract3.ToolTipText = "ページを指定して抽出します";
+            PageDetailesExtract3.Click += PageExtractSetting_Click;
+            PageDetailesExtract3.MouseEnter += menuStrip1_MouseEnter;
+            PageDetailesExtract3.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // RotatePagesSetting3
+            // 
+            RotatePagesSetting3.DropDownItems.AddRange(new ToolStripItem[] { RotatePagesSettingLeft90, RotatePagesSettingRight90, RotatePagesSetting180, PageDetailesRotate3 });
+            RotatePagesSetting3.Enabled = false;
+            RotatePagesSetting3.Name = "RotatePagesSetting3";
+            RotatePagesSetting3.Size = new Size(174, 26);
+            RotatePagesSetting3.Text = "回転(&R)";
+            RotatePagesSetting3.ToolTipText = "ページを回転します";
+            RotatePagesSetting3.MouseEnter += menuStrip1_MouseEnter;
+            RotatePagesSetting3.MouseLeave += menuStrip1_MouseLeave;
+            // 
             // RotatePagesSettingLeft90
             // 
-            RotatePagesSettingLeft90.Enabled = false;
             RotatePagesSettingLeft90.Name = "RotatePagesSettingLeft90";
-            RotatePagesSettingLeft90.Size = new Size(174, 26);
-            RotatePagesSettingLeft90.Text = "左90°回転(&R)";
+            RotatePagesSettingLeft90.Size = new Size(215, 26);
+            RotatePagesSettingLeft90.Text = "左90°回転";
             RotatePagesSettingLeft90.ToolTipText = "選択したページを左に90°回転します";
             RotatePagesSettingLeft90.Click += RotatePagesSettingLeft90_Click;
             RotatePagesSettingLeft90.MouseEnter += menuStrip1_MouseEnter;
@@ -881,10 +1007,9 @@
             // 
             // RotatePagesSettingRight90
             // 
-            RotatePagesSettingRight90.Enabled = false;
             RotatePagesSettingRight90.Name = "RotatePagesSettingRight90";
-            RotatePagesSettingRight90.Size = new Size(174, 26);
-            RotatePagesSettingRight90.Text = "右90°回転(&R)";
+            RotatePagesSettingRight90.Size = new Size(215, 26);
+            RotatePagesSettingRight90.Text = "右90°回転";
             RotatePagesSettingRight90.ToolTipText = "選択したページを右に90°回転します";
             RotatePagesSettingRight90.Click += RotatePagesSettingRight90_Click;
             RotatePagesSettingRight90.MouseEnter += menuStrip1_MouseEnter;
@@ -892,25 +1017,54 @@
             // 
             // RotatePagesSetting180
             // 
-            RotatePagesSetting180.Enabled = false;
             RotatePagesSetting180.Name = "RotatePagesSetting180";
-            RotatePagesSetting180.Size = new Size(174, 26);
-            RotatePagesSetting180.Text = "180°回転(&R)";
+            RotatePagesSetting180.Size = new Size(215, 26);
+            RotatePagesSetting180.Text = "180°回転";
             RotatePagesSetting180.ToolTipText = "選択したページを180°回転します";
             RotatePagesSetting180.Click += RotatePagesSetting180_Click;
             RotatePagesSetting180.MouseEnter += menuStrip1_MouseEnter;
             RotatePagesSetting180.MouseLeave += menuStrip1_MouseLeave;
             // 
+            // PageDetailesRotate3
+            // 
+            PageDetailesRotate3.Name = "PageDetailesRotate3";
+            PageDetailesRotate3.Size = new Size(215, 26);
+            PageDetailesRotate3.Text = "ページを指定して回転";
+            PageDetailesRotate3.ToolTipText = "ページを指定して回転します";
+            PageDetailesRotate3.Click += RotatePagesSetting_Click;
+            PageDetailesRotate3.MouseEnter += menuStrip1_MouseEnter;
+            PageDetailesRotate3.MouseLeave += menuStrip1_MouseLeave;
+            // 
             // PageDeleteSetting3
             // 
+            PageDeleteSetting3.DropDownItems.AddRange(new ToolStripItem[] { SelectPageDel3, PageDetailesDel3 });
             PageDeleteSetting3.Enabled = false;
             PageDeleteSetting3.Name = "PageDeleteSetting3";
             PageDeleteSetting3.Size = new Size(174, 26);
             PageDeleteSetting3.Text = "削除(&D)";
-            PageDeleteSetting3.ToolTipText = "選択したページを削除します";
-            PageDeleteSetting3.Click += PageDeleteSetting3_Click;
+            PageDeleteSetting3.ToolTipText = "ページを削除します";
             PageDeleteSetting3.MouseEnter += menuStrip1_MouseEnter;
             PageDeleteSetting3.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // SelectPageDel3
+            // 
+            SelectPageDel3.Name = "SelectPageDel3";
+            SelectPageDel3.Size = new Size(216, 26);
+            SelectPageDel3.Text = "選択したページを削除";
+            SelectPageDel3.ToolTipText = "選択したページを削除します";
+            SelectPageDel3.Click += PageDeleteSetting3_Click;
+            SelectPageDel3.MouseEnter += menuStrip1_MouseEnter;
+            SelectPageDel3.MouseLeave += menuStrip1_MouseLeave;
+            // 
+            // PageDetailesDel3
+            // 
+            PageDetailesDel3.Name = "PageDetailesDel3";
+            PageDetailesDel3.Size = new Size(216, 26);
+            PageDetailesDel3.Text = "ページを指定して削除";
+            PageDetailesDel3.ToolTipText = "ページを指定して削除します";
+            PageDetailesDel3.Click += PageDeleteSetting_Click;
+            PageDetailesDel3.MouseEnter += menuStrip1_MouseEnter;
+            PageDetailesDel3.MouseLeave += menuStrip1_MouseLeave;
             // 
             // ConvImgSetting3
             // 
@@ -1188,12 +1342,28 @@
             // 
             toolStrip1.AutoSize = false;
             toolStrip1.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
-            toolStrip1.Items.AddRange(new ToolStripItem[] { FileMenu, ShioriMenu, PageEditMenu, HelpMenu, toolStripSeparator1, NewPagetoolStripTextBox, TotalPagetoolStripLabel, toolStripSeparator2, ZoomtoolStripComboBox, toolStripSeparator3 });
+            toolStrip1.Items.AddRange(new ToolStripItem[] { FileMenu, ShioriMenu, PageEditMenu, HelpMenu, toolStripSeparator1, NewPagetoolStripTextBox, TotalPagetoolStripLabel, toolStripSeparator2, ZoomtoolStripComboBox, toolStripSeparator3, ViewSelect });
             toolStrip1.Location = new Point(0, 0);
             toolStrip1.Name = "toolStrip1";
-            toolStrip1.Size = new Size(1035, 35);
+            toolStrip1.Size = new Size(1206, 35);
             toolStrip1.TabIndex = 6;
             toolStrip1.Text = "toolStrip1";
+            // 
+            // ViewSelect
+            // 
+            ViewSelect.Checked = true;
+            ViewSelect.CheckOnClick = true;
+            ViewSelect.CheckState = CheckState.Checked;
+            ViewSelect.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            ViewSelect.Image = (Image)resources.GetObject("ViewSelect.Image");
+            ViewSelect.ImageTransparentColor = Color.Magenta;
+            ViewSelect.Name = "ViewSelect";
+            ViewSelect.Size = new Size(214, 32);
+            ViewSelect.Text = "連続スクロール表示をOFFにする";
+            ViewSelect.ToolTipText = "連続スクロール表示と1ページずつ表示を切り替えます";
+            ViewSelect.Click += ViewSelect_Click;
+            ViewSelect.MouseEnter += menuStrip1_MouseEnter;
+            ViewSelect.MouseLeave += menuStrip1_MouseLeave;
             // 
             // panel2
             // 
@@ -1229,8 +1399,7 @@
             // pdfCustomViewer1
             // 
             pdfCustomViewer1.BackColor = SystemColors.Control;
-            pdfCustomViewer1.ContextMenuStrip = contextMenuStrip2;
-            pdfCustomViewer1.Location = new Point(177, 20);
+            pdfCustomViewer1.Location = new Point(12, 161);
             pdfCustomViewer1.Name = "pdfCustomViewer1";
             pdfCustomViewer1.Size = new Size(118, 94);
             pdfCustomViewer1.TabIndex = 11;
@@ -1239,7 +1408,7 @@
             // 
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
-            ClientSize = new Size(1035, 644);
+            ClientSize = new Size(1206, 644);
             Controls.Add(splitContainer1);
             Controls.Add(splitter1);
             Controls.Add(pdfViewer1);
@@ -1373,9 +1542,6 @@
         private Label label1;
         private ContextMenuStrip contextMenuStrip3;
         private ToolStripMenuItem PageDeleteSetting3;
-        private ToolStripMenuItem RotatePagesSettingLeft90;
-        private ToolStripMenuItem RotatePagesSettingRight90;
-        private ToolStripMenuItem RotatePagesSetting180;
         private ToolStripMenuItem PageExtractSetting3;
         private ToolStripMenuItem PageInsert3;
         private ToolStripMenuItem ReplacementMenu3;
@@ -1387,5 +1553,25 @@
         private PdfThumbnailViewer pdfThumbnailViewer1;
         private ToolStripMenuItem tempOpen;
         private PdfCustomViewer pdfCustomViewer1;
+        private ToolStripButton ViewSelect;
+        private ToolStripMenuItem 選択ページを削除ToolStripMenuItem;
+        private ToolStripMenuItem PageDetailesDel;
+        private ToolStripMenuItem SelectPageDel3;
+        private ToolStripMenuItem PageDetailesDel3;
+        private ToolStripMenuItem SelectPageDel2;
+        private ToolStripMenuItem PageDetailesDel2;
+        private ToolStripMenuItem SelectPageExtract2;
+        private ToolStripMenuItem PageDetailesExtract2;
+        private ToolStripMenuItem SelectPageExtract3;
+        private ToolStripMenuItem PageDetailesExtract3;
+        private ToolStripMenuItem RotatePagesSetting3;
+        private ToolStripMenuItem RotatePagesSettingLeft90;
+        private ToolStripMenuItem RotatePagesSettingRight90;
+        private ToolStripMenuItem RotatePagesSetting180;
+        private ToolStripMenuItem PageDetailesRotate3;
+        private ToolStripMenuItem RotatePagesSettingLeft902;
+        private ToolStripMenuItem RotatePagesSettingRight902;
+        private ToolStripMenuItem RotatePagesSetting1802;
+        private ToolStripMenuItem PageDetailesRotate2;
     }
 }
