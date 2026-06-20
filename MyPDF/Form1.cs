@@ -195,7 +195,7 @@ namespace MyPDF
 
             // フォームサイズ
             this.Width = 1000;
-            this.Height = 600;
+            this.Height = 700;
             this.MinimumSize = new Size(400, 400);
 
             // フォーム最大化
