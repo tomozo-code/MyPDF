@@ -1554,8 +1554,6 @@
         private ToolStripMenuItem tempOpen;
         private PdfCustomViewer pdfCustomViewer1;
         private ToolStripButton ViewSelect;
-        private ToolStripMenuItem 選択ページを削除ToolStripMenuItem;
-        private ToolStripMenuItem PageDetailesDel;
         private ToolStripMenuItem SelectPageDel3;
         private ToolStripMenuItem PageDetailesDel3;
         private ToolStripMenuItem SelectPageDel2;

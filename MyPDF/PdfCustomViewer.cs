@@ -44,7 +44,7 @@ namespace MyPDF
 
         // 現在表示中のページ番号（0始まりのインデックス）を取得する
         public int CurrentPage
-        {            
+        {
             get
             {
                 if (_pdfDocument == null || PageCount == 0) return 0;
@@ -92,7 +92,7 @@ namespace MyPDF
                 // スクロールが一番下まで行きすぎて中央線が最終ページも突き抜けた場合は、安全のため最終ページを返す
                 return PageCount - 1;
             }
-            
+
 
             /*
             get
@@ -285,49 +285,65 @@ namespace MyPDF
 
             try
             {
-                // リサイズ前の「現在表示中のページ番号」をあらかじめ退避しておく
+                // 現在表示中のページ番号を退避
                 int currentPageIndex = this.CurrentPage;
 
-                // 1ページ目の本来のサイズ（ポイント単位）を取得
-                //SizeF firstPageSize = _pdfDocument?.PageSizes[0];
                 // 表示しているページのサイズ（ポイント単位）を取得
                 SizeF firstPageSize = _pdfDocument?.PageSizes[currentPageIndex];
-            
                 if (firstPageSize.Width <= 0) return;
 
-                // スクロールバーが表示されることを見越して、少し余裕（マージン）を持たせる
-                // 左右に計 40px 分の余白（片側20px）を取る場合
-                float padding = 40f;
+                // 基礎となるコントロールの有効幅を取得（ClientSizeを優先）
+                float baseWidth = this.Width;
+                if (this.ClientSize.Width > 0) baseWidth = this.ClientSize.Width;
 
-                // 垂直スクロールバーの幅をあらかじめ差し引いて計算
-                float availableWidth = this.Width - _vScrollBar.Width - padding;
-                if (availableWidth <= 0) availableWidth = this.Width - padding;
+                // 左右のマージン
+                float padding = 20f;
+                float availableWidth = baseWidth - padding;
 
-                // 最適なズーム倍率を逆算 (コントロール有効幅 ÷ ページ本来の幅)
-                _zoom = availableWidth / firstPageSize.Width;
-
-                // ズーム倍率が極端な値にならないよう安全ガード
-                //_zoom = Math.Max(0.1f, Math.Min(_zoom, 5.0f));
-                _zoom = Math.Max(0.1f, Math.Min(_zoom, 2.0f));
-
-                // 位置を左上（適切な位置）に初期化
-                _offset = new PointF(0, 20);
-
-                // 新しいズーム倍率をベースにして、元いたページの位置へ強制スクロール
-                float spacing = PageSpacing * _zoom;
-                float targetY = spacing;
-
-                for (int i = 0; i < currentPageIndex; i++)
+                // ------------------------------------------------------------
+                // 【モード別】幅計算の調整
+                // ------------------------------------------------------------
+                if (_viewMode == PdfViewMode.Continuous)
                 {
-                    var pageSizes = _pdfDocument?.PageSizes;
-                    SizeF originalSize = pageSizes?[i];
-                    float pageHeight = originalSize.Height * _zoom;
-
-                    targetY += pageHeight + spacing;
+                    // 連続スクロール時は常に垂直スクロールバーが出る可能性を考慮して幅を引く
+                    float vScrollBarWidth = (_vScrollBar != null) ? _vScrollBar.Width : 0;
+                    availableWidth -= vScrollBarWidth;
+                }
+                else
+                {
+                    // 単一ページ時は、拡大されていなければ垂直スクロールバーは出ないので引かない
                 }
 
-                // 新しい倍率に応じた正しいYオフセットを設定
-                _offset.Y = -targetY + 20;
+                if (availableWidth <= 0) availableWidth = baseWidth;
+
+                // 最適なズーム倍率を逆算
+                _zoom = availableWidth / firstPageSize.Width;
+                _zoom = Math.Max(0.1f, Math.Min(_zoom, 1.0f));
+
+                // 【モード別】オフセット（スクロール位置）の計算
+                if (_viewMode == PdfViewMode.SinglePage)
+                {
+                    // 単一ページ表示：描画側（Paint）が自動で中央寄せするため位置リセット
+                    _offset = new PointF(0, 0);
+                }
+                else
+                {
+                    // 連続スクロールモード：元いたページの位置へ強制縦スクロール
+                    float spacing = PageSpacing * _zoom;
+                    float targetY = spacing;
+
+                    for (int i = 0; i < currentPageIndex; i++)
+                    {
+                        var pageSizes = _pdfDocument.PageSizes;
+                        SizeF originalSize = pageSizes[i];
+                        float pageHeight = originalSize.Height * _zoom;
+
+                        targetY += pageHeight + spacing;
+                    }
+
+                    // ぴったり元のページが先頭（上部マージン20px空け）にくるようにオフセットを設定
+                    _offset = new PointF(0, -targetY + 20);
+                }
 
                 // スクロールバーの範囲を再計算して画面をリフレッシュ
                 UpdateScrollBarRanges();
@@ -335,7 +351,6 @@ namespace MyPDF
             }
             catch
             {
-                // 万が一サイズ取得等でエラーになった場合は標準ビューに戻す
                 ResetView();
             }
         }
@@ -352,47 +367,66 @@ namespace MyPDF
                 // 現在表示中のページ番号を退避
                 int currentPageIndex = this.CurrentPage;
 
-                // 1ページ目の本来の高さ（ポイント単位）を取得
-                //SizeF firstPageSize = _pdfDocument?.PageSizes[0];
                 // 表示しているページのサイズ（ポイント単位）を取得
                 SizeF firstPageSize = _pdfDocument?.PageSizes[currentPageIndex];
-
                 if (firstPageSize.Height <= 0) return;
 
-                // 上下のマージンを考慮
+                // 基礎となるコントロールの有効高さを取得（ClientSizeを優先）
+                float baseHeight = this.Height;
+                if (this.ClientSize.Height > 0) baseHeight = this.ClientSize.Height;
+
+                // 【モード別】高さ計算とパディングの調整
                 float padding = 40f;
-                float availableHeight = this.Height - padding;
-                if (availableHeight <= 0) availableHeight = this.Height;
+                float hScrollBarHeight = 0f;
+
+                if (_viewMode == PdfViewMode.SinglePage)
+                {
+                    // 単一ページ時は見切れ防止用にパディングを多めに取り、下バーの厚み(20px)も引く
+                    padding = 50f;
+                    hScrollBarHeight = 20f;
+                }
+
+                float availableHeight = baseHeight - padding - hScrollBarHeight;
+                if (availableHeight <= 0) availableHeight = baseHeight;
 
                 // 新しいズーム倍率を「高さ基準」で逆算
                 _zoom = availableHeight / firstPageSize.Height;
-                _zoom = Math.Max(0.1f, Math.Min(_zoom, 5.0f));
+                _zoom = Math.Max(0.1f, Math.Min(_zoom, 1.0f));
 
-                // オフセット初期化
-                _offset = new PointF(0, 20);
-
-                // 新しい倍率で元いたページの位置へ再スクロール計算
-                float spacing = PageSpacing * _zoom;
-                float targetY = spacing;
-
-                for (int i = 0; i < currentPageIndex; i++)
+                // ------------------------------------------------------------
+                // 【モード別】オフセット（スクロール位置）の計算
+                // ------------------------------------------------------------
+                if (_viewMode == PdfViewMode.SinglePage)
                 {
-                    var pageSizes = _pdfDocument?.PageSizes;
-                    SizeF originalSize = pageSizes?[i];
-                    float pageHeight = originalSize.Height * _zoom;
+                    // 単一ページ表示：描画側（Paint）が自動で中央寄せするため位置リセット
+                    _offset = new PointF(0, 0);
+                }
+                else
+                {
+                    // 連続スクロールモード：元いたページの位置へ強制縦スクロール
+                    float spacing = PageSpacing * _zoom;
+                    float targetY = spacing;
 
-                    targetY += pageHeight + spacing;
+                    for (int i = 0; i < currentPageIndex; i++)
+                    {
+                        var pageSizes = _pdfDocument.PageSizes;
+                        SizeF originalSize = pageSizes[i];
+                        float pageHeight = originalSize.Height * _zoom;
+
+                        targetY += pageHeight + spacing;
+                    }
+
+                    _offset = new PointF(0, -targetY + 20);
                 }
 
-                _offset.Y = -targetY + 20;
-
+                // スクロールバーの範囲を再計算して画面をリフレッシュ
                 UpdateScrollBarRanges();
                 Invalidate();
             }
             catch
             {
                 _zoom = 1.0f;
-                _offset = new PointF(0, 20);
+                _offset = (_viewMode == PdfViewMode.SinglePage) ? new PointF(0, 0) : new PointF(0, 20);
                 Invalidate();
             }
         }
@@ -404,13 +438,13 @@ namespace MyPDF
         {
             if (_pdfDocument != null)
             {
-                try 
+                try
                 {
-                    _pdfDocument.Dispose(); 
+                    _pdfDocument.Dispose();
                 }
                 catch
                 {
-                
+
                 }
                 _pdfDocument = null;
                 PageCount = 0;
@@ -519,7 +553,7 @@ namespace MyPDF
                 // 画面にすっぽり収まる場合はスクロール不要
                 _vScrollBar.Enabled = false;
                 // 単ページ時は中央配置されるため、オフセットは20（初期値）
-                _offset.Y = (_viewMode == PdfViewMode.Continuous) ? 20 : 20; 
+                _offset.Y = (_viewMode == PdfViewMode.Continuous) ? 20 : 20;
             }
 
             // --- 横スクロールの限界値チェックと丸め処理 ---
@@ -568,20 +602,32 @@ namespace MyPDF
             Invalidate();
         }
 
+        // ==============================
+        // リサイズされたとき
+        // ==============================
         private void PdfCustomViewer_Resize(object? sender, EventArgs e)
         {
-            // PDFが開かれているなら、変更後の新しい横幅に合わせて倍率（_zoom）を再計算する
-            if (_pdfDocument != null)
+            // PDFが開かれていないなら何もしない
+            if (_pdfDocument == null || PageCount == 0) return;
+
+            // 現在の表示モード（またはコンボボックスの状態）を維持してリサイズ追従させる
+            if (_viewMode == PdfViewMode.SinglePage)
             {
+                // 単一ページ表示のときは、常に画面内にすっぽり収まるように「高さ合わせ」を掛け直す
+                FitToHeight();
+            }
+            else
+            {
+                // 連続スクロールモードのときは、これまで通り「幅合わせ」を掛け直す
                 FitToWidth();
             }
 
-            UpdateScrollBarRanges();
-            Invalidate();
+            //UpdateScrollBarRanges();
+            //Invalidate();
         }
 
         // ==============================
-        // 連続ページ描画ロジック（A4/A3などの実寸サイズ混在対応版
+        // 連続ページ描画ロジック（A4/A3などの実寸サイズ混在対応版）
         // ==============================
         private void PdfCustomViewer_Paint(object? sender, PaintEventArgs e)
         {
@@ -589,10 +635,17 @@ namespace MyPDF
 
             Graphics g = e.Graphics;
 
+            // 描画品質を最高レベル（クッキリ表示）に設定する
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic; // 高品質な拡大縮小（ボヤけ防止）
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality; // アンチエイリアスを綺麗にかける
+            g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality; // 1ピクセルのズレによる滲みを防ぐ
+            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit; // テキストフォントの最適化
+
             if (_viewMode == PdfViewMode.Continuous)
             {
-                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                g.SmoothingMode = SmoothingMode.HighQuality;
+                // 連続スクロール表示
+                //g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                //g.SmoothingMode = SmoothingMode.HighQuality;
 
                 float spacing = PageSpacing * _zoom;
                 int pageCount = _pdfDocument.PageCount;
@@ -657,9 +710,32 @@ namespace MyPDF
                 float w = originalSize.Width * _zoom;
                 float h = originalSize.Height * _zoom;
 
-                // 画面中央に配置するための計算（オフセット）
-                float x = (this.ClientSize.Width - w) / 2f + _offset.X;
-                float y = (this.ClientSize.Height - h) / 2f + _offset.Y;
+                // 1. スクロールバーが表示されている場合、その厚み・幅を差し引いた「純粋な表示エリア」を出す
+                float hScrollBarHeight = (_hScrollBar != null && _hScrollBar.Visible) ? _hScrollBar.Height : 0;
+                float vScrollBarWidth = (_vScrollBar != null && _vScrollBar.Visible) ? _vScrollBar.Width : 0;
+
+                float clientWidth = this.Width - vScrollBarWidth;
+                float clientHeight = this.Height - hScrollBarHeight;
+
+                // 2. 画面中央に配置するための計算
+                float x = (clientWidth - w) / 2f + _offset.X;
+                float y = (clientHeight - h) / 2f + _offset.Y;
+
+                // 3. 画面に収まっている時は、ドラッグによる微小なズレを防ぐため完全中央にロックする
+                if (h <= clientHeight && _vScrollBar?.Enabled == false)
+                {
+                    y = (clientHeight - h) / 2f;
+                }
+                if (w <= clientWidth && _hScrollBar?.Enabled == false)
+                {
+                    x = (clientWidth - w) / 2f;
+                }
+
+                // ちょっと上へあげる
+                if (h <= clientHeight)
+                {
+                    y -= 10f;
+                }
 
                 // ズームに応じたDPI計算
                 int currentDpiX = (int)(96 * _zoom);
