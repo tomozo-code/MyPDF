@@ -92,43 +92,6 @@ namespace MyPDF
                 // スクロールが一番下まで行きすぎて中央線が最終ページも突き抜けた場合は、安全のため最終ページを返す
                 return PageCount - 1;
             }
-
-
-            /*
-            get
-            {
-                if (_pdfDocument == null || PageCount == 0) return 0;
-
-                // スクロール位置 Y はマイナス値（例: -150px）で管理されているため、
-                // 正の数（画面上端からの絶対的な高さ位置）に変換して計算
-                float currentY = -_offset.Y;
-                float spacing = PageSpacing * _zoom;
-
-                // 各ページの高さと照らし合わせて、現在のスクロール位置がどのページに属しているか探す
-                float accumulatedHeight = 0;
-
-                for (int i = 0; i < PageCount; i++)
-                {
-                    var pageSizes = _pdfDocument?.PageSizes;
-                    SizeF originalSize = pageSizes?[i];
-                    float pageHeight = originalSize.Height * _zoom;
-
-                    // 次のページの判定ライン
-                    float nextThreshold = accumulatedHeight + pageHeight + (spacing / 2f);
-
-                    // 現在の表示位置が、このページの範囲内（または半分以上食い込んでいる）ならこのページ番号を返す
-                    if (currentY <= nextThreshold)
-                    {
-                        return i;
-                    }
-
-                    accumulatedHeight += pageHeight + spacing;
-                }
-
-                // 突き抜けた場合は最終ページ
-                return PageCount - 1;
-            }
-            */
         }
 
         // ズーム倍率の外部公開プロパティ
@@ -626,7 +589,7 @@ namespace MyPDF
         }
 
         // ==============================
-        // 連続ページ描画ロジック（A4/A3などの実寸サイズ混在対応版）
+        // 描画ロジック（A4/A3などの実寸サイズ混在対応版）
         // ==============================
         private void PdfCustomViewer_Paint(object? sender, PaintEventArgs e)
         {
@@ -681,6 +644,16 @@ namespace MyPDF
                     int currentDpiY = (int)(96 * _zoom);
                     currentDpiX = Math.Max(10, Math.Min(currentDpiX, 300));
                     currentDpiY = Math.Max(10, Math.Min(currentDpiY, 300));
+
+                    // ズームに関係なく、常にベースを 200 DPI として高精細にレンダリングする
+                    //int currentDpiX = 200;
+                    //int currentDpiY = 200;
+
+                    // 4. ズームに応じたDPI計算（解像度倍）
+                    //int currentDpiX = (int)(192 * _zoom);
+                    //int currentDpiY = (int)(192 * _zoom);
+                    //currentDpiX = Math.Max(150, Math.Min(currentDpiX, 300));
+                    //currentDpiY = Math.Max(150, Math.Min(currentDpiY, 300));
 
                     // --- 背景（用紙の白い土台）と影の描画 ---
                     // X座標の基準を「_offset.X」から、今計算した「pageLeftX」に差し替え
@@ -741,6 +714,16 @@ namespace MyPDF
                 int currentDpiY = (int)(96 * _zoom);
                 currentDpiX = Math.Max(10, Math.Min(currentDpiX, 300));
                 currentDpiY = Math.Max(10, Math.Min(currentDpiY, 300));
+
+                // ズームに関係なく、常にベースを 200 DPI として高精細にレンダリングする
+                //int currentDpiX = 200;
+                //int currentDpiY = 200;
+
+                // ズームに応じたDPI計算
+                //int currentDpiX = (int)(192 * _zoom);
+                //int currentDpiY = (int)(192 * _zoom);
+                //currentDpiX = Math.Max(150, Math.Min(currentDpiX, 300));
+                //currentDpiY = Math.Max(150, Math.Min(currentDpiY, 300));
 
                 // 背景（用紙の白い土台）と影の描画
                 g.FillRectangle(Brushes.DimGray, x + 4, y + 4, w, h);
