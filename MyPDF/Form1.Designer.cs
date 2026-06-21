@@ -318,7 +318,7 @@
             // 
             PageMove2.Enabled = false;
             PageMove2.Name = "PageMove2";
-            PageMove2.Size = new Size(180, 26);
+            PageMove2.Size = new Size(174, 26);
             PageMove2.Text = "移動(&M)...";
             PageMove2.ToolTipText = "ページを指定して移動します";
             PageMove2.Click += PageMove_Click;
@@ -329,7 +329,7 @@
             // 
             PageInsert2.Enabled = false;
             PageInsert2.Name = "PageInsert2";
-            PageInsert2.Size = new Size(180, 26);
+            PageInsert2.Size = new Size(174, 26);
             PageInsert2.Text = "挿入(&I)...";
             PageInsert2.ToolTipText = "ファイルからページを挿入します";
             PageInsert2.Click += PageInsert_Click;
@@ -340,7 +340,7 @@
             // 
             ReplacementMenu2.Enabled = false;
             ReplacementMenu2.Name = "ReplacementMenu2";
-            ReplacementMenu2.Size = new Size(180, 26);
+            ReplacementMenu2.Size = new Size(174, 26);
             ReplacementMenu2.Text = "置換(&K)...";
             ReplacementMenu2.ToolTipText = "ファイルからページを置換します";
             ReplacementMenu2.Click += ReplacementMenu_Click;
@@ -352,7 +352,7 @@
             PageExtractSetting2.DropDownItems.AddRange(new ToolStripItem[] { SelectPageExtract2, PageDetailesExtract2 });
             PageExtractSetting2.Enabled = false;
             PageExtractSetting2.Name = "PageExtractSetting2";
-            PageExtractSetting2.Size = new Size(180, 26);
+            PageExtractSetting2.Size = new Size(174, 26);
             PageExtractSetting2.Text = "抽出(&X)";
             PageExtractSetting2.ToolTipText = "ページを抽出します";
             PageExtractSetting2.MouseEnter += menuStrip1_MouseEnter;
@@ -385,7 +385,7 @@
             RotatePagesSetting2.DropDownItems.AddRange(new ToolStripItem[] { RotatePagesSettingLeft902, RotatePagesSettingRight902, RotatePagesSetting1802, PageDetailesRotate2 });
             RotatePagesSetting2.Enabled = false;
             RotatePagesSetting2.Name = "RotatePagesSetting2";
-            RotatePagesSetting2.Size = new Size(180, 26);
+            RotatePagesSetting2.Size = new Size(174, 26);
             RotatePagesSetting2.Text = "回転(&R)";
             RotatePagesSetting2.ToolTipText = "ページを回転します";
             RotatePagesSetting2.MouseEnter += menuStrip1_MouseEnter;
@@ -440,7 +440,7 @@
             PageDeleteSetting2.DropDownItems.AddRange(new ToolStripItem[] { SelectPageDel2, PageDetailesDel2 });
             PageDeleteSetting2.Enabled = false;
             PageDeleteSetting2.Name = "PageDeleteSetting2";
-            PageDeleteSetting2.Size = new Size(180, 26);
+            PageDeleteSetting2.Size = new Size(174, 26);
             PageDeleteSetting2.Text = "削除(&D)";
             PageDeleteSetting2.ToolTipText = "ページを削除します";
             PageDeleteSetting2.Click += PageDeleteSetting3_Click;
@@ -473,7 +473,7 @@
             // 
             ConvImgSetting2.Enabled = false;
             ConvImgSetting2.Name = "ConvImgSetting2";
-            ConvImgSetting2.Size = new Size(180, 26);
+            ConvImgSetting2.Size = new Size(174, 26);
             ConvImgSetting2.Text = "画像変換(&G)...";
             ConvImgSetting2.ToolTipText = "ページを指定して画像ファイル(jpg/png/bmp/tif)に変換します";
             ConvImgSetting2.Click += ConvImgSetting_Click;

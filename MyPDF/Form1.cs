@@ -710,31 +710,6 @@ namespace MyPDF
             NewPagetoolStripTextBox.Text = "1";
             // サムネイル生成
             pdfThumbnailViewer1.LoadDocument(document);
-
-            /*
-
-            // しおりタブがクリックされたらtrue、サムネイルタブならfalse
-            isTab1 = (tabControl1.SelectedTab == tabPage1);
-
-            // しおりタブが押された
-            if (tabControl1.SelectedTab == tabPage1)
-            {
-                // しおりにフォーカス
-                treeView1.Focus();
-            }
-
-            // サムネイルタブが押された
-            if (tabControl1.SelectedTab == tabPage2)
-            {
-                // サムネイルにフォーカス
-                pdfThumbnailViewer1.Focus();
-            }
-
-            // メニュー選択ON/OFF
-            UpdateContextMenuState();
-
-            */
-
         }
 
         // ==============================
@@ -742,8 +717,14 @@ namespace MyPDF
         // ==============================
         private void DisplaySize()
         {
+            // PDFが開かれていないなら処理しない
+            if (pdfCustomViewer1.Document == null) return;
+
+            // 現在の表示ページ番号を退避(ゼロ始まりなので +1)
+            int currentPage = pdfCustomViewer1.CurrentPage + 1;
+
             var pageSizes = pdfCustomViewer1?.Document?.PageSizes;
-            SizeF firstPageSize = pageSizes?[0];
+            SizeF firstPageSize = pageSizes?[currentPage];
 
             // 自動調整
             ZoomtoolStripComboBox.SelectedIndex = 0;
@@ -1079,7 +1060,7 @@ namespace MyPDF
             if (!CheckFileLock(savePath))
                 return;
             // 現在ページ取得
-            // 現在の表示ページ番号を退避
+            // 現在の表示ページ番号を退避(ゼロ始まりだが、どっかで +1 してる)
             int currentPage = pdfCustomViewer1.CurrentPage;
 
             try
@@ -1100,6 +1081,12 @@ namespace MyPDF
                     ShowSecurityMessage(savePath);
                 }
 
+                //pdfCustomViewer1.ScrollToPage(currentPage);
+
+                // PDFの縦横方向に応じた表示
+                DisplaySize();
+
+                // 未保存フラグOFF
                 isDirty = false;
             }
             catch (Exception ex)
@@ -2181,7 +2168,7 @@ namespace MyPDF
                 AllDelMenu.Enabled = isTab1 && hasNodes;
                 // 現在のページ番号をしおりに設定(しおりタブtrue and しおりありtureの場合選択可、つまり、両方tureならture)
                 SetShioriToolStripMenuItem.Enabled = isTab1 && hasNodes;
-                SetShioriMenu.Enabled = isTab1 &&hasNodes;
+                SetShioriMenu.Enabled = isTab1 && hasNodes;
                 // しおりのプロパティ
                 ShioriProToolStripMenuItem.Enabled = isTab1 && hasNodes;
                 ShioriProMenu.Enabled = isTab1 && hasNodes;
@@ -7278,5 +7265,6 @@ namespace MyPDF
             JumpToPage(page);
 
         }
+
     }
 }

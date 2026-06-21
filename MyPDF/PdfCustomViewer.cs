@@ -893,5 +893,180 @@ namespace MyPDF
             UpdateScrollBarRanges();
             Invalidate(); // 再描画
         }
+
+        // ==============================
+        // ショートカットキー・キーボード操作の処理
+        // ==============================
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            // PDF開いてない、ページない場合
+            if (_pdfDocument == null || PageCount == 0) return base.ProcessCmdKey(ref msg, keyData);
+
+            // 現在のズーム倍率を考慮して1回あたりのスクロール量を計算（35pxベース）
+            float scrollSpeed = 35f * _zoom;
+
+            // PageDown、右矢印、下矢印、エンター：次のページへ進む
+            if (keyData == Keys.PageDown || keyData == Keys.Right || keyData == Keys.Down || keyData == Keys.Enter)
+            {
+                if (_viewMode == PdfViewMode.SinglePage)
+                {
+                    // 【単一表示】ページインデックスを直接進める
+                    if (_singlePageIndex < PageCount - 1)
+                    {
+                        _singlePageIndex++;
+                        ResetBookmarkViewLocation();
+                    }
+                }
+                else
+                {
+                    // 【連続スクロール】次のページへ自動スクロールさせる
+                    // 下矢印キー（Down）：ドキュメントを上に押し上げる（スクロールダウン）
+                    if (keyData == Keys.Down)
+                    {
+                        _offset.Y -= scrollSpeed;
+
+                        UpdateScrollBarRanges(); // スクロールバー更新
+                        Invalidate();// 再描画
+                        return true; // キー処理を完了
+                    }
+
+                    // ※現在のページ（CurrentPage）が最終ページ未満なら次へ進む
+                    int nextPage = this.CurrentPage + 1;
+                    if (nextPage < PageCount)
+                    {
+                        // 以前サムネイルクリック時などに使った「ページジャンプ関数」を呼び出す
+                        ScrollToPage(nextPage);
+                    }
+                }
+                return true; // キー処理を完了
+            }
+
+            // PageUp、左矢印、上矢印、バックスペース：前のページへ戻る
+            if (keyData == Keys.PageUp || keyData == Keys.Left || keyData == Keys.Up || keyData == Keys.Back)
+            {
+                if (_viewMode == PdfViewMode.SinglePage)
+                {
+                    // 【単一表示】ページインデックスを直接戻す
+                    if (_singlePageIndex > 0)
+                    {
+                        _singlePageIndex--;
+                        ResetBookmarkViewLocation();
+                    }
+                }
+                else
+                {
+                    // 【連続スクロール】前のページへ自動スクロールさせる
+                    // 上矢印キー（Up）：ドキュメントを下に押し下げる（スクロールアップ）
+                    if (keyData == Keys.Up)
+                    {
+                        _offset.Y += scrollSpeed;
+
+                        UpdateScrollBarRanges();
+                        Invalidate();
+                        return true; // キー処理を完了
+                    }
+
+                    int prevPage = this.CurrentPage - 1;
+                    if (prevPage >= 0)
+                    {
+                        ScrollToPage(prevPage);
+                    }
+                }
+                return true; // キー処理を完了
+            }
+
+            /*
+
+            // PageDown、右矢印、エンター：次のページへ進む
+            if (keyData == Keys.PageDown || keyData == Keys.Right || keyData == Keys.Enter)
+            {
+                if (_viewMode == PdfViewMode.SinglePage)
+                {
+                    // 【単一表示】ページインデックスを直接進める
+                    if (_singlePageIndex < PageCount - 1)
+                    {
+                        _singlePageIndex++;
+                        ResetBookmarkViewLocation();
+                    }
+                }
+                else
+                {
+                    // 【連続スクロール】次のページへ自動スクロールさせる
+                    // ※現在のページ（CurrentPage）が最終ページ未満なら次へ進む
+                    int nextPage = this.CurrentPage + 1;
+                    if (nextPage < PageCount)
+                    {
+                        // 以前サムネイルクリック時などに使った「ページジャンプ関数」を呼び出す
+                        ScrollToPage(nextPage);
+                    }
+                }
+                return true; // キー処理を完了
+            }
+
+            // PageUp、左矢印、バックスペース：前のページへ戻る
+            if (keyData == Keys.PageUp || keyData == Keys.Left || keyData == Keys.Back)
+            {
+                if (_viewMode == PdfViewMode.SinglePage)
+                {
+                    // 【単一表示】ページインデックスを直接戻す
+                    if (_singlePageIndex > 0)
+                    {
+                        _singlePageIndex--;
+                        ResetBookmarkViewLocation();
+                    }
+                }
+                else
+                {
+                    // 【連続スクロール】前のページへ自動スクロールさせる
+                    int prevPage = this.CurrentPage - 1;
+                    if (prevPage >= 0)
+                    {
+                        ScrollToPage(prevPage);
+                    }
+                }
+                return true; // キー処理を完了
+            }
+
+            // 連続スクロール表示時の、上下矢印キーによるスルスル移動処理
+            if (_viewMode == PdfViewMode.Continuous)
+            {
+                // 現在のズーム倍率を考慮して1回あたりのスクロール量を計算（35pxベース）
+                float scrollSpeed = 35f * _zoom;
+
+                // 下矢印キー（Down）：ドキュメントを上に押し上げる（スクロールダウン）
+                if (keyData == Keys.Down)
+                {
+                    _offset.Y -= scrollSpeed;
+
+                    UpdateScrollBarRanges(); // スクロールバー更新
+                    Invalidate();// 再描画
+                    return true; // キー処理を完了
+                }
+
+                // 上矢印キー（Up）：ドキュメントを下に押し下げる（スクロールアップ）
+                if (keyData == Keys.Up)
+                {
+                    _offset.Y += scrollSpeed;
+
+                    UpdateScrollBarRanges();
+                    Invalidate();
+                    return true; // キー処理を完了
+                }
+            }
+
+            */
+
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        // ==============================
+        // ページが切り替わったときに描画をリセットする共通関数
+        // ==============================
+        private void ResetBookmarkViewLocation()
+        {
+            _offset = new PointF(0, 20); // オフセットリセット
+            UpdateScrollBarRanges(); // スクロールバー更新
+            Invalidate(); // 再描画
+        }
     }
 }
