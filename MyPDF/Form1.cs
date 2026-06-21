@@ -794,9 +794,15 @@ namespace MyPDF
             if (treeView1.Nodes.Count == 0)
                 return;
 
-            treeView1.TopNode = treeView1.Nodes[0];
-            // 選択解除したい場合
-            treeView1.SelectedNode = null;
+            // TreeViewにフォーカスを当てる
+            //treeView1.Focus();
+            // 選択を一旦解除
+            //treeView1.SelectedNode = null;
+            // 一番上のしおりを選択状態にする
+            //treeView1.TopNode = treeView1.Nodes[0];
+            treeView1.SelectedNode = treeView1.Nodes[0];
+            // 選択したノードまで確実にスクロールさせて画面内に表示する
+            treeView1.Nodes[0].EnsureVisible();
         }
 
         // ==============================
@@ -3172,8 +3178,36 @@ namespace MyPDF
         // ==============================
         private void AllShioriSyukusyouToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // 全てのしおりを縮小
+            // 縮小する前に、現在選択されているノード、またはその「ルート（最上層の親）」を覚えておく
+            TreeNode? targetToSelect = null;
+            if (treeView1.SelectedNode != null)
+            {
+                var current = treeView1.SelectedNode;
+                // 子や孫ノードだったら、一番上の親（ルートノード）まで辿る
+                while (current.Parent != null)
+                {
+                    current = current.Parent;
+                }
+                targetToSelect = current;
+            }
+            else if (treeView1.Nodes.Count > 0)
+            {
+                // もともと何も選択されていなければ、一番先頭のしおりをターゲットにする
+                targetToSelect = treeView1.Nodes[0];
+            }
+
+            // 全てのしおりを縮小（ここでTreeViewにより選択が解除される）
             treeView1.CollapseAll();
+
+            // 【対策】退避しておいた親ノードを再選択する
+            if (targetToSelect != null)
+            {
+                treeView1.SelectedNode = targetToSelect;
+                targetToSelect.EnsureVisible();
+            }
+
+            // 全てのしおりを縮小
+            //treeView1.CollapseAll();
         }
 
         // ==============================
@@ -3196,8 +3230,12 @@ namespace MyPDF
             if (treeView1.SelectedNode == null) return;
 
             var node = treeView1.SelectedNode;
+            // そのまま自身を縮小すると選択が外れることがあるため、自分自身を選択状態として明示
+            treeView1.SelectedNode = node;
             // 選択中のしおり以下を縮小
             node.Collapse();
+            // 縮小後、確実に画面内に収める
+            node.EnsureVisible();
 
         }
 
@@ -3211,7 +3249,12 @@ namespace MyPDF
             {
                 info.IsOpen = true;
             }
-
+            // 現在選択されているノードがある場合
+            if (treeView1.SelectedNode != null)
+            {
+                // 選択されているノードが画面内に確実に表示される位置までスクロールを戻す
+                treeView1.SelectedNode.EnsureVisible();
+            }
         }
 
         // ==============================
@@ -3224,7 +3267,12 @@ namespace MyPDF
             {
                 info.IsOpen = false;
             }
-
+            // 現在選択されているノードがある場合
+            if (treeView1.SelectedNode != null)
+            {
+                // 選択されているノードが画面内に確実に表示される位置までスクロールを戻す
+                treeView1.SelectedNode.EnsureVisible();
+            }
         }
 
         // ==============================
