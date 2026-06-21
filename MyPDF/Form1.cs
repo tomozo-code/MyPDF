@@ -91,7 +91,7 @@ namespace MyPDF
     public partial class Form1 : Form
     {
 
-        // ドラッグ＆ドロップ用
+        // しおりドラッグ＆ドロップ用
         // dropTargetNode → ドロップ先
         private TreeNode? dropTargetNode = null;
         // nsertAfter → 下に入れるか
@@ -102,6 +102,11 @@ namespace MyPDF
         private bool isRightClickSelecting = false;
         // しおりホバー中ノード
         private TreeNode? hoverNode = null;
+        // しおり展開防止用タイマー
+        // 1秒(1000ms)で発火
+        private readonly System.Windows.Forms.Timer _expandTimer = new System.Windows.Forms.Timer { Interval = 1000 };
+        private TreeNode? _lastHoverNodeForExpand;
+
 
         // ページ監視用（Pdfiumにイベントないので自前監視）
         private int lastPage = -1;
@@ -266,6 +271,9 @@ namespace MyPDF
                 null, // 通常はnullでOK
                 treeView1, // 実際に対象となるTreeView
                 new object[] { true }); // DoubleBuffered = trueと意味する
+
+            // しおり用 タイマーの時間が来たら（1秒経ったら）ホバー中のノードを展開する
+            _expandTimer.Tick += (s, e) => { _lastHoverNodeForExpand?.Expand(); _expandTimer.Stop(); };
         }
 
         // ==============================
@@ -2558,7 +2566,6 @@ namespace MyPDF
             dropTargetNode = node;
             treeView1.Invalidate();
 
-
             // スクロール追従
             int margin = 20; // 端の感度（調整OK）
 
@@ -2580,8 +2587,24 @@ namespace MyPDF
             // ホバーで展開
             if (node != null)
             {
-                node.Expand();
+                // マウスが別のノードに移動したらタイマーをリセット
+                if (_lastHoverNodeForExpand != node)
+                {
+                    _expandTimer.Stop();
+                    _lastHoverNodeForExpand = node;
+                    _expandTimer.Start(); // 1秒のカウントダウン開始
+                }
             }
+            else
+            {
+                _expandTimer.Stop();
+                _lastHoverNodeForExpand = null;
+            }
+            
+            //if (node != null)
+            //{
+            //    node.Expand();
+            //}
 
         }
 
@@ -7263,8 +7286,6 @@ namespace MyPDF
 
             // ジャンプ
             JumpToPage(page);
-
         }
-
     }
 }
