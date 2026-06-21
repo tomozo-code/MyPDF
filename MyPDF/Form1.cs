@@ -711,24 +711,30 @@ namespace MyPDF
             // サムネイル生成
             pdfThumbnailViewer1.LoadDocument(document);
 
+            /*
+
+            // しおりタブがクリックされたらtrue、サムネイルタブならfalse
+            isTab1 = (tabControl1.SelectedTab == tabPage1);
+
+            // しおりタブが押された
             if (tabControl1.SelectedTab == tabPage1)
             {
-                ShioriMenu.Enabled = true;
-                PageEditMenu.Enabled = false;
-
                 // しおりにフォーカス
                 treeView1.Focus();
             }
 
+            // サムネイルタブが押された
             if (tabControl1.SelectedTab == tabPage2)
             {
-                ShioriMenu.Enabled = false;
-                PageEditMenu.Enabled = true;
-
                 // サムネイルにフォーカス
                 pdfThumbnailViewer1.Focus();
-
             }
+
+            // メニュー選択ON/OFF
+            UpdateContextMenuState();
+
+            */
+
         }
 
         // ==============================
@@ -2321,6 +2327,13 @@ namespace MyPDF
                 // 現在表示ページ取得(ゼロ始まりなので +1 する)
                 //    currentPage = pdfViewer1.Renderer.Page + 1;
                 //}
+
+                if (pdfCustomViewer1.Document != null)
+                {
+                    // 現在表示ページ取得(ゼロ始まりなので +1 する)
+                    currentPage = pdfCustomViewer1.CurrentPage + 1;
+                }
+
                 // BookmarkInfo初期化開始
                 newNode.Tag = new BookmarkInfo
                 {
@@ -6444,20 +6457,6 @@ namespace MyPDF
                 this.Enabled = true;
             }
         }
-
-        /*
-        // ==============================
-        // PdfViewer1右クリックしたとき(挙動が変なので念のため)
-        // ==============================
-        private void pdfViewer1_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                // 自前でコンテキストメニュー表示
-                contextMenuStrip2.Show(pdfViewer1, e.Location);
-            }
-        }
-        */
 
         // ==============================
         // TreeView(しおりパネル)がリサイズされたら
