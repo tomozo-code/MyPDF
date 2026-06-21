@@ -163,8 +163,9 @@ namespace MyPDF
             Continuous, // 連続スクロール表示（今までのモード）
             SinglePage  // ページ表示（単ページ切り替えモード）
         }
-
-        private PdfViewMode _viewMode = PdfViewMode.Continuous;
+        // 初期表示状態(単ページ)
+        //private PdfViewMode _viewMode = PdfViewMode.Continuous;
+        private PdfViewMode _viewMode = PdfViewMode.SinglePage;
         private int _singlePageIndex = 0; // 単ページ表示時の現在のページ番号
 
         // デザイナーの自動コード生成（シリアル化）の対象外にする
@@ -334,8 +335,8 @@ namespace MyPDF
 
                     for (int i = 0; i < currentPageIndex; i++)
                     {
-                        var pageSizes = _pdfDocument.PageSizes;
-                        SizeF originalSize = pageSizes[i];
+                        var pageSizes = _pdfDocument?.PageSizes;
+                        SizeF originalSize = pageSizes?[i];
                         float pageHeight = originalSize.Height * _zoom;
 
                         targetY += pageHeight + spacing;
@@ -393,9 +394,7 @@ namespace MyPDF
                 _zoom = availableHeight / firstPageSize.Height;
                 _zoom = Math.Max(0.1f, Math.Min(_zoom, 1.0f));
 
-                // ------------------------------------------------------------
                 // 【モード別】オフセット（スクロール位置）の計算
-                // ------------------------------------------------------------
                 if (_viewMode == PdfViewMode.SinglePage)
                 {
                     // 単一ページ表示：描画側（Paint）が自動で中央寄せするため位置リセット
@@ -409,8 +408,8 @@ namespace MyPDF
 
                     for (int i = 0; i < currentPageIndex; i++)
                     {
-                        var pageSizes = _pdfDocument.PageSizes;
-                        SizeF originalSize = pageSizes[i];
+                        var pageSizes = _pdfDocument?.PageSizes;
+                        SizeF originalSize = pageSizes?[i];
                         float pageHeight = originalSize.Height * _zoom;
 
                         targetY += pageHeight + spacing;

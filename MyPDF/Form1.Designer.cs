@@ -360,8 +360,9 @@
             // 
             // SelectPageExtract2
             // 
+            SelectPageExtract2.Enabled = false;
             SelectPageExtract2.Name = "SelectPageExtract2";
-            SelectPageExtract2.Size = new Size(216, 26);
+            SelectPageExtract2.Size = new Size(243, 26);
             SelectPageExtract2.Text = "選択したページを抽出";
             SelectPageExtract2.ToolTipText = "選択したページを抽出します";
             SelectPageExtract2.Click += PageExtractSetting3_Click;
@@ -370,9 +371,10 @@
             // 
             // PageDetailesExtract2
             // 
+            PageDetailesExtract2.Enabled = false;
             PageDetailesExtract2.Name = "PageDetailesExtract2";
-            PageDetailesExtract2.Size = new Size(216, 26);
-            PageDetailesExtract2.Text = "ページを指定して抽出";
+            PageDetailesExtract2.Size = new Size(243, 26);
+            PageDetailesExtract2.Text = "ページを指定して抽出(&X)...";
             PageDetailesExtract2.ToolTipText = "ページを指定して抽出します";
             PageDetailesExtract2.Click += PageExtractSetting_Click;
             PageDetailesExtract2.MouseEnter += menuStrip1_MouseEnter;
@@ -391,8 +393,9 @@
             // 
             // RotatePagesSettingLeft902
             // 
+            RotatePagesSettingLeft902.Enabled = false;
             RotatePagesSettingLeft902.Name = "RotatePagesSettingLeft902";
-            RotatePagesSettingLeft902.Size = new Size(215, 26);
+            RotatePagesSettingLeft902.Size = new Size(244, 26);
             RotatePagesSettingLeft902.Text = "左90°回転";
             RotatePagesSettingLeft902.ToolTipText = "選択したページを左に90°回転します";
             RotatePagesSettingLeft902.Click += RotatePagesSettingLeft90_Click;
@@ -401,8 +404,9 @@
             // 
             // RotatePagesSettingRight902
             // 
+            RotatePagesSettingRight902.Enabled = false;
             RotatePagesSettingRight902.Name = "RotatePagesSettingRight902";
-            RotatePagesSettingRight902.Size = new Size(215, 26);
+            RotatePagesSettingRight902.Size = new Size(244, 26);
             RotatePagesSettingRight902.Text = "右90°回転";
             RotatePagesSettingRight902.ToolTipText = "選択したページを右に90°回転します";
             RotatePagesSettingRight902.Click += RotatePagesSettingRight90_Click;
@@ -411,8 +415,9 @@
             // 
             // RotatePagesSetting1802
             // 
+            RotatePagesSetting1802.Enabled = false;
             RotatePagesSetting1802.Name = "RotatePagesSetting1802";
-            RotatePagesSetting1802.Size = new Size(215, 26);
+            RotatePagesSetting1802.Size = new Size(244, 26);
             RotatePagesSetting1802.Text = "180°回転";
             RotatePagesSetting1802.ToolTipText = "選択したページを180°回転します";
             RotatePagesSetting1802.Click += RotatePagesSetting180_Click;
@@ -421,9 +426,10 @@
             // 
             // PageDetailesRotate2
             // 
+            PageDetailesRotate2.Enabled = false;
             PageDetailesRotate2.Name = "PageDetailesRotate2";
-            PageDetailesRotate2.Size = new Size(215, 26);
-            PageDetailesRotate2.Text = "ページを指定して回転";
+            PageDetailesRotate2.Size = new Size(244, 26);
+            PageDetailesRotate2.Text = "ページを指定して回転(&R)...";
             PageDetailesRotate2.ToolTipText = "ページを指定して回転します";
             PageDetailesRotate2.Click += RotatePagesSetting_Click;
             PageDetailesRotate2.MouseEnter += menuStrip1_MouseEnter;
@@ -443,8 +449,9 @@
             // 
             // SelectPageDel2
             // 
+            SelectPageDel2.Enabled = false;
             SelectPageDel2.Name = "SelectPageDel2";
-            SelectPageDel2.Size = new Size(216, 26);
+            SelectPageDel2.Size = new Size(245, 26);
             SelectPageDel2.Text = "選択したページを削除";
             SelectPageDel2.ToolTipText = "選択したページを削除します";
             SelectPageDel2.Click += PageDeleteSetting3_Click;
@@ -453,9 +460,10 @@
             // 
             // PageDetailesDel2
             // 
+            PageDetailesDel2.Enabled = false;
             PageDetailesDel2.Name = "PageDetailesDel2";
-            PageDetailesDel2.Size = new Size(216, 26);
-            PageDetailesDel2.Text = "ページを指定して削除";
+            PageDetailesDel2.Size = new Size(245, 26);
+            PageDetailesDel2.Text = "ページを指定して削除(&D)...";
             PageDetailesDel2.ToolTipText = "ページを指定して削除します";
             PageDetailesDel2.Click += PageDeleteSetting_Click;
             PageDetailesDel2.MouseEnter += menuStrip1_MouseEnter;
@@ -966,8 +974,9 @@
             // 
             // SelectPageExtract3
             // 
+            SelectPageExtract3.Enabled = false;
             SelectPageExtract3.Name = "SelectPageExtract3";
-            SelectPageExtract3.Size = new Size(216, 26);
+            SelectPageExtract3.Size = new Size(243, 26);
             SelectPageExtract3.Text = "選択したページを抽出";
             SelectPageExtract3.ToolTipText = "選択したページを抽出します";
             SelectPageExtract3.Click += PageExtractSetting3_Click;
@@ -976,9 +985,10 @@
             // 
             // PageDetailesExtract3
             // 
+            PageDetailesExtract3.Enabled = false;
             PageDetailesExtract3.Name = "PageDetailesExtract3";
-            PageDetailesExtract3.Size = new Size(216, 26);
-            PageDetailesExtract3.Text = "ページを指定して抽出";
+            PageDetailesExtract3.Size = new Size(243, 26);
+            PageDetailesExtract3.Text = "ページを指定して抽出(&X)...";
             PageDetailesExtract3.ToolTipText = "ページを指定して抽出します";
             PageDetailesExtract3.Click += PageExtractSetting_Click;
             PageDetailesExtract3.MouseEnter += menuStrip1_MouseEnter;
@@ -997,8 +1007,9 @@
             // 
             // RotatePagesSettingLeft90
             // 
+            RotatePagesSettingLeft90.Enabled = false;
             RotatePagesSettingLeft90.Name = "RotatePagesSettingLeft90";
-            RotatePagesSettingLeft90.Size = new Size(215, 26);
+            RotatePagesSettingLeft90.Size = new Size(244, 26);
             RotatePagesSettingLeft90.Text = "左90°回転";
             RotatePagesSettingLeft90.ToolTipText = "選択したページを左に90°回転します";
             RotatePagesSettingLeft90.Click += RotatePagesSettingLeft90_Click;
@@ -1007,8 +1018,9 @@
             // 
             // RotatePagesSettingRight90
             // 
+            RotatePagesSettingRight90.Enabled = false;
             RotatePagesSettingRight90.Name = "RotatePagesSettingRight90";
-            RotatePagesSettingRight90.Size = new Size(215, 26);
+            RotatePagesSettingRight90.Size = new Size(244, 26);
             RotatePagesSettingRight90.Text = "右90°回転";
             RotatePagesSettingRight90.ToolTipText = "選択したページを右に90°回転します";
             RotatePagesSettingRight90.Click += RotatePagesSettingRight90_Click;
@@ -1017,8 +1029,9 @@
             // 
             // RotatePagesSetting180
             // 
+            RotatePagesSetting180.Enabled = false;
             RotatePagesSetting180.Name = "RotatePagesSetting180";
-            RotatePagesSetting180.Size = new Size(215, 26);
+            RotatePagesSetting180.Size = new Size(244, 26);
             RotatePagesSetting180.Text = "180°回転";
             RotatePagesSetting180.ToolTipText = "選択したページを180°回転します";
             RotatePagesSetting180.Click += RotatePagesSetting180_Click;
@@ -1027,9 +1040,10 @@
             // 
             // PageDetailesRotate3
             // 
+            PageDetailesRotate3.Enabled = false;
             PageDetailesRotate3.Name = "PageDetailesRotate3";
-            PageDetailesRotate3.Size = new Size(215, 26);
-            PageDetailesRotate3.Text = "ページを指定して回転";
+            PageDetailesRotate3.Size = new Size(244, 26);
+            PageDetailesRotate3.Text = "ページを指定して回転(&R)...";
             PageDetailesRotate3.ToolTipText = "ページを指定して回転します";
             PageDetailesRotate3.Click += RotatePagesSetting_Click;
             PageDetailesRotate3.MouseEnter += menuStrip1_MouseEnter;
@@ -1048,8 +1062,9 @@
             // 
             // SelectPageDel3
             // 
+            SelectPageDel3.Enabled = false;
             SelectPageDel3.Name = "SelectPageDel3";
-            SelectPageDel3.Size = new Size(216, 26);
+            SelectPageDel3.Size = new Size(245, 26);
             SelectPageDel3.Text = "選択したページを削除";
             SelectPageDel3.ToolTipText = "選択したページを削除します";
             SelectPageDel3.Click += PageDeleteSetting3_Click;
@@ -1058,9 +1073,10 @@
             // 
             // PageDetailesDel3
             // 
+            PageDetailesDel3.Enabled = false;
             PageDetailesDel3.Name = "PageDetailesDel3";
-            PageDetailesDel3.Size = new Size(216, 26);
-            PageDetailesDel3.Text = "ページを指定して削除";
+            PageDetailesDel3.Size = new Size(245, 26);
+            PageDetailesDel3.Text = "ページを指定して削除(&D)...";
             PageDetailesDel3.ToolTipText = "ページを指定して削除します";
             PageDetailesDel3.Click += PageDeleteSetting_Click;
             PageDetailesDel3.MouseEnter += menuStrip1_MouseEnter;
@@ -1351,15 +1367,13 @@
             // 
             // ViewSelect
             // 
-            ViewSelect.Checked = true;
             ViewSelect.CheckOnClick = true;
-            ViewSelect.CheckState = CheckState.Checked;
             ViewSelect.DisplayStyle = ToolStripItemDisplayStyle.Text;
             ViewSelect.Image = (Image)resources.GetObject("ViewSelect.Image");
             ViewSelect.ImageTransparentColor = Color.Magenta;
             ViewSelect.Name = "ViewSelect";
-            ViewSelect.Size = new Size(214, 32);
-            ViewSelect.Text = "連続スクロール表示をOFFにする";
+            ViewSelect.Size = new Size(210, 32);
+            ViewSelect.Text = "連続スクロール表示をONにする";
             ViewSelect.ToolTipText = "連続スクロール表示と1ページずつ表示を切り替えます";
             ViewSelect.Click += ViewSelect_Click;
             ViewSelect.MouseEnter += menuStrip1_MouseEnter;

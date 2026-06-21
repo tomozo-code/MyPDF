@@ -113,7 +113,9 @@ namespace MyPDF
         // 編集可能フラグ(PDFがセキュリティありかチェック用 true:可、false:不可)
         private bool canEdit = true;
         // サムネイルクリック時の同期フラグ
-        private bool _isSyncing = false;
+        private bool isSyncing = false;
+        // しおりタブ/サムネイルタブ切り替えフラグ
+        private bool isTab1 = true;
 
         // PDF設定・セキュリティ
         // 現在読み込んでいるPDFの各種設定（メタデータ・表示設定など）
@@ -1990,10 +1992,18 @@ namespace MyPDF
             PageExtractSetting.Enabled = false;
             PageExtractSetting2.Enabled = false;
             PageExtractSetting3.Enabled = false;
+            SelectPageExtract2.Enabled = false;
+            SelectPageExtract3.Enabled = false;
+            PageDetailesExtract2.Enabled = false;
+            PageDetailesExtract3.Enabled = false;
             // ページ削除
             PageDeleteSetting.Enabled = false;
             PageDeleteSetting2.Enabled = false;
             PageDeleteSetting3.Enabled = false;
+            SelectPageDel2.Enabled = false;
+            SelectPageDel3.Enabled = false;
+            PageDetailesDel2.Enabled = false;
+            PageDetailesDel3.Enabled = false;
             // 回転
             RotatePagesSetting.Enabled = false;
             RotatePagesSetting2.Enabled = false;
@@ -2001,6 +2011,14 @@ namespace MyPDF
             RotatePagesSettingLeft90.Enabled = false;
             RotatePagesSettingRight90.Enabled = false;
             RotatePagesSetting180.Enabled = false;
+            RotatePagesSettingLeft902.Enabled = false;
+            RotatePagesSettingLeft90.Enabled = false;
+            RotatePagesSettingRight902.Enabled = false;
+            RotatePagesSettingRight90.Enabled = false;
+            RotatePagesSetting1802.Enabled = false;
+            RotatePagesSetting180.Enabled = false;
+            PageDetailesRotate2.Enabled = false;
+            PageDetailesRotate3.Enabled = false;
             // 画像変換
             ConvImgSetting.Enabled = false;
             ConvImgSetting2.Enabled = false;
@@ -2042,6 +2060,9 @@ namespace MyPDF
             if (!canEdit)
             {
                 // セキュリティありの場合
+                // ---- しおり編集メニュー ----------------------
+                // しおり編集
+                ShioriMenu.Enabled = isTab1;
                 // しおり作成
                 AddShioriToolStripMenuItem.Enabled = false;
                 AddShioriMenu.Enabled = false;
@@ -2054,17 +2075,6 @@ namespace MyPDF
                 // 現在のページ番号をしおりに設定
                 SetShioriToolStripMenuItem.Enabled = false;
                 SetShioriMenu.Enabled = false;
-
-                // 上書き保存
-                SaveMenu.Enabled = false;
-                // 名前を付けて保存
-                SaveAsMenu.Enabled = false;
-                // 既定のPDFアプリで開く
-                AcrobatOpenMenu.Enabled = true;
-                // PDFのプロパティ
-                PdfPropertyMenu.Enabled = false;
-                // セキュリティ設定
-                SecurityMenu.Enabled = false;
                 // しおりのプロパティ
                 ShioriProToolStripMenuItem.Enabled = false;
                 ShioriProMenu.Enabled = false;
@@ -2075,6 +2085,21 @@ namespace MyPDF
                 ExportShioriToolStripMenuItem.Enabled = false;
                 ExportShioriMenu.Enabled = false;
 
+                // ---- ファイルメニュー ----------------------
+                // 上書き保存
+                SaveMenu.Enabled = false;
+                // 名前を付けて保存
+                SaveAsMenu.Enabled = false;
+                // 既定のPDFアプリで開く
+                AcrobatOpenMenu.Enabled = true;
+                // PDFのプロパティ
+                PdfPropertyMenu.Enabled = false;
+                // セキュリティ設定
+                SecurityMenu.Enabled = false;
+
+                // ---- ページ編集メニュー(サムネイル) ----------------------
+                //ページ編集
+                PageEditMenu.Enabled = false;
                 // サムネイルドラッグ＆ドロップ
                 pdfThumbnailViewer1.AllowDrop = false;
 
@@ -2094,10 +2119,18 @@ namespace MyPDF
                 PageExtractSetting.Enabled = false;
                 PageExtractSetting2.Enabled = false;
                 PageExtractSetting3.Enabled = false;
+                SelectPageExtract2.Enabled = false;
+                SelectPageExtract3.Enabled = false;
+                PageDetailesExtract2.Enabled = false;
+                PageDetailesExtract3.Enabled = false;
                 // ページ削除
                 PageDeleteSetting.Enabled = false;
                 PageDeleteSetting2.Enabled = false;
                 PageDeleteSetting3.Enabled = false;
+                SelectPageDel2.Enabled = false;
+                SelectPageDel3.Enabled = false;
+                PageDetailesDel2.Enabled = false;
+                PageDetailesDel3.Enabled = false;
                 // 回転
                 RotatePagesSetting.Enabled = false;
                 RotatePagesSetting2.Enabled = false;
@@ -2105,6 +2138,14 @@ namespace MyPDF
                 RotatePagesSettingLeft90.Enabled = false;
                 RotatePagesSettingRight90.Enabled = false;
                 RotatePagesSetting180.Enabled = false;
+                RotatePagesSettingLeft902.Enabled = false;
+                RotatePagesSettingLeft90.Enabled = false;
+                RotatePagesSettingRight902.Enabled = false;
+                RotatePagesSettingRight90.Enabled = false;
+                RotatePagesSetting1802.Enabled = false;
+                RotatePagesSetting180.Enabled = false;
+                PageDetailesRotate2.Enabled = false;
+                PageDetailesRotate3.Enabled = false;
                 // 画像変換
                 ConvImgSetting.Enabled = false;
                 ConvImgSetting2.Enabled = false;
@@ -2114,19 +2155,32 @@ namespace MyPDF
             else
             {
                 // セキュリティなしの場合
+                // ---- しおり編集メニュー ----------------------
+                // しおり編集
+                ShioriMenu.Enabled = isTab1;
                 // しおり作成
-                AddShioriToolStripMenuItem.Enabled = true;     // 常にOK
-                AddShioriMenu.Enabled = true;     // 常にOK
-                // しおり削除
-                DelShioriToolStripMenuItem.Enabled = hasNodes; // ノードある時だけ
-                DelShioriMenu.Enabled = hasNodes; // ノードある時だけ
-                // 全てのしおり削除
-                AllDelToolStripMenuItem.Enabled = hasNodes; // ノードある時だけ
-                AllDelMenu.Enabled = hasNodes; // ノードある時だけ
-                // 現在のページ番号をしおりに設定
-                SetShioriToolStripMenuItem.Enabled = hasNodes; // ノードある時だけ
-                SetShioriMenu.Enabled = hasNodes; // ノードある時だけ
+                AddShioriToolStripMenuItem.Enabled = isTab1; // 常にOK
+                AddShioriMenu.Enabled = isTab1; // 常にOK
+                // しおり削除(しおりタブtrue and しおりありtureの場合選択可、つまり、両方tureならture)
+                DelShioriToolStripMenuItem.Enabled = isTab1 && hasNodes;
+                DelShioriMenu.Enabled = isTab1 && hasNodes;
+                // 全てのしおり削除(しおりタブtrue and しおりありtureの場合選択可、つまり、両方tureならture)
+                AllDelToolStripMenuItem.Enabled = isTab1 && hasNodes;
+                AllDelMenu.Enabled = isTab1 && hasNodes;
+                // 現在のページ番号をしおりに設定(しおりタブtrue and しおりありtureの場合選択可、つまり、両方tureならture)
+                SetShioriToolStripMenuItem.Enabled = isTab1 && hasNodes;
+                SetShioriMenu.Enabled = isTab1 &&hasNodes;
+                // しおりのプロパティ
+                ShioriProToolStripMenuItem.Enabled = isTab1 && hasNodes;
+                ShioriProMenu.Enabled = isTab1 && hasNodes;
+                // しおりインポート                               
+                ImportShioriToolStripMenuItem.Enabled = isTab1;     // 常にOK
+                ImportShioriMenu.Enabled = isTab1;     // 常にOK
+                // しおりエクスポート
+                ExportShioriToolStripMenuItem.Enabled = isTab1 && hasNodes;
+                ExportShioriMenu.Enabled = isTab1 && hasNodes;
 
+                // ---- ファイルメニュー ----------------------
                 // 上書き保存
                 SaveMenu.Enabled = true;
                 // 名前を付けて保存
@@ -2137,74 +2191,89 @@ namespace MyPDF
                 PdfPropertyMenu.Enabled = true;
                 // セキュリティ設定
                 SecurityMenu.Enabled = true;
-                // しおりのプロパティ
-                ShioriProToolStripMenuItem.Enabled = hasNodes; // ノードある時だけ
-                ShioriProMenu.Enabled = hasNodes; // ノードある時だけ
-                // しおりインポート                               
-                ImportShioriToolStripMenuItem.Enabled = true;     // 常にOK
-                ImportShioriMenu.Enabled = true;     // 常にOK
-                // しおりエクスポート
-                ExportShioriToolStripMenuItem.Enabled = hasNodes; // ノードある時だけ
-                ExportShioriMenu.Enabled = hasNodes; // ノードある時だけ
+
+                // ---- ページ編集メニュー(サムネイル) ----------------------
+                //ページ編集(isTab1=tureならfalse、falseならture)
+                PageEditMenu.Enabled = !isTab1;
 
                 // サムネイルドラッグ＆ドロップ
                 pdfThumbnailViewer1.AllowDrop = true;
 
                 // 移動
-                PageMove.Enabled = true;
-                PageMove2.Enabled = true;
-                PageMove3.Enabled = true;
+                PageMove.Enabled = !isTab1;
+                PageMove2.Enabled = !isTab1;
+                PageMove3.Enabled = !isTab1;
                 // 挿入
-                PageInsert.Enabled = true;
-                PageInsert2.Enabled = true;
-                PageInsert3.Enabled = true;
+                PageInsert.Enabled = !isTab1;
+                PageInsert2.Enabled = !isTab1;
+                PageInsert3.Enabled = !isTab1;
                 // 置換
-                ReplacementMenu.Enabled = true;
-                ReplacementMenu2.Enabled = true;
-                ReplacementMenu3.Enabled = true;
+                ReplacementMenu.Enabled = !isTab1;
+                ReplacementMenu2.Enabled = !isTab1;
+                ReplacementMenu3.Enabled = !isTab1;
                 // 抽出
-                PageExtractSetting.Enabled = true;
-                PageExtractSetting2.Enabled = true;
-                PageExtractSetting3.Enabled = true;
+                PageExtractSetting.Enabled = !isTab1;
+                PageExtractSetting2.Enabled = !isTab1;
+                PageExtractSetting3.Enabled = !isTab1;
+                SelectPageExtract2.Enabled = !isTab1;
+                SelectPageExtract3.Enabled = !isTab1;
+                PageDetailesExtract2.Enabled = !isTab1;
+                PageDetailesExtract3.Enabled = !isTab1;
                 // ページ削除
                 if (pageCount <= 1)
                 {
                     PageDeleteSetting.Enabled = false;
                     PageDeleteSetting2.Enabled = false;
                     PageDeleteSetting3.Enabled = false;
+                    SelectPageDel2.Enabled = false;
+                    SelectPageDel3.Enabled = false;
+                    PageDetailesDel2.Enabled = false;
+                    PageDetailesDel3.Enabled = false;
                 }
                 else
                 {
-                    PageDeleteSetting.Enabled = true;
-                    PageDeleteSetting2.Enabled = true;
-                    PageDeleteSetting3.Enabled = true;
+                    PageDeleteSetting.Enabled = !isTab1;
+                    PageDeleteSetting2.Enabled = !isTab1;
+                    PageDeleteSetting3.Enabled = !isTab1;
+                    SelectPageDel2.Enabled = !isTab1;
+                    SelectPageDel3.Enabled = !isTab1;
+                    PageDetailesDel2.Enabled = !isTab1;
+                    PageDetailesDel3.Enabled = !isTab1;
                 }
                 // 回転
-                RotatePagesSetting.Enabled = true;
-                RotatePagesSetting2.Enabled = true;
-                RotatePagesSetting3.Enabled = true;
-                RotatePagesSettingLeft90.Enabled = true;
-                RotatePagesSettingRight90.Enabled = true;
-                RotatePagesSetting180.Enabled = true;
+                RotatePagesSetting.Enabled = !isTab1;
+                RotatePagesSetting2.Enabled = !isTab1;
+                RotatePagesSetting3.Enabled = !isTab1;
+                RotatePagesSettingLeft90.Enabled = !isTab1;
+                RotatePagesSettingRight90.Enabled = !isTab1;
+                RotatePagesSetting180.Enabled = !isTab1;
+                RotatePagesSettingLeft902.Enabled = !isTab1;
+                RotatePagesSettingLeft90.Enabled = !isTab1;
+                RotatePagesSettingRight902.Enabled = !isTab1;
+                RotatePagesSettingRight90.Enabled = !isTab1;
+                RotatePagesSetting1802.Enabled = !isTab1;
+                RotatePagesSetting180.Enabled = !isTab1;
+                PageDetailesRotate2.Enabled = !isTab1;
+                PageDetailesRotate3.Enabled = !isTab1;
                 // 画像変換
-                ConvImgSetting.Enabled = true;
-                ConvImgSetting2.Enabled = true;
-                ConvImgSetting3.Enabled = true;
+                ConvImgSetting.Enabled = !isTab1;
+                ConvImgSetting2.Enabled = !isTab1;
+                ConvImgSetting3.Enabled = !isTab1;
 
             }
 
             // 全てのしおりを展開
-            AllShioriTenkaiToolStripMenuItem.Enabled = hasNodes;
-            AllShioriTenkaiMenu.Enabled = hasNodes;
+            AllShioriTenkaiToolStripMenuItem.Enabled = isTab1 && hasNodes;
+            AllShioriTenkaiMenu.Enabled = isTab1 && hasNodes;
             // 全てのしおりを縮小
-            AllShioriSyukusyouToolStripMenuItem.Enabled = hasNodes;
-            AllShioriSyukusyouMenu.Enabled = hasNodes;
+            AllShioriSyukusyouToolStripMenuItem.Enabled = isTab1 && hasNodes;
+            AllShioriSyukusyouMenu.Enabled = isTab1 && hasNodes;
             // 選択中のしおりを展開
-            ShioriTenkaiToolStripMenuItem.Enabled = hasNodes;
-            ShioriTenkaiMenu.Enabled = hasNodes;
+            ShioriTenkaiToolStripMenuItem.Enabled = isTab1 && hasNodes;
+            ShioriTenkaiMenu.Enabled = isTab1 && hasNodes;
             // 選択中のしおりを縮小
-            ShioriSyukusyouToolStripMenuItem.Enabled = hasNodes;
-            ShioriSyukusyouMenu.Enabled = hasNodes;
+            ShioriSyukusyouToolStripMenuItem.Enabled = isTab1 && hasNodes;
+            ShioriSyukusyouMenu.Enabled = isTab1 && hasNodes;
 
             // ページ番号
             NewPagetoolStripTextBox.Enabled = true;
@@ -7005,28 +7074,25 @@ namespace MyPDF
             if (pdfCustomViewer1.Document == null)
                 return;
 
+            // しおりタブがクリックされたらtrue、サムネイルタブならfalse
+            isTab1 = (tabControl1.SelectedTab == tabPage1);
+
+            // しおりタブが押された
             if (tabControl1.SelectedTab == tabPage1)
             {
-                ShioriMenu.Enabled = true;
-                PageEditMenu.Enabled = false;
-
                 // しおりにフォーカス
                 treeView1.Focus();
             }
 
+            // サムネイルタブが押された
             if (tabControl1.SelectedTab == tabPage2)
             {
-                ShioriMenu.Enabled = false;
-                PageEditMenu.Enabled = true;
-
                 // サムネイルにフォーカス
                 pdfThumbnailViewer1.Focus();
-
-                // 表示ページを取得
-                //int page = pdfViewer1.Renderer.Page;
-                //int page = pdfCustomViewer1.CurrentPage + 1;
-
             }
+
+            // メニュー選択ON/OFF
+            UpdateContextMenuState();
         }
 
         // ==============================
@@ -7034,10 +7100,15 @@ namespace MyPDF
         // ==============================
         private void PdfThumbnailViewer1_SelectionChanged(object? sender, List<int> selectedIndices)
         {
+            // サムネイルが無い場合は戻る
             if (selectedIndices.Count == 0) return;
 
+            // サムネイル側からの指示でスクロールしている最中なら、
+            // サムネイル側の選択をさらに変える処理（無限ループ）をブロックする！
+            if (isSyncing) return;
+
             // プログラムからの強制操作が始まるのでロックをかける！
-            _isSyncing = true;
+            isSyncing = true;
 
             try
             {
@@ -7052,7 +7123,7 @@ namespace MyPDF
             finally
             {
                 // スクロール命令が完全に終わったら、ロックを解除する
-                _isSyncing = false;
+                isSyncing = false;
             }
 
         }
