@@ -278,8 +278,8 @@ namespace MyPDF
             OpenMenu.ShortcutKeys = Keys.Control | Keys.O;
             // 画像をPDFに変換
             ConvPdf.ShortcutKeys = Keys.Control | Keys.J;
-            // Ctrl + G(既定のPDFアプリで開く)
-            AcrobatOpenMenu.ShortcutKeys = Keys.Control | Keys.G;
+            // Ctrl + G(既定のPDFアプリで開く) アクロバットリーダーの隠し機能にCtrlキーが引っかかるのやめる
+            //AcrobatOpenMenu.ShortcutKeys = Keys.Control | Keys.G;
             // Ctrl+S(上書き保存)
             SaveMenu.ShortcutKeys = Keys.Control | Keys.S;
             // Ctrl+B(しおり作成)
