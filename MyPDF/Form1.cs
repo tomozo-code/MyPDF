@@ -103,8 +103,8 @@ namespace MyPDF
         // しおりホバー中ノード
         private TreeNode? hoverNode = null;
         // しおり展開防止用タイマー
-        // 1秒(1000ms)で発火
-        private readonly System.Windows.Forms.Timer _expandTimer = new System.Windows.Forms.Timer { Interval = 1000 };
+        // 2秒(2000ms)で発火
+        private readonly System.Windows.Forms.Timer _expandTimer = new System.Windows.Forms.Timer { Interval = 2000 };
         private TreeNode? _lastHoverNodeForExpand;
 
 
@@ -728,8 +728,8 @@ namespace MyPDF
             // PDFが開かれていないなら処理しない
             if (pdfCustomViewer1.Document == null) return;
 
-            // 現在の表示ページ番号を退避(ゼロ始まりなので +1)
-            int currentPage = pdfCustomViewer1.CurrentPage + 1;
+            // 現在の表示ページ番号を退避
+            int currentPage = pdfCustomViewer1.CurrentPage;
 
             var pageSizes = pdfCustomViewer1?.Document?.PageSizes;
             SizeF firstPageSize = pageSizes?[currentPage];
