@@ -31,11 +31,6 @@ namespace MyPDF
         // ページ間の隙間（余白）ピクセル数
         private const int PageSpacing = 20;
 
-        // 基準となるページのサイズ（A4比率：横800 × 縦1130）
-        // 本来はページごとにPdfiumからサイズ（実寸）を取得すべきですが、まずは固定で実装します
-        //private const float BasePageWidth = 800;
-        //private const float BasePageHeight = 1130;
-
         // 変更：外部から現在のドキュメントを参照・解放できるようにプロパティ化します
         public dynamic? Document => _pdfDocument;
 
@@ -161,7 +156,7 @@ namespace MyPDF
             // 描画のちらつき（チャタリング）を抑えるためのダブルバッファリング設定
             this.DoubleBuffered = true;
             this.BackColor = Color.DarkGray; // PDFの背景（余白部分）の色
-            // ★修正：サムネイルビューアと同じ洗練されたダークグレーに統一
+            // サムネイルビューアと同じ洗練されたダークグレーに統一
             //this.BackColor = Color.FromArgb(45, 45, 48);
 
             // スクロールバーの初期化と配置
@@ -198,7 +193,7 @@ namespace MyPDF
             _offset = new PointF(0, 20);
 
             // 追加：読み込んだドキュメントから総ページ数を取得（ライブラリの仕様に合わせてください）
-            // PdfiumViewerの場合は document.PageCount です
+            // PdfiumViewerの場合は document.PageCount
             if (_pdfDocument != null)
             {
                 PageCount = _pdfDocument.PageCount;
@@ -264,9 +259,7 @@ namespace MyPDF
                 float padding = 20f;
                 float availableWidth = baseWidth - padding;
 
-                // ------------------------------------------------------------
                 // 【モード別】幅計算の調整
-                // ------------------------------------------------------------
                 if (_viewMode == PdfViewMode.Continuous)
                 {
                     // 連続スクロール時は常に垂直スクロールバーが出る可能性を考慮して幅を引く
@@ -629,7 +622,7 @@ namespace MyPDF
 
                     // 各ページの描画開始X座標（左右中央揃え）を計算
                     // 基本は「(画面幅 - ページ幅) / 2」ですが、手のひらツール（ドラッグ）での
-                    // 左右スクロール量（_offset.X）も連動できるように足し算します。
+                    // 左右スクロール量（_offset.X）も連動できるように足し算
                     float pageLeftX = (controlWidth - pageWidth) / 2f + _offset.X;
 
                     // 3. 画面外にあるページは描画をスキップして軽快にする（クリッピング最適化）
@@ -855,7 +848,7 @@ namespace MyPDF
                 return; // ここで終了
             }
 
-            // ※PdfCustomViewerが持つ変数（PageSpacing, _zoom）を使うため、必ずこのファイル内に記述します
+            // PdfCustomViewerが持つ変数（PageSpacing, _zoom）を使うため、必ずこのファイル内に記述
             float spacing = PageSpacing * _zoom;
             float targetY = spacing;
 
@@ -957,88 +950,6 @@ namespace MyPDF
                 }
                 return true; // キー処理を完了
             }
-
-            /*
-
-            // PageDown、右矢印、エンター：次のページへ進む
-            if (keyData == Keys.PageDown || keyData == Keys.Right || keyData == Keys.Enter)
-            {
-                if (_viewMode == PdfViewMode.SinglePage)
-                {
-                    // 【単一表示】ページインデックスを直接進める
-                    if (_singlePageIndex < PageCount - 1)
-                    {
-                        _singlePageIndex++;
-                        ResetBookmarkViewLocation();
-                    }
-                }
-                else
-                {
-                    // 【連続スクロール】次のページへ自動スクロールさせる
-                    // ※現在のページ（CurrentPage）が最終ページ未満なら次へ進む
-                    int nextPage = this.CurrentPage + 1;
-                    if (nextPage < PageCount)
-                    {
-                        // 以前サムネイルクリック時などに使った「ページジャンプ関数」を呼び出す
-                        ScrollToPage(nextPage);
-                    }
-                }
-                return true; // キー処理を完了
-            }
-
-            // PageUp、左矢印、バックスペース：前のページへ戻る
-            if (keyData == Keys.PageUp || keyData == Keys.Left || keyData == Keys.Back)
-            {
-                if (_viewMode == PdfViewMode.SinglePage)
-                {
-                    // 【単一表示】ページインデックスを直接戻す
-                    if (_singlePageIndex > 0)
-                    {
-                        _singlePageIndex--;
-                        ResetBookmarkViewLocation();
-                    }
-                }
-                else
-                {
-                    // 【連続スクロール】前のページへ自動スクロールさせる
-                    int prevPage = this.CurrentPage - 1;
-                    if (prevPage >= 0)
-                    {
-                        ScrollToPage(prevPage);
-                    }
-                }
-                return true; // キー処理を完了
-            }
-
-            // 連続スクロール表示時の、上下矢印キーによるスルスル移動処理
-            if (_viewMode == PdfViewMode.Continuous)
-            {
-                // 現在のズーム倍率を考慮して1回あたりのスクロール量を計算（35pxベース）
-                float scrollSpeed = 35f * _zoom;
-
-                // 下矢印キー（Down）：ドキュメントを上に押し上げる（スクロールダウン）
-                if (keyData == Keys.Down)
-                {
-                    _offset.Y -= scrollSpeed;
-
-                    UpdateScrollBarRanges(); // スクロールバー更新
-                    Invalidate();// 再描画
-                    return true; // キー処理を完了
-                }
-
-                // 上矢印キー（Up）：ドキュメントを下に押し下げる（スクロールアップ）
-                if (keyData == Keys.Up)
-                {
-                    _offset.Y += scrollSpeed;
-
-                    UpdateScrollBarRanges();
-                    Invalidate();
-                    return true; // キー処理を完了
-                }
-            }
-
-            */
-
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
