@@ -10,8 +10,8 @@
     <Copyright>Copyright(c) ともさん</Copyright>
     <ApplicationIcon>app_icon.ico</ApplicationIcon>
 	<Version>1.0.5.0</Version> <!-- 表示用(NuGetとか) -->
-	<FileVersion>1.0.5.0</FileVersion> <!--ファイルプロパティ -->
-	<AssemblyVersion>1.0.5.0</AssemblyVersion> <!-- 内部識別 -->
+	<FileVersion>1.0.6.0</FileVersion> <!--ファイルプロパティ -->
+	<AssemblyVersion>1.0.6.0</AssemblyVersion> <!-- 内部識別 -->
 	<InformationalVersion>1.0.5.0</InformationalVersion> <!-- 表示(製品バージョン -->
 	<ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>

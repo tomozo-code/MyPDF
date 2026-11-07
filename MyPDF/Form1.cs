@@ -84,6 +84,7 @@ using SysRectangle = System.Drawing.Rectangle;
 // PdfSettings.cs:PDFプロパティ用(メタデータ)
 // PdfSettingsLoader.cs:PDFの設定情報を読み込む
 // SecuritySettings.cs:セキュリティ設定用(メタデータ)
+// RecentFileManager.cs:最近使ったファイル用
 // ==============================
 
 namespace MyPDF
@@ -116,6 +117,10 @@ namespace MyPDF
         // 今PDF開いてる？のフラグ(ture:開いてる、false:開いてない)
         private bool isOpening = false;
         // 編集可能フラグ(PDFがセキュリティありかチェック用 true:可、false:不可)
+
+        // 最近使ったPDFの履歴管理
+        private readonly RecentFileManager recentFileManager = new RecentFileManager();
+
         private bool canEdit = true;
         // サムネイルクリック時の同期フラグ
         private bool isSyncing = false;
@@ -196,6 +201,7 @@ namespace MyPDF
         // ツールチップ表示用：直前にマウスが乗っていたノード
         private TreeNode? lastNode = null;
 
+
         public Form1()
         {
             InitializeComponent();
@@ -206,7 +212,7 @@ namespace MyPDF
             this.MinimumSize = new Size(400, 400);
 
             // フォーム最大化
-            //this.WindowState = FormWindowState.Maximized;
+            this.WindowState = FormWindowState.Maximized;
             // アプリ名（タイトルバー表示）
             this.Text = myName;
 
@@ -371,6 +377,11 @@ namespace MyPDF
 
             // 未保存フラグOFF
             isDirty = false;
+
+            // 最近使ったファイルメニューを更新
+            UpdateRecentFilesMenu();
+
+
         }
 
         // ==============================
@@ -619,6 +630,12 @@ namespace MyPDF
 
                 // 未保存フラグOFF
                 isDirty = false;
+
+                // 最近使ったファイルに登録
+                recentFileManager.Add(path);
+
+                // 履歴メニューを更新
+                UpdateRecentFilesMenu();
 
                 thumbnailPageCount = currentSettings?.TotalPage ?? 0;
 
@@ -1858,6 +1875,10 @@ namespace MyPDF
                 // はい 上書き保存
                 // awaitを付けて非同期メソッドを呼び出す
                 await SavePdf(originalPath);
+
+                // 保存に失敗して未保存状態が残っていたら中止
+                if (isDirty)
+                    return false;
             }
             else if (result == DialogResult.No)
             {
@@ -2600,7 +2621,7 @@ namespace MyPDF
                 _expandTimer.Stop();
                 _lastHoverNodeForExpand = null;
             }
-            
+
             //if (node != null)
             //{
             //    node.Expand();
@@ -7287,5 +7308,187 @@ namespace MyPDF
             // ジャンプ
             JumpToPage(page);
         }
+
+        // ==============================
+        // PDFファイルのドラッグ＆ドロップ
+        // ==============================
+        private async void pdfCustomViewer1_PdfFileDropped(string filePath)
+        {
+            // 処理中なら何もしない
+            if (isOpening)
+                return;
+
+            // 未保存の変更がある場合は保存確認
+            if (!await ConfirmDiscard())
+                return;
+
+            // 新しいPDFを開く
+            isOpening = true;
+
+            try
+            {
+                // PDFファイルを開く
+                await OpenPdfAsync(filePath);
+            }
+            finally
+            {
+                isOpening = false;
+            }
+        }
+
+        // ============================================================
+        // 最近使ったファイルメニューを更新
+        // ============================================================
+        private void UpdateRecentFilesMenu()
+        {
+            // 現在のメニュー項目をすべて削除
+            RecentFilesMenu.DropDownItems.Clear();
+
+            // 履歴がない場合
+            if (recentFileManager.RecentFiles.Count == 0)
+            {
+                var emptyItem = new ToolStripMenuItem("履歴はありません")
+                {
+                    Enabled = false
+                };
+
+                RecentFilesMenu.DropDownItems.Add(emptyItem);
+            }
+            else
+            {
+                // 履歴がある場合は、履歴ファイルをメニューに追加
+                for (int i = 0; i < recentFileManager.RecentFiles.Count; i++)
+                {
+                    string path = recentFileManager.RecentFiles[i];
+
+                    // 表示名はファイル名だけにする
+                    string fileName = IOPath.GetFileName(path);
+
+                    var item = new ToolStripMenuItem($"{i + 1}. {fileName}");
+
+                    // フルパスをツールチップに表示
+                    item.ToolTipText = path;
+
+                    // ファイルが存在しない場合は選択不可
+                    item.Enabled = File.Exists(path);
+
+                    // クリック時にPDFを開く
+                    item.Click += async (sender, e) =>
+                    {
+                        await OpenRecentFileAsync(path);
+                    };
+
+                    RecentFilesMenu.DropDownItems.Add(item);
+                }
+
+                // 区切り線
+                RecentFilesMenu.DropDownItems.Add(new ToolStripSeparator());
+
+                // 履歴をすべてクリア
+                var clearItem = new ToolStripMenuItem("履歴をすべてクリア");
+
+                clearItem.Click += (sender, e) =>
+                {
+                    ClearRecentFiles();
+                };
+
+                RecentFilesMenu.DropDownItems.Add(clearItem);
+            }
+
+            // --------------------------------------------------------
+            // 履歴ファイルのフォルダを開く
+            // ※ 履歴の有無にかかわらず、常に表示する
+            // --------------------------------------------------------
+            RecentFilesMenu.DropDownItems.Add(
+                new ToolStripSeparator());
+
+            var openFolderItem = new ToolStripMenuItem("履歴ファイルのフォルダを開く");
+
+            openFolderItem.Click += (sender, e) =>
+            {
+                OpenRecentFileFolder();
+            };
+
+            RecentFilesMenu.DropDownItems.Add(openFolderItem);
+        }
+
+
+        // ============================================================
+        // 履歴からPDFを開く
+        // ============================================================
+        private async Task OpenRecentFileAsync(string path)
+        {
+            if (isOpening)
+                return;
+
+            // 未保存の変更を確認
+            if (!await ConfirmDiscard())
+                return;
+
+            isOpening = true;
+
+            try
+            {
+                BeginProcessUi("読込中...");
+
+                await OpenPdfAsync(path);
+            }
+            finally
+            {
+                EndProcessUi();
+                isOpening = false;
+            }
+        }
+
+
+        // ============================================================
+        // 履歴をすべてクリア
+        // ============================================================
+        private void ClearRecentFiles()
+        {
+            var result = MessageBox.Show(
+                "最近使ったファイルの履歴をすべて削除しますか？",
+                "履歴のクリア",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (result != DialogResult.Yes)
+                return;
+
+            recentFileManager.Clear();
+
+            UpdateRecentFilesMenu();
+        }
+
+        // ============================================================
+        // 履歴ファイル(RecentFiles.txt)の保存先フォルダを開く
+        // ============================================================
+        private void OpenRecentFileFolder()
+        {
+            try
+            {
+                string folderPath = recentFileManager.HistoryFolderPath;
+
+                // フォルダが存在しなければ作成
+                Directory.CreateDirectory(folderPath);
+
+                // エクスプローラーでフォルダを開く
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "explorer.exe",
+                    Arguments = $"\"{folderPath}\"",
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"履歴ファイルのフォルダを開けませんでした。\r\n\r\n{ex.Message}",
+                    "エラー",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
     }
 }

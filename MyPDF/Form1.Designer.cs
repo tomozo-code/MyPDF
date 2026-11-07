@@ -154,6 +154,8 @@
             panel2 = new Panel();
             splitContainer1 = new SplitContainer();
             pdfCustomViewer1 = new PdfCustomViewer();
+            RecentFilesMenu = new ToolStripMenuItem();
+            toolStripSeparator4 = new ToolStripSeparator();
             statusStrip1.SuspendLayout();
             contextMenuStrip2.SuspendLayout();
             contextMenuStrip1.SuspendLayout();
@@ -1133,7 +1135,7 @@
             // FileMenu
             // 
             FileMenu.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            FileMenu.DropDownItems.AddRange(new ToolStripItem[] { OpenMenu, AcrobatOpenMenu, toolStripMenuItem10, ConvPdf, toolStripMenuItem15, SaveMenu, SaveAsMenu, toolStripMenuItem9, PdfPropertyMenu, SecurityMenu, toolStripMenuItem11, CloseMenu, EndMenu });
+            FileMenu.DropDownItems.AddRange(new ToolStripItem[] { OpenMenu, AcrobatOpenMenu, toolStripMenuItem10, ConvPdf, toolStripMenuItem15, SaveMenu, SaveAsMenu, toolStripMenuItem9, RecentFilesMenu, toolStripSeparator4, PdfPropertyMenu, SecurityMenu, toolStripMenuItem11, CloseMenu, EndMenu });
             FileMenu.Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             FileMenu.ImageTransparentColor = Color.Magenta;
             FileMenu.Name = "FileMenu";
@@ -1412,11 +1414,24 @@
             // 
             // pdfCustomViewer1
             // 
+            pdfCustomViewer1.AllowDrop = true;
             pdfCustomViewer1.BackColor = SystemColors.Control;
             pdfCustomViewer1.Location = new Point(12, 161);
             pdfCustomViewer1.Name = "pdfCustomViewer1";
             pdfCustomViewer1.Size = new Size(118, 94);
             pdfCustomViewer1.TabIndex = 11;
+            pdfCustomViewer1.PdfFileDropped += pdfCustomViewer1_PdfFileDropped;
+            // 
+            // RecentFilesMenu
+            // 
+            RecentFilesMenu.Name = "RecentFilesMenu";
+            RecentFilesMenu.Size = new Size(256, 26);
+            RecentFilesMenu.Text = "最近使ったファイル";
+            // 
+            // toolStripSeparator4
+            // 
+            toolStripSeparator4.Name = "toolStripSeparator4";
+            toolStripSeparator4.Size = new Size(253, 6);
             // 
             // Form1
             // 
@@ -1585,5 +1600,7 @@
         private ToolStripMenuItem RotatePagesSettingRight902;
         private ToolStripMenuItem RotatePagesSetting1802;
         private ToolStripMenuItem PageDetailesRotate2;
+        private ToolStripMenuItem RecentFilesMenu;
+        private ToolStripSeparator toolStripSeparator4;
     }
 }

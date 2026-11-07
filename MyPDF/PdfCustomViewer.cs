@@ -149,6 +149,9 @@ namespace MyPDF
             }
         }
 
+        // ==============================
+        // コンストラクタ
+        // ==============================
         public PdfCustomViewer()
         {
             InitializeComponent();
@@ -158,6 +161,9 @@ namespace MyPDF
             this.BackColor = Color.DarkGray; // PDFの背景（余白部分）の色
             // サムネイルビューアと同じ洗練されたダークグレーに統一
             //this.BackColor = Color.FromArgb(45, 45, 48);
+
+            // PDFファイルのドラッグ＆ドロップを受け付ける
+            this.AllowDrop = true;
 
             // スクロールバーの初期化と配置
             _vScrollBar = new VScrollBar { Dock = DockStyle.Right, Enabled = false };
@@ -173,7 +179,12 @@ namespace MyPDF
             this.MouseDown += PdfCustomViewer_MouseDown;
             this.MouseMove += PdfCustomViewer_MouseMove;
             this.MouseUp += PdfCustomViewer_MouseUp;
-            this.Resize += PdfCustomViewer_Resize; // 画面サイズ変更時にも追従
+            // 画面サイズ変更時にも追従
+            this.Resize += PdfCustomViewer_Resize;
+
+            // ドラッグ＆ドロップ
+            this.DragEnter += PdfCustomViewer_DragEnter;
+            this.DragDrop += PdfCustomViewer_DragDrop;
 
         }
 
@@ -961,6 +972,70 @@ namespace MyPDF
             _offset = new PointF(0, 20); // オフセットリセット
             UpdateScrollBarRanges(); // スクロールバー更新
             Invalidate(); // 再描画
+        }
+
+        // ==============================
+        // PDFファイルのドラッグ＆ドロップ ファイルがドラッグされてきたとき
+        // ==============================
+        private void PdfCustomViewer_DragEnter(object? sender, DragEventArgs e)
+        {
+            if (e.Data == null)
+                return;
+
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[]? files = e.Data.GetData(DataFormats.FileDrop) as string[];
+
+                if (files != null &&
+                    files.Length > 0 &&
+                    System.IO.Path.GetExtension(files[0])
+                        .Equals(".pdf", StringComparison.OrdinalIgnoreCase))
+                {
+                    e.Effect = DragDropEffects.Copy;
+                    return;
+                }
+            }
+
+            e.Effect = DragDropEffects.None;
+        }
+
+        // ==============================
+        // PDFファイルのドラッグ＆ドロップ ファイルがドロップされたとき
+        // ==============================
+        private void PdfCustomViewer_DragDrop(object? sender, DragEventArgs e)
+        {
+            if (e.Data == null)
+                return;
+
+            if (!e.Data.GetDataPresent(DataFormats.FileDrop))
+                return;
+
+            string[]? files = e.Data.GetData(DataFormats.FileDrop) as string[];
+
+            if (files == null || files.Length == 0)
+                return;
+
+            string filePath = files[0];
+
+            if (!System.IO.Path.GetExtension(filePath)
+                .Equals(".pdf", StringComparison.OrdinalIgnoreCase))
+                return;
+
+            // Form1側にPDFを開く処理を依頼する
+            OnPdfFileDropped(filePath);
+        }
+
+        // ==============================
+        // PDFファイルのドラッグ＆ドロップ Form1側に通知するイベント
+        // ==============================
+        public event Action<string>? PdfFileDropped;
+
+        // ==============================
+        // PDFファイルのドラッグ＆ドロップ ロップされたPDFの通知
+        // ==============================
+        private void OnPdfFileDropped(string filePath)
+        {
+            PdfFileDropped?.Invoke(filePath);
         }
     }
 }
